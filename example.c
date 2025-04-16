@@ -37,7 +37,7 @@ static void activate(GtkApplication* app, gpointer user_data) {
     // Label
     label = gtk_label_new(NULL);
     gtk_label_set_markup(GTK_LABEL(label),
-        "<span font_desc=\"Arial Bold 24\" foreground=\"red\">Hello World</span>");
+        "<span font_desc=\"Arial Bold 24\" foreground=\"red\">Bonjour discord Blabla</span>");
     gtk_widget_set_halign(label, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(inner_box), label, TRUE, TRUE, 0);
 
@@ -52,7 +52,7 @@ static void activate(GtkApplication* app, gpointer user_data) {
     GtkCssProvider *provider = gtk_css_provider_new();
     gtk_css_provider_load_from_data(provider,
         "#main_background {"
-        "  background-color: #007FFF;"  // Bleu clair
+        "  background-color: #007FFF;" //background color
         "}"
         "#my_button {"
         "  background-color: #003366;"
