@@ -1,6 +1,7 @@
 PROCEDURE INSTALLATION INTERFACE GRAPHIQUE  
 
-1. Installer WSL
+1. Installer WSL(C’est un sous-système Linux intégré à Windows.)  
+util pour installer ubuntu  
 Ouvre PowerShell avec win+R en administrateur et tape :  
   
 ```bash
@@ -10,7 +11,8 @@ wsl --install
 💡 Ça va installer WSL 2 avec Ubuntu automatiquement.  
 Redémarre ensuite le PC.  
   
-2. Ouvrir Unbuntu :   
+2. Ouvrir Unbuntu(environnemnet de bureau) :   
+
   - Après le redemarrage du PC, :  
   - Chercher "UBUNTU" dans le menu Démarrer :  
   - Lance-le une première fois, attendre l'installation  
@@ -63,6 +65,7 @@ int main(int argc, char **argv) {
 6. Installation serveur affichage - GTK :   
       
 **Installe un serveur d'affichage comme VcXsrv sur ton Windows**   
+**parce que linux n'affiche pas nativemnet des interfaces graphiques sous windows**
    
 ```a copier
 https://vcxsrv.com/  
