@@ -5,7 +5,7 @@ static void on_toggle_clicked(GtkToggleButton *toggle_button, gpointer user_data
     if (gtk_toggle_button_get_active(toggle_button)) {
         gtk_label_set_markup(label, "<span font_desc=\"Arial Bold 24\" foreground=\"green\">Discord_blablaconnecté !!!</span>");
     } else {
-        gtk_label_set_markup(label, "<span font_desc=\"Arial Bold 24\" foreground=\"blue\">Hello World</span>");
+        gtk_label_set_markup(label, "<span font_desc=\"Arial Bold 24\" foreground=\"blue\">Discord_blabla_disconnected</span>");
     }
 }
 
@@ -37,12 +37,12 @@ static void activate(GtkApplication* app, gpointer user_data) {
     // Label
     label = gtk_label_new(NULL);
     gtk_label_set_markup(GTK_LABEL(label),
-        "<span font_desc=\"Arial Bold 24\" foreground=\"red\">Bonjour discord Blabla</span>");
+        "<span font_desc=\"Arial Bold 24\" foreground=\"red\">Hello discord Blabla</span>");
     gtk_widget_set_halign(label, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(inner_box), label, TRUE, TRUE, 0);
 
     // Toggle button
-    toggle_button = gtk_toggle_button_new_with_label("Appuyer");
+    toggle_button = gtk_toggle_button_new_with_label("Click");
     gtk_widget_set_name(toggle_button, "my_button");
     g_signal_connect(toggle_button, "toggled", G_CALLBACK(on_toggle_clicked), label);
     gtk_widget_set_halign(toggle_button, GTK_ALIGN_CENTER);
