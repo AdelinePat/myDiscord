@@ -1,6 +1,6 @@
--- Active: 1744878329281@@127.0.0.1@5432@postgres
+-- Active: 1744914038452@@127.0.0.1@5432@whispr
 DESCRIBE users;
-
+DROP DATABASE whispr;
 SHOW TABLE;
 
 INSERT INTO users (user_name, email, password)
@@ -31,6 +31,8 @@ INSERT INTO channels (channel_title, channel_status)
 VALUES ('General_chat', 'public');
 INSERT INTO channels (channel_title, channel_status)
 VALUES ('jolyne_florence', 'private');
+INSERT INTO channels (channel_title, channel_status)
+VALUES ('florence_toto', 'private');
 
 SELECT * FROM messages;
 
@@ -49,8 +51,7 @@ INSERT INTO messages (user_id, channel_id, content)
 VALUES (4, 1, 'Bien sur hehe');
 INSERT INTO channels (channel_title, channel_status)
 VALUES ('flood', 'public');
-INSERT INTO channels (channel_title, channel_status)
-VALUES ('florence_toto', 'private');
+
 
 SELECT * FROM channels;
 INSERT INTO messages (user_id, channel_id, content)
@@ -68,6 +69,7 @@ SELECT c.channel_title, COALESCE(u.user_name, 'Anonymous user'), m.date_time, m.
 FROM messages AS m
 JOIN channels AS c ON c.channel_id = m.channel_id
 LEFT JOIN users AS u ON u.user_id = m.user_id
+JOIN channels_access ca ON ca.user_id = m.user_id and ca.channel_id = c.channel_id
 WHERE c.channel_status = 'public' AND c.channel_id = (
     SELECT channel_id FROM channels
     WHERE channel_title = 'General_chat'
@@ -102,7 +104,14 @@ START TRANSACTION;
 INSERT INTO users (user_name, email, password)
 VALUES('Toto', 'toto@gmail.com', '123456');
 INSERT INTO channels_access (user_id, channel_id, role_title)
-VALUES (LAST_VALUE(user_id), SELECT MIN(channel_id) FROM channels WHERE channel_status = 'public', 'membre');
+VALUES (
+    (SELECT MAX(user_id)
+        FROM users),
+    (SELECT MIN(channel_id)
+        FROM channels
+        WHERE channel_status = 'public'),
+    'membre');
 END;
 
 SELECT * FROM users;
+SELECT MAX(user_id) FROM users;
