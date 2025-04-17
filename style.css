@@ -1,0 +1,41 @@
+#main_background {
+    background-color: #3A383E;
+}
+
+#my_button {
+    background-color: #003366;
+    color: black;
+    font: bold 18pt 'Arial';
+    border-radius: 5px;
+    padding: 10px 20px;
+}
+
+#my_button:hover {
+    background-color: red;
+}
+
+#my_button:checked {
+    background-color: green;
+    color: black;
+}
+
+#my_button:active {
+    background-color: #005599;
+}
+
+#connect_button {
+    background-color: #2e8b57;
+    color: white;
+    font: bold 14pt 'Arial';
+    border-radius: 4px;
+    padding: 10px 20px;
+}
+
+#connect_button:hover {
+    background-color: #1c5f3c;
+}
+
+#user_label {
+    font: italic 12pt 'Arial';
+    color: white;
+}
