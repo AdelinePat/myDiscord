@@ -1,9 +1,9 @@
 -- Active: 1744878329281@@127.0.0.1@5432@whispr
-CREATE DATABASE IF NOT EXISTS whispr;
+CREATE DATABASE whispr;
 USE whispr;
 CREATE TABLE IF NOT EXISTS users
 (
-    user_id integer NOT NULL,
+    user_id SERIAL NOT NULL,
     user_name character varying(20) NOT NULL,
     email character varying(255) NOT NULL,
     password character varying(255) NOT NULL,
@@ -26,23 +26,23 @@ CREATE TABLE IF NOT EXISTS reactions
 
 CREATE TABLE IF NOT EXISTS channels
 (
-    channel_id integer NOT NULL,
+    channel_id SERIAL NOT NULL,
     channel_title character varying(20) NOT NULL,
     channel_status character(10) NOT NULL,
-    PRIMARY KEY (channel_id)
+    PRIMARY KEY (channel_id),
+    UNIQUE (channel_title)
 );
-
 CREATE TABLE IF NOT EXISTS messages
 (
-    message_id integer NOT NULL,
+    message_id SERIAL NOT NULL,
     user_id integer,
     channel_id integer NOT NULL,
     date_time time without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     content character varying(1000) NOT NULL,
     PRIMARY KEY (message_id),
-	FOREIGN KEY (user_id) REFERENCES users (user_id)
+	FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE
     ON UPDATE NO ACTION
-	ON DELETE SET NULL,
+    ON DELETE SET NULL,
 	FOREIGN KEY (channel_id) REFERENCES channels (channel_id)
 	ON UPDATE NO ACTION
 	ON DELETE CASCADE
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS messages
 
 CREATE TABLE IF NOT EXISTS channels_access
 (
-    access_id integer NOT NULL,
+    access_id SERIAL NOT NULL,
     user_id integer NOT NULL,
     channel_id integer NOT NULL,
     role_title character(10) NOT NULL,
@@ -62,4 +62,3 @@ CREATE TABLE IF NOT EXISTS channels_access
 	ON UPDATE CASCADE
 	ON DELETE CASCADE
 );
-
