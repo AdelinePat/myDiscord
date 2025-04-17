@@ -8,32 +8,43 @@ CFLAGS = -Wall -Wextra -std=c11
 GTK_CFLAGS := $(shell pkg-config --cflags gtk+-3.0)
 GTK_LIBS   := $(shell pkg-config --libs gtk+-3.0)
 
-# Combine les options de compilation (on ajoute GTK_CFLAGS aux CFLAGS)
+# Combine les options de compilation
 CFLAGS += $(GTK_CFLAGS)
 
 # Fichiers sources
-SRC = example.c 
+SRC = example.c
 
-# Fichiers objets générés à partir des sources
+# Fichiers objets générés
 OBJ = $(SRC:.c=.o)
 
 # Nom de l'exécutable
 EXEC = example
 
-# Cible par défaut appelée avec juste "make"
+# Feuilles de style (copiées à l'installation)
+CSS = style.css
+
+# Cible par défaut
 all: $(EXEC)
 
-# Règle pour créer l'exécutable en liant avec GTK_LIBS
+# Création de l'exécutable
 $(EXEC): $(OBJ)
 	$(CC) $(OBJ) -o $(EXEC) $(GTK_LIBS)
 
-# Règle générique pour compiler les .c en .o
+# Compilation des .c en .o
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Cible pour nettoyer les fichiers temporaires
+# Nettoyage
 clean:
-	del /Q *.o *.exe 2>nul || rm -f *.o $(EXEC)
+	@rm -f $(EXEC) *.o
 
-# Pour forcer la recompilation de tout
+# Recompilation totale
 rebuild: clean all
+
+# Installer les ressources (ici CSS)
+install: all
+	@cp $(CSS) ./
+
+# Exécution rapide
+run: all
+	./$(EXEC)
