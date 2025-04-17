@@ -1,14 +1,5 @@
 #include <gtk/gtk.h>
 
-static void on_toggle_clicked(GtkToggleButton *toggle_button, gpointer user_data) {
-    GtkLabel *label = GTK_LABEL(user_data);
-    if (gtk_toggle_button_get_active(toggle_button)) {
-        gtk_label_set_markup(label, "<span font_desc=\"Arial Bold 24\" foreground=\"green\">Discord_blablaconnecté !!!</span>");
-    } else {
-        gtk_label_set_markup(label, "<span font_desc=\"Arial Bold 24\" foreground=\"blue\">Discord_blabla_disconnected</span>");
-    }
-}
-
 static void on_connect_clicked(GtkButton *button, gpointer user_data) {
     g_print("Connexion bouton cliqué !\n");
 }
@@ -17,19 +8,16 @@ static void activate(GtkApplication* app, gpointer user_data) {
     GtkWidget *window;
     GtkWidget *outer_box;
     GtkWidget *inner_box;
-    GtkWidget *bottom_box;
     GtkWidget *label;
-    GtkWidget *toggle_button;
     GtkWidget *connect_button;
     GtkWidget *user_label;
     GtkWidget *chat_box;
     GtkWidget *chat_display;
     GtkWidget *chat_entry;
-    GtkWidget *send_button;
 
     // Fenêtre principale
     window = gtk_application_window_new(app);
-    gtk_window_set_title(GTK_WINDOW(window), "Whisper");
+    gtk_window_set_title(GTK_WINDOW(window), "Whisper_blabla");
     gtk_window_set_default_size(GTK_WINDOW(window), 1280, 720);
 
     // Boîte verticale principale
@@ -39,65 +27,56 @@ static void activate(GtkApplication* app, gpointer user_data) {
     gtk_widget_set_vexpand(outer_box, TRUE);
     gtk_container_add(GTK_CONTAINER(window), outer_box);
 
-    // Boîte intérieure centrée
+    // Boîte intérieure pour le label, alignée en haut à gauche
     inner_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 20);
-    gtk_widget_set_halign(inner_box, GTK_ALIGN_CENTER);
-    gtk_widget_set_valign(inner_box, GTK_ALIGN_CENTER);
-    gtk_box_pack_start(GTK_BOX(outer_box), inner_box, TRUE, TRUE, 0);
+    gtk_widget_set_halign(inner_box, GTK_ALIGN_START);  // Aligner à gauche
+    gtk_widget_set_valign(inner_box, GTK_ALIGN_START);  // Aligner en haut
+    gtk_box_pack_start(GTK_BOX(outer_box), inner_box, FALSE, FALSE, 0);  // Empêche la boîte de s'étirer verticalement
 
     // Label principal
+
     label = gtk_label_new(NULL);
-    gtk_label_set_markup(GTK_LABEL(label),
-        "<span font_desc=\"Arial Bold 24\" foreground=\"red\">Hello discord Blabla</span>");
-    gtk_widget_set_halign(label, GTK_ALIGN_CENTER);
+    gtk_label_set_markup(GTK_LABEL(label), "<span font_desc='Arial 24' color='#D6D6D6'>Channel</span>");  
+    gtk_widget_set_halign(label, GTK_ALIGN_START);  // Aligner à gauche
     gtk_box_pack_start(GTK_BOX(inner_box), label, TRUE, TRUE, 0);
 
-    // Toggle button
-    toggle_button = gtk_toggle_button_new_with_label("Click");
-    gtk_widget_set_name(toggle_button, "my_button");
-    g_signal_connect(toggle_button, "toggled", G_CALLBACK(on_toggle_clicked), label);
-    gtk_widget_set_halign(toggle_button, GTK_ALIGN_CENTER);
-    gtk_box_pack_start(GTK_BOX(inner_box), toggle_button, TRUE, TRUE, 0);
 
-    // Boîte du bas : bouton gauche + label utilisateur à droite
-    bottom_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 20);
-    gtk_widget_set_halign(bottom_box, GTK_ALIGN_START);  // Centrer la boîte
-    gtk_widget_set_valign(bottom_box, GTK_ALIGN_START);  // Centrer verticalement
-    gtk_box_pack_start(GTK_BOX(outer_box), bottom_box, FALSE, TRUE, 10);
+    // ======= Chat zone =======
+    chat_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_widget_set_name(chat_box, "chat_box");
+    gtk_widget_set_hexpand(chat_box, TRUE);  // S'assurer que le chat_box prend toute la largeur
+    gtk_widget_set_vexpand(chat_box, TRUE);  // Permet à la boîte de se redimensionner verticalement
+    gtk_box_pack_start(GTK_BOX(outer_box), chat_box, TRUE, TRUE, 10);
+
+    // Chat display
+    chat_display = gtk_text_view_new();
+    gtk_widget_set_name(chat_display, "chat_display");
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(chat_display), FALSE);
+    gtk_widget_set_hexpand(chat_display, TRUE);  // Étendre le chat_display à la largeur de chat_box
+    gtk_widget_set_vexpand(chat_display, TRUE);  // Prend tout l'espace restant en hauteur
+    gtk_box_pack_start(GTK_BOX(chat_box), chat_display, TRUE, TRUE, 0);
+
+    // Ligne du bas avec les 3 éléments
+    GtkWidget *input_line = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+    gtk_widget_set_hexpand(input_line, TRUE);
+    gtk_box_pack_end(GTK_BOX(chat_box), input_line, FALSE, FALSE, 0);  // Collé en bas
 
     // Bouton connexion
     connect_button = gtk_button_new_with_label("Connexion");
     gtk_widget_set_name(connect_button, "connect_button");
     g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_clicked), NULL);
-    gtk_widget_set_halign(connect_button, GTK_ALIGN_START);  // Aligner à gauche dans la boîte
-    gtk_box_pack_start(GTK_BOX(bottom_box), connect_button, FALSE, FALSE, 20);
+    gtk_box_pack_start(GTK_BOX(input_line), connect_button, FALSE, FALSE, 0);
 
     // Label utilisateur
     user_label = gtk_label_new("Utilisateur: Enola");
     gtk_widget_set_name(user_label, "user_label");
-    gtk_widget_set_halign(user_label, GTK_ALIGN_START);  // Aligner à gauche dans la boîte
-    gtk_box_pack_start(GTK_BOX(bottom_box), user_label, FALSE, FALSE, 20);
+    gtk_box_pack_start(GTK_BOX(input_line), user_label, FALSE, FALSE, 0);
 
-    // Chat box à droite
-    chat_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
-    gtk_widget_set_hexpand(chat_box, TRUE);
-    gtk_widget_set_vexpand(chat_box, TRUE);
-    gtk_widget_set_halign(chat_box, GTK_ALIGN_END);  // Aligné à droite de la fenêtre
-    gtk_box_pack_start(GTK_BOX(outer_box), chat_box, TRUE, TRUE, 10);
-    
-    // Zone d'affichage des messages
-    chat_display = gtk_text_view_new();
-    gtk_widget_set_name(chat_display, "chat_display");
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(chat_display), FALSE);  // Rendre la zone d'affichage non éditable
-    gtk_widget_set_vexpand(chat_display, TRUE);
-    gtk_box_pack_start(GTK_BOX(chat_box), chat_display, TRUE, TRUE, 0);
-    
-    // Champ de saisie du message
+    // Champ de saisie qui s’étire
     chat_entry = gtk_entry_new();
     gtk_widget_set_name(chat_entry, "chat_entry");
-    gtk_widget_set_hexpand(chat_entry, TRUE);
-    gtk_box_pack_start(GTK_BOX(chat_box), chat_entry, FALSE, FALSE, 10);
-    
+    gtk_widget_set_hexpand(chat_entry, TRUE); // ← c’est ça qui l’étire
+    gtk_box_pack_end(GTK_BOX(input_line), chat_entry, TRUE, TRUE, 0);
 
     // Chargement CSS
     GtkCssProvider *provider = gtk_css_provider_new();
@@ -111,10 +90,10 @@ static void activate(GtkApplication* app, gpointer user_data) {
     // Application du style
     GtkStyleContext *context;
     GtkWidget *widgets_to_style[] = {
-        window, outer_box, toggle_button, connect_button, user_label
+        window, outer_box, connect_button, user_label, chat_entry, chat_display
     };
 
-    for (int i = 0; i < sizeof(widgets_to_style)/sizeof(GtkWidget*); ++i) {
+    for (int i = 0; i < sizeof(widgets_to_style) / sizeof(GtkWidget*); ++i) {
         context = gtk_widget_get_style_context(widgets_to_style[i]);
         gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
     }

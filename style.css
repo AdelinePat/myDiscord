@@ -1,6 +1,10 @@
 #main_background {
     background-color: #3A383E;
 }
+#main_background label {
+    color: #d6d6d6;
+    font: bold 12pt "Arial";  /* Applique Arial en gras et taille 24pt */
+}
 
 #my_button {
     background-color: #003366;
@@ -11,7 +15,7 @@
 }
 
 #my_button:hover {
-    background-color: red;
+    background-color: #CFBEF8;
 }
 
 #my_button:checked {
@@ -46,6 +50,4 @@
     border: none;
     padding: 10px;
     border-radius: 8px;
-    /* Laisse le widget s'étirer */
-    min-width: 200px;
 }
