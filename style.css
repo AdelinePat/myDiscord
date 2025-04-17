@@ -24,8 +24,8 @@
 }
 
 #connect_button {
-    background-color: #2e8b57;
-    color: white;
+    background-color: #D3FBD8;
+    color: #2E2C31;
     font: bold 14pt 'Arial';
     border-radius: 4px;
     padding: 10px 20px;
@@ -38,4 +38,14 @@
 #user_label {
     font: italic 12pt 'Arial';
     color: white;
+}
+
+#chat_entry {
+    background-color: #5C535A;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    /* Laisse le widget s'étirer */
+    min-width: 200px;
 }

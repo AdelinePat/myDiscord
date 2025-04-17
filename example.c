@@ -22,6 +22,10 @@ static void activate(GtkApplication* app, gpointer user_data) {
     GtkWidget *toggle_button;
     GtkWidget *connect_button;
     GtkWidget *user_label;
+    GtkWidget *chat_box;
+    GtkWidget *chat_display;
+    GtkWidget *chat_entry;
+    GtkWidget *send_button;
 
     // Fenêtre principale
     window = gtk_application_window_new(app);
@@ -57,22 +61,43 @@ static void activate(GtkApplication* app, gpointer user_data) {
 
     // Boîte du bas : bouton gauche + label utilisateur à droite
     bottom_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 20);
-    gtk_widget_set_halign(bottom_box, GTK_ALIGN_FILL);
-    gtk_widget_set_valign(bottom_box, GTK_ALIGN_END);
+    gtk_widget_set_halign(bottom_box, GTK_ALIGN_START);  // Centrer la boîte
+    gtk_widget_set_valign(bottom_box, GTK_ALIGN_START);  // Centrer verticalement
     gtk_box_pack_start(GTK_BOX(outer_box), bottom_box, FALSE, TRUE, 10);
 
     // Bouton connexion
     connect_button = gtk_button_new_with_label("Connexion");
     gtk_widget_set_name(connect_button, "connect_button");
     g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_clicked), NULL);
-    gtk_widget_set_halign(connect_button, GTK_ALIGN_START);
+    gtk_widget_set_halign(connect_button, GTK_ALIGN_START);  // Aligner à gauche dans la boîte
     gtk_box_pack_start(GTK_BOX(bottom_box), connect_button, FALSE, FALSE, 20);
 
     // Label utilisateur
     user_label = gtk_label_new("Utilisateur: Enola");
     gtk_widget_set_name(user_label, "user_label");
-    gtk_widget_set_halign(user_label, GTK_ALIGN_END);
-    gtk_box_pack_end(GTK_BOX(bottom_box), user_label, FALSE, FALSE, 20);
+    gtk_widget_set_halign(user_label, GTK_ALIGN_START);  // Aligner à gauche dans la boîte
+    gtk_box_pack_start(GTK_BOX(bottom_box), user_label, FALSE, FALSE, 20);
+
+    // Chat box à droite
+    chat_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_widget_set_hexpand(chat_box, TRUE);
+    gtk_widget_set_vexpand(chat_box, TRUE);
+    gtk_widget_set_halign(chat_box, GTK_ALIGN_END);  // Aligné à droite de la fenêtre
+    gtk_box_pack_start(GTK_BOX(outer_box), chat_box, TRUE, TRUE, 10);
+    
+    // Zone d'affichage des messages
+    chat_display = gtk_text_view_new();
+    gtk_widget_set_name(chat_display, "chat_display");
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(chat_display), FALSE);  // Rendre la zone d'affichage non éditable
+    gtk_widget_set_vexpand(chat_display, TRUE);
+    gtk_box_pack_start(GTK_BOX(chat_box), chat_display, TRUE, TRUE, 0);
+    
+    // Champ de saisie du message
+    chat_entry = gtk_entry_new();
+    gtk_widget_set_name(chat_entry, "chat_entry");
+    gtk_widget_set_hexpand(chat_entry, TRUE);
+    gtk_box_pack_start(GTK_BOX(chat_box), chat_entry, FALSE, FALSE, 10);
+    
 
     // Chargement CSS
     GtkCssProvider *provider = gtk_css_provider_new();
