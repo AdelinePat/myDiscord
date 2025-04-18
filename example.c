@@ -17,7 +17,7 @@ static void activate(GtkApplication* app, gpointer user_data) {
 
     // Fenêtre principale
     window = gtk_application_window_new(app);
-    gtk_window_set_title(GTK_WINDOW(window), "Whisper_blabla");
+    gtk_window_set_title(GTK_WINDOW(window), "Whisper");
     gtk_window_set_default_size(GTK_WINDOW(window), 1280, 720);
 
     // Boîte verticale principale
@@ -29,37 +29,48 @@ static void activate(GtkApplication* app, gpointer user_data) {
 
     // Boîte intérieure pour le label, alignée en haut à gauche
     inner_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 20);
-    gtk_widget_set_halign(inner_box, GTK_ALIGN_START);  // Aligner à gauche
-    gtk_widget_set_valign(inner_box, GTK_ALIGN_START);  // Aligner en haut
-    gtk_box_pack_start(GTK_BOX(outer_box), inner_box, FALSE, FALSE, 0);  // Empêche la boîte de s'étirer verticalement
+    gtk_widget_set_halign(inner_box, GTK_ALIGN_START);
+    gtk_widget_set_valign(inner_box, GTK_ALIGN_START);
+    gtk_box_pack_start(GTK_BOX(outer_box), inner_box, FALSE, FALSE, 0);
 
     // Label principal
-
     label = gtk_label_new(NULL);
-    gtk_label_set_markup(GTK_LABEL(label), "<span font_desc='Arial 24' color='#D6D6D6'>Channel</span>");  
-    gtk_widget_set_halign(label, GTK_ALIGN_START);  // Aligner à gauche
+    gtk_label_set_markup(GTK_LABEL(label), "<span font_desc='Arial 24' color='#D6D6D6'>Channel</span>");
+    gtk_widget_set_halign(label, GTK_ALIGN_START);
     gtk_box_pack_start(GTK_BOX(inner_box), label, TRUE, TRUE, 0);
-
 
     // ======= Chat zone =======
     chat_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_widget_set_name(chat_box, "chat_box");
-    gtk_widget_set_hexpand(chat_box, TRUE);  // S'assurer que le chat_box prend toute la largeur
-    gtk_widget_set_vexpand(chat_box, TRUE);  // Permet à la boîte de se redimensionner verticalement
+    gtk_widget_set_hexpand(chat_box, TRUE);
+    gtk_widget_set_vexpand(chat_box, TRUE);
     gtk_box_pack_start(GTK_BOX(outer_box), chat_box, TRUE, TRUE, 10);
 
     // Chat display
     chat_display = gtk_text_view_new();
     gtk_widget_set_name(chat_display, "chat_display");
     gtk_text_view_set_editable(GTK_TEXT_VIEW(chat_display), FALSE);
-    gtk_widget_set_hexpand(chat_display, TRUE);  // Étendre le chat_display à la largeur de chat_box
-    gtk_widget_set_vexpand(chat_display, TRUE);  // Prend tout l'espace restant en hauteur
+    gtk_widget_set_hexpand(chat_display, TRUE);
+    gtk_widget_set_size_request(chat_display, 600, -1);
+    gtk_widget_set_hexpand(chat_display, FALSE); 
+    gtk_widget_set_halign(chat_display, GTK_ALIGN_END); 
+    gtk_widget_set_vexpand(chat_display, TRUE);// Largeur = 600px, hauteur auto
     gtk_box_pack_start(GTK_BOX(chat_box), chat_display, TRUE, TRUE, 0);
+    
+
+    // Forcer le style du texte si nécessaire
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(chat_display));
+    GtkTextTag *default_tag = gtk_text_buffer_create_tag(buffer, "default",
+        "foreground", "#D6D6D6", NULL);
+    GtkTextIter start, end;
+    gtk_text_buffer_get_start_iter(buffer, &start);
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_apply_tag(buffer, default_tag, &start, &end);
 
     // Ligne du bas avec les 3 éléments
     GtkWidget *input_line = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_widget_set_hexpand(input_line, TRUE);
-    gtk_box_pack_end(GTK_BOX(chat_box), input_line, FALSE, FALSE, 0);  // Collé en bas
+    gtk_box_pack_end(GTK_BOX(chat_box), input_line, FALSE, FALSE, 0);
 
     // Bouton connexion
     connect_button = gtk_button_new_with_label("Connexion");
@@ -72,10 +83,10 @@ static void activate(GtkApplication* app, gpointer user_data) {
     gtk_widget_set_name(user_label, "user_label");
     gtk_box_pack_start(GTK_BOX(input_line), user_label, FALSE, FALSE, 0);
 
-    // Champ de saisie qui s’étire
+    // Champ de saisie
     chat_entry = gtk_entry_new();
     gtk_widget_set_name(chat_entry, "chat_entry");
-    gtk_widget_set_hexpand(chat_entry, TRUE); // ← c’est ça qui l’étire
+    gtk_widget_set_hexpand(chat_entry, TRUE);
     gtk_box_pack_end(GTK_BOX(input_line), chat_entry, TRUE, TRUE, 0);
 
     // Chargement CSS

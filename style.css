@@ -45,9 +45,19 @@
 }
 
 #chat_entry {
-    background-color: #5C535A;
+    background-color: #5f4d5b;
     color: #FFFFFF;
     border: none;
     padding: 10px;
     border-radius: 8px;
 }
+#chat_display {
+    background-color: #534C62;
+    color: #D6D6D6;
+    font: 12pt 'Arial'; /* Tu peux ajuster si tu veux une autre taille ou police */
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+
