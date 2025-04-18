@@ -1,3 +1,5 @@
+
+
 #main_background {
     background-color: #3A383E;
 }
@@ -54,10 +56,18 @@
 #chat_display {
     background-color: #534C62;
     color: #D6D6D6;
-    font: 12pt 'Arial'; /* Tu peux ajuster si tu veux une autre taille ou police */
+    font: 12pt 'Arial';
     border: none;
     padding: 10px;
     border-radius: 8px;
+}
+
+/* Cible le contenu interne du GtkTextView */
+#chat_display text,
+#chat_display text view,
+#chat_display textview {
+    background-color: #534C62;
+    color: #D6D6D6;
 }
 
 
