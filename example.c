@@ -1,8 +1,45 @@
 #include <gtk/gtk.h>
 
+typedef struct {
+    GtkWidget *chat_display;
+    GtkWidget *chat_entry;
+} ChatWidgets;
+
+
 static void on_connect_clicked(GtkButton *button, gpointer user_data) {
     g_print("Connexion bouton cliqué !\n");
 }
+
+// Fonction qui est appelée lorsqu'on appuie sur la touche "Entrée" dans le champ de texte (GtkEntry)
+static void on_chat_entry_activate(GtkEntry *entry, gpointer user_data) {
+    // 1. Récupérer la structure contenant les widgets (ici, probablement les éléments de la fenêtre de chat)
+    ChatWidgets *widgets = (ChatWidgets *)user_data; // Conversion de "user_data" en structure ChatWidgets
+
+    // 2. Récupérer le texte saisi dans le champ de texte GtkEntry
+    const gchar *text = gtk_entry_get_text(entry); // Récupère le texte actuel dans le champ de saisie
+
+    // 3. Vérifier si le champ de texte n'est pas vide
+    if (g_strcmp0(text, "") != 0) { // Comparaison du texte avec une chaîne vide
+        // 4. Récupérer le GtkTextBuffer associé à la zone de texte (chat_display)
+        GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widgets->chat_display));
+
+        // 5. Déclarer un itérateur de texte (un curseur) pour insérer le texte à la fin du buffer
+        GtkTextIter end_iter;
+
+        // 6. Obtenir l'itérateur de fin du texte dans le GtkTextBuffer
+        gtk_text_buffer_get_end_iter(buffer, &end_iter); // Place l'itérateur à la fin du texte dans le buffer
+
+        // 7. Insérer le texte saisi par l'utilisateur à la fin du buffer (zone de texte)
+        gtk_text_buffer_insert(buffer, &end_iter, text, -1); // Insère le texte à la fin du buffer
+
+        // 8. Ajouter un saut de ligne à la fin du texte inséré
+        gtk_text_buffer_insert(buffer, &end_iter, "\n", -1); // Ajoute une nouvelle ligne après le texte inséré
+
+        // 9. Vider le champ de saisie GtkEntry pour que l'utilisateur puisse entrer un nouveau message
+        gtk_entry_set_text(GTK_ENTRY(entry), ""); // Réinitialise le champ de texte à vide
+    }
+}
+
 
 static void activate(GtkApplication* app, gpointer user_data) {
     GtkWidget *window;
@@ -89,6 +126,13 @@ static void activate(GtkApplication* app, gpointer user_data) {
     gtk_widget_set_name(chat_entry, "chat_entry");
     gtk_widget_set_hexpand(chat_entry, TRUE);
     gtk_box_pack_end(GTK_BOX(input_line), chat_entry, TRUE, TRUE, 0);
+
+    // 👉 AJOUTE CETTE LIGNE :
+    ChatWidgets *chat_widgets = g_malloc(sizeof(ChatWidgets));
+    chat_widgets->chat_display = chat_display;
+    chat_widgets->chat_entry = chat_entry;
+
+    g_signal_connect(chat_entry, "activate", G_CALLBACK(on_chat_entry_activate), chat_widgets);
 
     // Chargement CSS
     GtkCssProvider *provider = gtk_css_provider_new();
