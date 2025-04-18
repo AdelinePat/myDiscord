@@ -8,29 +8,6 @@
     font: bold 12pt "Arial";  /* Applique Arial en gras et taille 24pt */
 }
 
-#my_button {
-    background :#41c550;
-    color: black;
-    font: bold 18pt 'Arial';
-    border-radius: 5px;
-    padding: 10px 20px;
-    border: none;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
-}
-
-#my_button:hover {
-    background-color: #CFBEF8;
-}
-
-#my_button:checked {
-    background-color: green;
-    color: black;
-}
-
-#my_button:active {
-    background-color: #005599;
-}
 
 #connect_button {
     background-color: #D3FBD8;
@@ -55,7 +32,9 @@
     border: none;
     padding: 10px;
     border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
+
 #chat_display {
     background-color: #534C62;
     color: #D6D6D6;
