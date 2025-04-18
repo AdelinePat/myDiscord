@@ -119,9 +119,11 @@ static void activate(GtkApplication* app, gpointer user_data) {
 
     GtkWidget *emoji_popover = gtk_popover_new(emoji_button);
     GtkWidget *emoji_grid = gtk_grid_new();
+    gtk_widget_show_all(emoji_grid);
+
     gtk_container_add(GTK_CONTAINER(emoji_popover), emoji_grid);
 
-    const gchar *emojis[] = {"😊", "😂", "😍", "😎", "🔥", "👍", "💯", "💥"};
+    const gchar *emojis[] = {"😊", "😂", "😍", "😎", "😉", "😭", "😡", "😃"};
     size_t emoji_count = sizeof(emojis) / sizeof(emojis[0]);
 
     for (size_t i = 0; i < emoji_count; ++i) {
@@ -129,6 +131,8 @@ static void activate(GtkApplication* app, gpointer user_data) {
         gtk_grid_attach(GTK_GRID(emoji_grid), emoji_btn, i % 4, i / 4, 1, 1);
         g_signal_connect(emoji_btn, "clicked", G_CALLBACK(on_emoji_clicked), chat_entry);
     }
+
+    gtk_widget_show_all(emoji_grid);
 
     g_signal_connect(emoji_button, "clicked", G_CALLBACK(on_emoji_button_clicked), emoji_popover);
 
