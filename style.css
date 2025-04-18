@@ -66,3 +66,14 @@
     background-color: #CFBEF8;
 }
 
+#emoji_popover {
+    background-color: #222;
+    border-radius: 8px;
+}
+#emoji_button {
+    font-size: 20px;
+}
+
+
+
+
