@@ -1,6 +1,4 @@
 -- Active: 1744878329281@@127.0.0.1@5432@whispr
-CREATE DATABASE whispr;
-USE whispr;
 CREATE TABLE IF NOT EXISTS users
 (
     user_id SERIAL NOT NULL,
@@ -62,3 +60,42 @@ CREATE TABLE IF NOT EXISTS channels_access
 	ON UPDATE CASCADE
 	ON DELETE CASCADE
 );
+
+-- create function to grant access to public channel for every new user
+CREATE OR REPLACE FUNCTION add_user_to_public_channels()    
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO channels_access (user_id, channel_id, role_title)
+    SELECT NEW.user_id, c.channel_id, 'member'  -- or any default role
+    FROM channels c
+    WHERE c.channel_status = 'public';
+    RETURN NEW;   
+END;
+$$
+LANGUAGE PLPGSQL
+
+-- trigger when new user is created => calls for add_user_to_public_channels
+CREATE TRIGGER after_insert_add_user_to_public_channels
+AFTER INSERT ON users
+FOR EACH ROW
+EXECUTE FUNCTION add_user_to_public_channels();
+
+-- create function to grant access to every new public channel created
+CREATE OR REPLACE FUNCTION add_access_to_new_public_channels()    
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Only grant access if the new channel is public
+    IF NEW.channel_status = 'public' THEN
+        INSERT INTO channels_access (user_id, channel_id, role_title)
+        SELECT u.user_id, NEW.channel_id, 'member'
+        FROM users u;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- trigger for granting access after new public channel created
+CREATE TRIGGER after_insert_channels_add_user_channels_access
+AFTER INSERT ON channels
+FOR EACH ROW
+EXECUTE FUNCTION add_access_to_new_public_channels();
