@@ -17,7 +17,7 @@ static void activate(GtkApplication* app, gpointer user_data) {
 
     // Fenêtre principale
     window = gtk_application_window_new(app);
-    gtk_window_set_title(GTK_WINDOW(window), "Whisper");
+    gtk_window_set_title(GTK_WINDOW(window), "Whisper_blabla");
     gtk_window_set_default_size(GTK_WINDOW(window), 1280, 720);
 
     // Boîte verticale principale
@@ -51,11 +51,12 @@ static void activate(GtkApplication* app, gpointer user_data) {
     gtk_widget_set_name(chat_display, "chat_display");
     gtk_text_view_set_editable(GTK_TEXT_VIEW(chat_display), FALSE);
     gtk_widget_set_hexpand(chat_display, TRUE);
-    gtk_widget_set_size_request(chat_display, 600, -1);
+    gtk_widget_set_size_request(chat_display, 950, -1);
     gtk_widget_set_hexpand(chat_display, FALSE); 
     gtk_widget_set_halign(chat_display, GTK_ALIGN_END); 
     gtk_widget_set_vexpand(chat_display, TRUE);// Largeur = 600px, hauteur auto
     gtk_box_pack_start(GTK_BOX(chat_box), chat_display, TRUE, TRUE, 0);
+
     
 
     // Forcer le style du texte si nécessaire
