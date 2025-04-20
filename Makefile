@@ -12,7 +12,7 @@ GTK_LIBS   := $(shell pkg-config --libs gtk+-3.0)
 CFLAGS += $(GTK_CFLAGS)
 
 # Fichiers sources
-SRC = example.c
+SRC = example.c login_window.c
 
 # Fichiers objets générés
 OBJ = $(SRC:.c=.o)

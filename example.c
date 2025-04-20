@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#include "login_window.h"
 
 typedef struct {
     GtkWidget *chat_display;
@@ -8,7 +9,7 @@ typedef struct {
 // Fonction callback pour ajouter un emoji au chat
 static void on_emoji_clicked(GtkButton *button, gpointer user_data) {
     GtkEntry *entry = GTK_ENTRY(user_data);
-    const gchar *emoji = gtk_button_get_label(GTK_WIDGET(button)); // Récupère l'emoji
+    const gchar *emoji = gtk_button_get_label(GTK_BUTTON(button)); // Récupère l'emoji
     const gchar *current_text = gtk_entry_get_text(entry);
 
     gchar *new_text = g_strconcat(current_text, emoji, NULL);
@@ -18,9 +19,12 @@ static void on_emoji_clicked(GtkButton *button, gpointer user_data) {
 
 static void on_connect_clicked(GtkButton *button, gpointer user_data) {
     (void)button;
-    (void)user_data;
+    //(void)user_data;
+    GtkApplication *app = GTK_APPLICATION(user_data); 
+    show_login_window(app);// appel à ta fonction définie dans login_window.c
     g_print("Connect button clicked!\n");
 }
+
 
 static void on_chat_entry_activate(GtkEntry *entry, gpointer user_data) {
     ChatWidgets *widgets = (ChatWidgets *)user_data;
@@ -75,10 +79,10 @@ static void activate(GtkApplication* app, gpointer user_data) {
 
     connect_button = gtk_button_new_with_label("Connexion");
     gtk_widget_set_name(connect_button, "connect_button");
-    g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_clicked), NULL);
+    g_signal_connect(connect_button, "clicked", G_CALLBACK(on_connect_clicked), app);
     gtk_box_pack_start(GTK_BOX(bottom_box), connect_button, FALSE, FALSE, 0);
 
-    user_label = gtk_label_new("User: kevin");
+    user_label = gtk_label_new("User: Anya");
     gtk_widget_set_name(user_label, "user_label");
     gtk_box_pack_start(GTK_BOX(bottom_box), user_label, FALSE, FALSE, 0);
 

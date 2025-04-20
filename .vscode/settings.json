@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "login_widgets.h": "c",
+        "activate.h": "c"
+    }
+}
