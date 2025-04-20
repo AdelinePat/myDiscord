@@ -1,0 +1,79 @@
+
+
+#main_background {
+    background-color: #3A383E;
+}
+#main_background label {
+    color: #d6d6d6;
+    font: bold 12pt "Arial";  /* Applique Arial en gras et taille 24pt */
+}
+
+
+/* #disconnect_button {
+    background-color: #D3FBD8;
+    color: #2E2C31;
+    font: bold 14pt 'Arial';
+    border-radius: 4px;
+    padding: 10px 20px;
+}
+
+#disconnect_button:hover {
+    background-color: #1c5f3c;
+} */
+
+#user_label {
+    font: italic 12pt 'Arial';
+    color: white;
+}
+
+#chat_entry {
+    background-color: #5f4d5b;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+#chat_display {
+    background-color: #534C62;
+    color: #D6D6D6;
+    font: 12pt 'Arial';
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Cible le contenu interne du GtkTextView */
+#chat_display text,
+#chat_display text view,
+#chat_display textview {
+    background-color: #3A383E;
+    color: #D6D6D6;
+}
+
+#disconnect_button {
+    background-image: linear-gradient(to right, #D3FBD8, #9A80E9);
+    color: #2E2C31;
+    font: bold 14pt 'Arial';
+    border-radius: 4px;
+    padding: 10px 20px;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)
+}
+
+#disconnect_button:hover {
+    background-color: #CFBEF8;
+}
+
+#emoji_popover {
+    background-color: #222;
+    border-radius: 8px;
+}
+#emoji_button {
+    font-size: 20px;
+}
+
+
+
+
