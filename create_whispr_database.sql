@@ -1,2 +1,2 @@
--- Active: 1744878329281@@127.0.0.1@5432@whispr
+-- Active: 1744914038452@@127.0.0.1@5432@postgres
 CREATE DATABASE whispr;
