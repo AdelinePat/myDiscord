@@ -1,6 +1,6 @@
--- Active: 1744914038452@@127.0.0.1@5432@whispr
+-- Active: 1744878329281@@127.0.0.1@5432@whispr
 DESCRIBE users;
-DROP DATABASE whispr;
+SELECT * FROM users;
 SHOW TABLE;
 
 INSERT INTO users (user_name, email, password)
@@ -32,6 +32,8 @@ VALUES ('General_chat', 'public');
 INSERT INTO channels (channel_title, channel_status)
 VALUES ('jolyne_florence', 'private');
 INSERT INTO channels (channel_title, channel_status)
+VALUES ('flood', 'public');
+INSERT INTO channels (channel_title, channel_status)
 VALUES ('florence_toto', 'private');
 
 SELECT * FROM messages;
@@ -49,8 +51,6 @@ VALUES (3, 1, 'On va regarder Eminence of Shadow ?');
 
 INSERT INTO messages (user_id, channel_id, content)
 VALUES (4, 1, 'Bien sur hehe');
-INSERT INTO channels (channel_title, channel_status)
-VALUES ('flood', 'public');
 
 
 SELECT * FROM channels;
@@ -80,7 +80,14 @@ SELECT c.channel_title, COALESCE(u.user_name, 'Anonymous user'), m.date_time, m.
 FROM messages AS m
 JOIN channels AS c ON c.channel_id = m.channel_id
 LEFT JOIN users AS u ON u.user_id = m.user_id
-WHERE c.channel_id = 3 AND c.channel_id IN (
+WHERE c.channel_status = 'private'
+ORDER BY date_time;
+
+SELECT c.channel_title, COALESCE(u.user_name, 'Anonymous user'), m.date_time, m.content
+FROM messages AS m
+JOIN channels AS c ON c.channel_id = m.channel_id
+LEFT JOIN users AS u ON u.user_id = m.user_id
+WHERE c.channel_id = 2 AND c.channel_id IN (
     SELECT channel_id FROM channels
     WHERE channel_status = 'private'
 )
@@ -104,14 +111,106 @@ START TRANSACTION;
 INSERT INTO users (user_name, email, password)
 VALUES('Toto', 'toto@gmail.com', '123456');
 INSERT INTO channels_access (user_id, channel_id, role_title)
-VALUES (
-    (SELECT MAX(user_id)
-        FROM users),
-    (SELECT MIN(channel_id)
-        FROM channels
-        WHERE channel_status = 'public'),
-    'membre');
-END;
+VALUES ((SELECT 
+            MAX(user_id)
+            FROM users),
+        (SELECT MIN(channel_id)
+            FROM channels
+            WHERE channel_status = 'public'),
+            'membre');
+COMMIT;
+
+START TRANSACTION;
+INSERT INTO users (user_name, email, password)
+VALUES('jolyne', 'jolyne@gmail.com', '789012');
+INSERT INTO channels_access (user_id, channel_id, role_title)
+VALUES ((SELECT 
+            MAX(user_id)
+            FROM users),
+        (SELECT MIN(channel_id)
+            FROM channels
+            WHERE channel_status = 'public'),
+            'membre');
+COMMIT;
+
+START TRANSACTION;
+INSERT INTO users (user_name, email, password)
+VALUES('florence', 'florence@gmail.com', '123456');
+INSERT INTO channels_access (user_id, channel_id, role_title)
+VALUES ((SELECT 
+            MAX(user_id)
+            FROM users),
+        (SELECT MIN(channel_id)
+            FROM channels
+            WHERE channel_status = 'public'),
+            'membre');
+COMMIT;
+
+START TRANSACTION;
+INSERT INTO users (user_name, email, password)
+VALUES('adeline', 'adeline@gmail.com', '123456');
+INSERT INTO channels_access (user_id, channel_id, role_title)
+VALUES ((SELECT 
+            MAX(user_id)
+            FROM users),
+        (SELECT MIN(channel_id)
+            FROM channels
+            WHERE channel_status = 'public'),
+            'membre');
+COMMIT;
+
+START TRANSACTION;
+INSERT INTO users (user_name, email, password)
+VALUES('noa', 'noa@gmail.com', '123456');
+INSERT INTO channels_access (user_id, channel_id, role_title)
+VALUES ((SELECT 
+            MAX(user_id)
+            FROM users),
+        (SELECT MIN(channel_id)
+            FROM channels
+            WHERE channel_status = 'public'),
+            'membre');
+COMMIT;
 
 SELECT * FROM users;
-SELECT MAX(user_id) FROM users;
+
+
+CREATE OR REPLACE FUNCTION add_user_to_public_channels()    
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO channels_access (user_id, channel_id, role_title)
+    SELECT NEW.user_id, c.channel_id, 'member'  -- or any default role
+    FROM channels c
+    JOIN messages m ON c.channel_id = m.channel_id
+    JOIN users u ON m.user_id = u.user_id
+    WHERE c.channel_status = 'public';
+
+    RETURN NEW;   
+END;
+$$
+LANGUAGE PLPGSQL
+
+
+INSERT INTO channels_access (user_id, channel_id, role_title)
+    SELECT u.user_id, c.channel_id, 'member'  -- or any default role
+    FROM channels c
+    JOIN messages m ON c.channel_id = m.channel_id
+    JOIN users u ON m.user_id = u.user_id
+    WHERE c.channel_id = 1 AND u.user_id = 1;
+
+SELECT * FROM users;
+SELECT * FROM channels;
+
+SELECT * FROM channels_access;
+
+INSERT INTO users (user_name, email, password)
+VALUES('armelle', 'armelle@gmail.com', '123456');
+
+INSERT INTO users (user_name, email, password)
+VALUES('vlad', 'vlad@gmail.com', '123456');
+
+
+INSERT INTO channels (channel_title, channel_status)
+VALUES ('fandom', 'public');
+
+SELECT * from channels;
