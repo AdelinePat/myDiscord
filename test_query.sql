@@ -1,4 +1,4 @@
--- Active: 1744878329281@@127.0.0.1@5432@whispr
+-- Active: 1744914038452@@127.0.0.1@5432@whispr
 DESCRIBE users;
 SELECT * FROM users;
 SHOW TABLE;
@@ -214,3 +214,23 @@ INSERT INTO channels (channel_title, channel_status)
 VALUES ('fandom', 'public');
 
 SELECT * from channels;
+
+SELECT *
+FROM pg_indexes
+WHERE schemaname = 'public'
+ORDER BY tablename, indexname;
+
+SHOW INDEXES FROM channels_access;
+
+SELECT * FROM messages;
+
+EXPLAIN
+SELECT c.channel_title, COALESCE(u.user_name, 'Anonymous user'), m.date_time, m.content
+FROM messages AS m
+JOIN channels AS c ON c.channel_id = m.channel_id
+LEFT JOIN users AS u ON u.user_id = m.user_id
+WHERE c.channel_status = 'public' AND c.channel_id = (
+    SELECT channel_id FROM channels
+    WHERE channel_title = 'General_chat'
+)
+ORDER BY date_time;
