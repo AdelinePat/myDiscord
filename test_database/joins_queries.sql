@@ -1,4 +1,4 @@
--- Active: 1744914038452@@127.0.0.1@5432@whispr
+-- Active: 1744878329281@@127.0.0.1@5432@whispr
 
 -- CREATE COMPOSITE INDEX FOR CHANNELS ACCESS ??
 
@@ -16,8 +16,7 @@ SELECT c.channel_title, COALESCE(u.user_name, 'Anonymous user'), m.date_time, m.
 FROM messages AS m
 JOIN channels AS c ON c.channel_id = m.channel_id
 LEFT JOIN users AS u ON u.user_id = m.user_id
-JOIN channels_access ca ON m.user_id = u.user_id
-WHERE c.channel_status = 'private' AND ca.role_title = 'member'
+WHERE c.channel_status = 'private'
 ORDER BY date_time;
 
 SELECT c.channel_title, COALESCE(u.user_name, 'Anonymous user'), m.date_time, m.content
@@ -56,7 +55,7 @@ SET role_title = 'member'
 WHERE user_id = 3 AND channel_id = 3;
 
 -- MATCH AGAINST
-
+SELECT * FROM channels_access;
 DESCRIBE users;
 
 SELECT CURRENT_USER;
