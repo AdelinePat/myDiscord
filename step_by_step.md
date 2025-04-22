@@ -31,22 +31,21 @@ it is possible to start ubuntu bash using
 ```bash
 wsl.exe -d Ubuntu
 ```
+1. restart pc
 
-2. restart pc
-
-3. use ubuntu terminal
+2. use ubuntu terminal
 ```bash
 sudo apt update
 sudo apt install build-essential libgtk-3-dev pkg-config
 ```
 
-4. Using vscode ubuntu terminal
+1. Using vscode ubuntu terminal
 ```bash
 sudo apt update
 sudo apt install libgtk-3-dev
 ```
 
-5. make sure you're using the right bash with vscode :
+1. make sure you're using the right bash with vscode :
 Bash should be MINGW64 ! And the path you use should be C:\msys64\mingw64\bin
 MINGW64 bash should be in this path C:\msys64\msys2_shell.cmd 
 
