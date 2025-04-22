@@ -5,4 +5,6 @@
 
 void show_chat_window(GtkApplication *app);
 
+
+
 #endif
