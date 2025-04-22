@@ -18,7 +18,7 @@ SRC = login_window.c chat_window.c main.c
 OBJ = $(SRC:.c=.o)
 
 # Nom de l'exécutable
-EXEC = main
+EXEC = main.exe
 
 # Feuilles de style (copiées à l'installation)
 CSS = style.css
