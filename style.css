@@ -1,5 +1,4 @@
 
-
 #main_background {
     background-color: #3A383E;
 }
@@ -63,6 +62,76 @@
     font-size: 20px;
 }
 
+/* Style for Login Window Button */
+#login_button,
+#register_button {
+    background-image: linear-gradient(to right, #D3FBD8, #9A80E9); /* Gradient background similar to chat window button */
+    color: #2E2C31; /* Dark color for text */
+    font: bold 14pt 'Arial'; /* Bold Arial font */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px 20px; /* Padding for the button */
+    border: none; /* No border */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow to match chat window button */
+}
+
+/* Hover effect for login and register buttons */
+#login_button:hover,
+#register_button:hover {
+    background-color: #CFBEF8; /* Lighter background when hovering */
+}
+
+/* Style for the 'Retour' and 'Confirmer' buttons in the register window */
+#confirm_button,
+#return_button {
+    background-image: linear-gradient(to right, #D3FBD8, #9A80E9);
+    color: #2E2C31;
+    font: bold 14pt 'Arial';
+    border-radius: 4px;
+    padding: 10px 20px;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover effect for confirm and return buttons */
+#confirm_button:hover,
+#return_button:hover {
+    background-color: #CFBEF8;
+}
+/* Style for Login Window Button */
+#login_button,
+#register_button {
+    background-image: linear-gradient(to right, #D3FBD8, #9A80E9); /* Gradient background similar to chat window button */
+    color: #2E2C31; /* Dark color for text */
+    font: bold 14pt 'Arial'; /* Bold Arial font */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px 20px; /* Padding for the button */
+    border: none; /* No border */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow to match chat window button */
+}
+
+/* Hover effect for login and register buttons */
+#login_button:hover,
+#register_button:hover {
+    background-color: #CFBEF8; /* Lighter background when hovering */
+}
+
+/* Style for the 'Retour' and 'Confirmer' buttons in the register window */
+#confirm_button,
+#return_button {
+    background-image: linear-gradient(to right, #D3FBD8, #9A80E9);
+    color: #2E2C31;
+    font: bold 14pt 'Arial';
+    border-radius: 4px;
+    padding: 10px 20px;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover effect for confirm and return buttons */
+#confirm_button:hover,
+#return_button:hover {
+    background-color: #CFBEF8;
+}
 
 
 
