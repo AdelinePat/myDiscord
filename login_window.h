@@ -4,7 +4,7 @@
 #include <gtk/gtk.h>
 
 void show_login_window(GtkApplication *app);
-// TODO: Déclarer ici la fonction validate_credentials une fois créée
+// TODO: Declare the validate_credentials function here once created
 // bool validate_credentials(const gchar *username, const gchar *password);
 
 #endif

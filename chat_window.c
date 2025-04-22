@@ -7,22 +7,19 @@ typedef struct {
     GtkWidget *chat_entry;
 } ChatWidgets;
 
-
-
+// === Called when the "Disconnect" button is clicked ===
 static void on_disconnect_clicked(GtkButton *button, gpointer user_data) {
     GtkApplication *app = GTK_APPLICATION(user_data);
-    g_print("Le bouton de déconnexion a été cliqué !\n");
 
     GtkWidget *window = gtk_widget_get_toplevel(GTK_WIDGET(button));
     if (GTK_IS_WINDOW(window)) {
-        gtk_widget_destroy(window);  // Ferme la fenêtre de chat
-        g_print("Fermeture de la fenêtre de chat.\n");
+        gtk_widget_destroy(window);  // Close the chat window
     }
 
-    show_login_window(app);  // Retour à l'IHM de connexion
-    g_print("Retour à l'écran de connexion.\n");
+    show_login_window(app);  // Return to login screen
 }
 
+// === Called when an emoji button is clicked inside the popover ===
 static void on_emoji_clicked(GtkButton *button, gpointer user_data) {
     GtkEntry *entry = GTK_ENTRY(user_data);
     const gchar *emoji = gtk_button_get_label(GTK_WIDGET(button));
@@ -33,6 +30,7 @@ static void on_emoji_clicked(GtkButton *button, gpointer user_data) {
     g_free(new_text);
 }
 
+// === Called when the user presses Enter in the chat entry ===
 static void on_chat_entry_activate(GtkEntry *entry, gpointer user_data) {
     ChatWidgets *widgets = (ChatWidgets *)user_data;
 
@@ -47,26 +45,27 @@ static void on_chat_entry_activate(GtkEntry *entry, gpointer user_data) {
     }
 }
 
+// === Called when the main emoji button is clicked to show popover ===
 static void on_emoji_button_clicked(GtkButton *button, gpointer user_data) {
     (void)button;
     gtk_popover_popup(GTK_POPOVER(user_data));
 }
 
+// === Called when the "Connect" button is clicked ===
 static void on_connect_clicked(GtkButton *button, gpointer user_data) {
     GtkApplication *app = GTK_APPLICATION(user_data);
-    g_print("Le bouton de connexion a été cliqué !\n");
 
-    // Code de gestion de la connexion ici
+    // TODO: Implement login verification logic here
 }
 
+// === Displays the main chat window ===
 void show_chat_window(GtkApplication *app) {
     GtkWidget *window, *outer_box, *chat_box, *chat_display, *chat_entry;
     GtkWidget *scrolled_window, *channels_box, *user_label, *bottom_box;
-    GtkWidget *connect_button, *disconnect_button;  // Déclare les boutons connect et disconnect ici
-
+    GtkWidget *connect_button, *disconnect_button;
 
     window = gtk_application_window_new(app);
-    gtk_window_set_title(GTK_WINDOW(window), "Whisper2");
+    gtk_window_set_title(GTK_WINDOW(window), "Whisper");
     gtk_window_set_default_size(GTK_WINDOW(window), 1280, 720);
 
     outer_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
@@ -85,11 +84,10 @@ void show_chat_window(GtkApplication *app) {
     gtk_widget_set_vexpand(spacer, TRUE);
     gtk_box_pack_start(GTK_BOX(channels_box), spacer, TRUE, TRUE, 0);
 
-    user_label = gtk_label_new("User: shadows");
+    user_label = gtk_label_new("User: Luffy");
     gtk_widget_set_name(user_label, "user_label");
     gtk_box_pack_start(GTK_BOX(channels_box), user_label, FALSE, FALSE, 0);
 
-    // Crée la boîte pour les widgets du chat
     chat_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_widget_set_name(chat_box, "chat_box");
     gtk_box_pack_start(GTK_BOX(outer_box), chat_box, TRUE, TRUE, 10);
@@ -134,22 +132,16 @@ void show_chat_window(GtkApplication *app) {
         g_signal_connect(emoji_btn, "clicked", G_CALLBACK(on_emoji_clicked), chat_entry);
     }
 
-    // Crée la boîte pour les boutons de connexion et déconnexion
     bottom_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_widget_set_name(bottom_box, "bottom_box");
     gtk_box_pack_start(GTK_BOX(channels_box), bottom_box, FALSE, FALSE, 0);
 
-    // Bouton de déconnexion
     disconnect_button = gtk_button_new_with_label("Déconnexion");
     gtk_widget_set_name(disconnect_button, "disconnect_button");
     g_signal_connect(disconnect_button, "clicked", G_CALLBACK(on_disconnect_clicked), app);
-    g_print("Signal de déconnexion connecté\n");  // Ajout d'un message pour vérifier
     gtk_box_pack_start(GTK_BOX(bottom_box), disconnect_button, FALSE, FALSE, 0);
-    GtkStyleContext *ctx = gtk_widget_get_style_context(disconnect_button);
 
-    
     gtk_widget_show_all(emoji_grid);
-
     g_signal_connect(emoji_button, "clicked", G_CALLBACK(on_emoji_button_clicked), emoji_popover);
 
     ChatWidgets *chat_widgets = g_malloc(sizeof(ChatWidgets));

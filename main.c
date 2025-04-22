@@ -1,13 +1,10 @@
 #include <gtk/gtk.h>
-
-
 #include "login_window.h"
 
 static void on_activate(GtkApplication *app, gpointer user_data) {
     (void)user_data;
-    show_login_window(app);  // commence par l'écran de login
+    show_login_window(app);  // Start with the login screen
 }
-
 
 int main(int argc, char **argv) {
     GtkApplication *app = gtk_application_new("org.my.discord", G_APPLICATION_DEFAULT_FLAGS);
