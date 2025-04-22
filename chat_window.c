@@ -166,7 +166,7 @@ void show_chat_window(GtkApplication *app) {
     }
 
     GtkWidget *widgets_to_style[] = {window, outer_box, user_label, chat_entry, chat_display, disconnect_button};
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < G_N_ELEMENTS(widgets_to_style); ++i) {
         GtkStyleContext *context = gtk_widget_get_style_context(widgets_to_style[i]);
         gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
     }
