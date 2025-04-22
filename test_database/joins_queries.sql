@@ -1,4 +1,4 @@
--- Active: 1744878329281@@127.0.0.1@5432@whispr
+-- Active: 1745348025971@@127.0.0.1@5432@whispr
 
 -- CREATE COMPOSITE INDEX FOR CHANNELS ACCESS ??
 
@@ -56,6 +56,9 @@ WHERE user_id = 3 AND channel_id = 3;
 
 -- MATCH AGAINST
 SELECT * FROM channels_access;
+SELECT * FROM channels;
 DESCRIBE users;
+SELECT * FROM users;
+SELECT * FROM messages;
 
 SELECT CURRENT_USER;
