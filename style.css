@@ -133,5 +133,19 @@
     background-color: #CFBEF8;
 }
 
+/* Apply background color and text style to the email field */
+#EmailorUsername,
+#Password {
+    background-color: #534C62;
+    color: #D6D6D6;
+    font: 12pt 'Arial';
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+
+/* Apply background color and text style to the password field */
+
 
 
