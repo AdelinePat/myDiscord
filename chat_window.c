@@ -1,12 +1,13 @@
 #include <gtk/gtk.h>
 #include "login_window.h"
+#include "register_window.h"
 
 typedef struct {
     GtkWidget *chat_display;
     GtkWidget *chat_entry;
 } ChatWidgets;
 
-#include "login_window.h"  // assure-toi que ce soit bien là
+
 
 static void on_disconnect_clicked(GtkButton *button, gpointer user_data) {
     GtkApplication *app = GTK_APPLICATION(user_data);
@@ -65,7 +66,7 @@ void show_chat_window(GtkApplication *app) {
 
 
     window = gtk_application_window_new(app);
-    gtk_window_set_title(GTK_WINDOW(window), "Whisper");
+    gtk_window_set_title(GTK_WINDOW(window), "Whisper2");
     gtk_window_set_default_size(GTK_WINDOW(window), 1280, 720);
 
     outer_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
@@ -84,7 +85,7 @@ void show_chat_window(GtkApplication *app) {
     gtk_widget_set_vexpand(spacer, TRUE);
     gtk_box_pack_start(GTK_BOX(channels_box), spacer, TRUE, TRUE, 0);
 
-    user_label = gtk_label_new("User: Toto");
+    user_label = gtk_label_new("User: shadows");
     gtk_widget_set_name(user_label, "user_label");
     gtk_box_pack_start(GTK_BOX(channels_box), user_label, FALSE, FALSE, 0);
 

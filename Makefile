@@ -12,7 +12,7 @@ GTK_LIBS   := $(shell pkg-config --libs gtk+-3.0)
 CFLAGS += $(GTK_CFLAGS)
 
 # Fichiers sources
-SRC = login_window.c chat_window.c main.c
+SRC = register_window.c login_window.c chat_window.c main.c
 
 # Fichiers objets générés
 OBJ = $(SRC:.c=.o)
@@ -43,7 +43,7 @@ rebuild: clean all
 
 # Installer les ressources (ici CSS)
 install: all
-	@cp $(CSS) ./
+	@cp $(CSS) ./ 
 
 # Exécution rapide
 run: all
