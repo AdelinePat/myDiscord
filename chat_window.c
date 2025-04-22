@@ -83,7 +83,7 @@ void show_chat_window(GtkApplication *app) {
     gtk_widget_set_vexpand(spacer, TRUE);
     gtk_box_pack_start(GTK_BOX(channels_box), spacer, TRUE, TRUE, 0);
 
-    user_label = gtk_label_new("User: Anya");
+    user_label = gtk_label_new("User: Adeline");
     gtk_widget_set_name(user_label, "user_label");
     gtk_box_pack_start(GTK_BOX(channels_box), user_label, FALSE, FALSE, 0);
 
