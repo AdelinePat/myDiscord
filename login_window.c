@@ -45,13 +45,20 @@ void show_login_window(GtkApplication *app) {
     gtk_entry_set_visibility(GTK_ENTRY(entry_pass), FALSE);
     gtk_box_pack_start(GTK_BOX(vbox), entry_pass, FALSE, FALSE, 0);
 
-    GtkWidget *btn_login = gtk_button_new_with_label("Se connecter");
-    gtk_box_pack_start(GTK_BOX(vbox), btn_login, FALSE, FALSE, 0);
+    // Crée une boîte horizontale pour les boutons
+    GtkWidget *hbox_buttons = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox_buttons, FALSE, FALSE, 0);
 
-    GtkWidget *label_register = gtk_label_new(NULL);
-    gtk_label_set_markup(GTK_LABEL(label_register), "<u><span foreground='blue'>Créer un compte</span></u>");
-    gtk_widget_set_halign(label_register, GTK_ALIGN_CENTER);
-    gtk_box_pack_start(GTK_BOX(vbox), label_register, FALSE, FALSE, 0);
+    // Crée les boutons
+    GtkWidget *btn_login = gtk_button_new_with_label("Se connecter");
+    GtkWidget *btn_register = gtk_button_new_with_label("Créer un compte");
+
+    // Ajoute les boutons dans la hbox
+    gtk_box_pack_start(GTK_BOX(hbox_buttons), btn_login, TRUE, TRUE, 5);
+    gtk_box_pack_start(GTK_BOX(hbox_buttons), btn_register, TRUE, TRUE, 5);
+
+
+
 
     GtkWidget **data = g_new(GtkWidget *, 4);  // allocation dynamique
     data[0] = window;
@@ -60,7 +67,7 @@ void show_login_window(GtkApplication *app) {
     data[3] = GTK_WIDGET(app);
 
     g_signal_connect(btn_login, "clicked", G_CALLBACK(on_login_clicked), data);
-    g_signal_connect(label_register, "button-press-event", G_CALLBACK(on_register_clicked), NULL);
+
 
     gtk_widget_show_all(window);
 }

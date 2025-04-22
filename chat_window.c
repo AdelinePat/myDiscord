@@ -63,6 +63,7 @@ void show_chat_window(GtkApplication *app) {
     GtkWidget *scrolled_window, *channels_box, *user_label, *bottom_box;
     GtkWidget *connect_button, *disconnect_button;  // Déclare les boutons connect et disconnect ici
 
+
     window = gtk_application_window_new(app);
     gtk_window_set_title(GTK_WINDOW(window), "Whisper");
     gtk_window_set_default_size(GTK_WINDOW(window), 1280, 720);
@@ -83,7 +84,7 @@ void show_chat_window(GtkApplication *app) {
     gtk_widget_set_vexpand(spacer, TRUE);
     gtk_box_pack_start(GTK_BOX(channels_box), spacer, TRUE, TRUE, 0);
 
-    user_label = gtk_label_new("User: Adeline");
+    user_label = gtk_label_new("User: Toto");
     gtk_widget_set_name(user_label, "user_label");
     gtk_box_pack_start(GTK_BOX(channels_box), user_label, FALSE, FALSE, 0);
 
@@ -143,7 +144,9 @@ void show_chat_window(GtkApplication *app) {
     g_signal_connect(disconnect_button, "clicked", G_CALLBACK(on_disconnect_clicked), app);
     g_print("Signal de déconnexion connecté\n");  // Ajout d'un message pour vérifier
     gtk_box_pack_start(GTK_BOX(bottom_box), disconnect_button, FALSE, FALSE, 0);
+    GtkStyleContext *ctx = gtk_widget_get_style_context(disconnect_button);
 
+    
     gtk_widget_show_all(emoji_grid);
 
     g_signal_connect(emoji_button, "clicked", G_CALLBACK(on_emoji_button_clicked), emoji_popover);
@@ -161,7 +164,7 @@ void show_chat_window(GtkApplication *app) {
         g_clear_error(&error);
     }
 
-    GtkWidget *widgets_to_style[] = {window, outer_box, user_label, chat_entry, chat_display};
+    GtkWidget *widgets_to_style[] = {window, outer_box, user_label, chat_entry, chat_display, disconnect_button};
     for (int i = 0; i < 5; ++i) {
         GtkStyleContext *context = gtk_widget_get_style_context(widgets_to_style[i]);
         gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
