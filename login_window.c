@@ -13,6 +13,10 @@ static void on_login_clicked(GtkButton *button, gpointer user_data) {
 
     g_print("Tentative de connexion: %s / %s\n", username, password);
 
+     // TODO: Appeler la fonction validate_credentials() ici pour vérifier le format du mail/pseudo et mot de passe avec regex
+    //       Ne pas spécifier si c'est le mail ou le mot de passe qui est incorrect
+    // Ex : if (!validate_credentials(username, password)) { afficher une erreur générique et return; }
+
     gtk_widget_destroy(login_window); // ferme la fenêtre de connexion
     show_chat_window(app);           // lance le chat
 }
