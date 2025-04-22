@@ -79,13 +79,16 @@ void show_login_window(GtkApplication *app) {
     gtk_widget_set_name(vbox, "main_background");
 
     GtkWidget *entry_user = gtk_entry_new();
-    gtk_entry_set_placeholder_text(GTK_ENTRY(entry_user), "Email or Username");
+    gtk_entry_set_placeholder_text(GTK_ENTRY(entry_user), "EmailorUsername");
+    gtk_widget_set_name(entry_user, "EmailorUsername"); // <-- ESSENTIEL
     gtk_box_pack_start(GTK_BOX(vbox), entry_user, FALSE, FALSE, 0);
-
+    
     GtkWidget *entry_pass = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_pass), "Password");
     gtk_entry_set_visibility(GTK_ENTRY(entry_pass), FALSE);
+    gtk_widget_set_name(entry_pass, "Password"); // <-- ESSENTIEL
     gtk_box_pack_start(GTK_BOX(vbox), entry_pass, FALSE, FALSE, 0);
+    
 
     // Create a horizontal box for the buttons
     GtkWidget *hbox_buttons = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
