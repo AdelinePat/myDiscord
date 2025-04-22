@@ -97,7 +97,9 @@ utiliser le terminal TMX
 
   
 
-https://www.msys2.org/   
+```
+https://www.msys2.org/  
+```
 
 faire dans le jaune puis dans le bleu  
   
