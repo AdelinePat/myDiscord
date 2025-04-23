@@ -1,5 +1,6 @@
 #include <gtk/gtk.h>
 #include "chat_window.h"
+#include "register_window.h"
 
 // Function to load the CSS file
 void load_css(GtkApplication *app) {
