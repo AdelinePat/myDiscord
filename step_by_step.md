@@ -16,7 +16,19 @@ pacman -S make
 ex path : C:\msys64\usr\bin
 
 # Install and use GTK for C
-1. in powershell terminal
+1. without linux : 
+    if pkg-congif isn't installed, run these commands
+  ```
+    pacman -Syu
+    pacman -S mingw-w64-x86_64-toolchain
+    pacman -S mingw-w64-x86_64-gtk3
+    pacman -S mingw-w64-x86_64-pkg-config
+  ```
+  Then 
+  ```
+   pacman -S mingw-w64-x86_64-gtk3
+   ```
+1. Using Linux : in powershell terminal
 Go back to desktop using
 ```bash
 $home\desktop
