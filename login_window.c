@@ -95,6 +95,11 @@ void show_login_window(GtkApplication *app) {
     gtk_entry_set_visibility(GTK_ENTRY(entry_pass), FALSE);
     gtk_widget_set_name(entry_pass, "Password"); // <-- ESSENTIEL
     gtk_box_pack_start(GTK_BOX(vbox), entry_pass, FALSE, FALSE, 0);
+
+    // Spacer pour pousser les boutons vers le bas
+    GtkWidget *spacer = gtk_label_new(NULL);
+    gtk_box_pack_start(GTK_BOX(vbox), spacer, TRUE, TRUE, 0);
+
     
 
     // Create a horizontal box for the buttons
