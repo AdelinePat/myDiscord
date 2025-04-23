@@ -3,6 +3,7 @@
         "*.sqlbook": "sql",
         "*.ndjson": "jsonl",
         "*.dbclient-js": "javascript",
-        "libpq-fe.h": "c"
+        "libpq-fe.h": "c",
+        "system_error": "c"
     }
 }

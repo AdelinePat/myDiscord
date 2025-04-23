@@ -1,16 +1,54 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <libpq-fe.h>
+
+#include "test_database_connexion.h"
 // #include <confuse.h>
-// #define ENV_PATH "C:\\Users\\Adeline\\Documents\\Projetdev\\myDiscord\\.env"
+
+void load_variable(FILE* file, char* password, char* user_name)
+{
+    file = fopen(ENV_PATH, "r+");
+    if (file != NULL)
+    {
+        strncpy(password, fgets(password, MAX_STRING_SIZE, file), MAX_STRING_SIZE);
+        strncpy(user_name, fgets(user_name, MAX_STRING_SIZE, file), MAX_STRING_SIZE);
+        printf("DANS LA FONCTION LOAD VARIABLE \n user_name : %s\npassword : %s\n\n", user_name, password);
+        // On peut lire et écrire dans le fichier
+        fclose(file);
+    }
+    else
+    {
+        // On affiche un message d'erreur si on veut
+        printf("Impossible d'ouvrir le fichier test.txt");
+    }    
+}
+
+int database_connexion_info(char* password, char* user_name)
+{
+    printf("AVANT LOAD VARIALBLE :\nuser_name : %s\npassword : %s\n\n", user_name, password);
+
+    FILE* file = NULL;
+    load_variable(file, password, user_name);
+    printf("APRES LOAD VARIABLE\nuser_name : %s\npassword : %s", user_name, password);
+    
+    // Count how many caracter for the string
+    int final_size_conninfo = snprintf(NULL, 0,
+        "dbname = whispr user=%s password=%s host=localhost port=5432", user_name, password) + 1;
+
+    return final_size_conninfo;
+}
 
 int main(int argc, char const *argv[])
 {  
-    // const char *file = getenv(ENV_PATH)
-    // char user_name[] = "";
-    // char user_password[] = "";
-    const char conninfo[] = "dbname = whispr user=user_name password=user_password host=localhost port=5432";
-    PGconn *conn;
+    char password[MAX_STRING_SIZE] = "";
+    char user_name[MAX_STRING_SIZE] = "";
+    
+    int final_size_conninfo = database_connexion_info(password, user_name);
+
+    printf("\n\nfinal size %d", final_size_conninfo);
+    const char conninfo[final_size_conninfo];
+
+    snprintf(conninfo, final_size_conninfo, "dbname = whispr user=%s password=%s host=localhost port=5432", user_name, password);
+    printf("\n\nconninfo c'est : %s", conninfo);
+
+    PGconn *conn;   
     PGresult *res;
     int nFields;
     conn = PQconnectdb(conninfo);
