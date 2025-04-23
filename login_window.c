@@ -84,11 +84,22 @@ void show_login_window(GtkApplication *app) {
     gtk_widget_set_halign(title_label, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(vbox), title_label, FALSE, FALSE, 0);
 
+    GtkWidget *label_user = gtk_label_new("Email/Username");
+    gtk_widget_set_name(label_user, "entry_label");
+    gtk_widget_set_halign(label_user, GTK_ALIGN_START);  // Aligné à gauche
+    gtk_box_pack_start(GTK_BOX(vbox), label_user, FALSE, FALSE, 0);
+    
 
     GtkWidget *entry_user = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_user), "Email or Username");
     gtk_widget_set_name(entry_user, "EmailorUsername"); // <-- ESSENTIEL
     gtk_box_pack_start(GTK_BOX(vbox), entry_user, FALSE, FALSE, 0);
+
+    GtkWidget *label_pass = gtk_label_new("Password");
+    gtk_widget_set_name(label_pass, "entry_label");
+    gtk_widget_set_halign(label_pass, GTK_ALIGN_START);  // Aligné à gauche
+    gtk_box_pack_start(GTK_BOX(vbox), label_pass, FALSE, FALSE, 0);
+    
     
     GtkWidget *entry_pass = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_pass), "Password");
