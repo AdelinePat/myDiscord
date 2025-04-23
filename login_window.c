@@ -86,7 +86,7 @@ void show_login_window(GtkApplication *app) {
 
 
     GtkWidget *entry_user = gtk_entry_new();
-    gtk_entry_set_placeholder_text(GTK_ENTRY(entry_user), "EmailorUsername");
+    gtk_entry_set_placeholder_text(GTK_ENTRY(entry_user), "Email or Username");
     gtk_widget_set_name(entry_user, "EmailorUsername"); // <-- ESSENTIEL
     gtk_box_pack_start(GTK_BOX(vbox), entry_user, FALSE, FALSE, 0);
     
