@@ -82,30 +82,50 @@ void show_login_window(GtkApplication *app) {
     gtk_widget_set_halign(title_label, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(vbox), title_label, FALSE, FALSE, 0);
 
+    // Créer une box pour les labels et les entrées avec un alignement vertical
+    GtkWidget *vbox_center = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10); // Cette box va contenir les labels et champs de saisie
+    gtk_box_set_homogeneous(GTK_BOX(vbox_center), FALSE); // Les éléments peuvent avoir des tailles différentes
+
+    // Ajoutez un espace au-dessus
+    GtkWidget *spacer_top = gtk_label_new(NULL);
+    gtk_box_pack_start(GTK_BOX(vbox_center), spacer_top, TRUE, TRUE, 0); // Cette box pousse les éléments vers le centre verticalement
+
+    // Créer le label pour l'email
     GtkWidget *label_user = gtk_label_new("Email/Username");
     gtk_widget_set_name(label_user, "entry_label");
-    gtk_widget_set_halign(label_user, GTK_ALIGN_CENTER);  // Aligné à gauche
-    gtk_box_pack_start(GTK_BOX(vbox), label_user, FALSE, FALSE, 0);
+    gtk_widget_set_halign(label_user, GTK_ALIGN_CENTER);  // Aligné au centre
+    gtk_box_pack_start(GTK_BOX(vbox_center), label_user, FALSE, FALSE, 0);
 
+    // Créer le champ de saisie pour l'email
     GtkWidget *entry_user = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_user), "Email or Username");
-    gtk_widget_set_name(entry_user, "EmailorUsername"); // <-- ESSENTIEL
-    gtk_widget_set_size_request(entry_user, 500, -1);  // Limite largeur à 100px
-    gtk_widget_set_halign(entry_user, GTK_ALIGN_CENTER); // Alignement à gauche
-    gtk_box_pack_start(GTK_BOX(vbox), entry_user, FALSE, FALSE, 0);
+    gtk_widget_set_name(entry_user, "EmailorUsername");
+    gtk_widget_set_size_request(entry_user, 500, -1);  // Limite largeur à 500px
+    gtk_widget_set_halign(entry_user, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(vbox_center), entry_user, FALSE, FALSE, 0);
 
+    // Créer un autre espace (si nécessaire) entre les éléments
+    GtkWidget *spacer_middle = gtk_label_new(NULL);
+    gtk_box_pack_start(GTK_BOX(vbox_center), spacer_middle, TRUE, TRUE, 0);
+
+    // Créer le label pour le mot de passe
     GtkWidget *label_pass = gtk_label_new("Password");
     gtk_widget_set_name(label_pass, "entry_label");
-    gtk_widget_set_halign(label_pass, GTK_ALIGN_CENTER);  // align to left
-    gtk_box_pack_start(GTK_BOX(vbox), label_pass, FALSE, FALSE, 0);
+    gtk_widget_set_halign(label_pass, GTK_ALIGN_CENTER);  // Aligné au centre
+    gtk_box_pack_start(GTK_BOX(vbox_center), label_pass, FALSE, FALSE, 0);
 
+    // Créer le champ de saisie pour le mot de passe
     GtkWidget *entry_pass = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_pass), "Password");
     gtk_entry_set_visibility(GTK_ENTRY(entry_pass), FALSE);
-    gtk_widget_set_size_request(entry_pass, 500, -1);  // Limit with to 500px
-    gtk_widget_set_halign(entry_pass, GTK_ALIGN_CENTER); // 
-    gtk_widget_set_name(entry_pass, "Password"); // <-- ESSENTIAL
-    gtk_box_pack_start(GTK_BOX(vbox), entry_pass, FALSE, FALSE, 0);
+    gtk_widget_set_size_request(entry_pass, 500, -1);  // Limite largeur à 500px
+    gtk_widget_set_halign(entry_pass, GTK_ALIGN_CENTER);
+    gtk_widget_set_name(entry_pass, "Password");
+    gtk_box_pack_start(GTK_BOX(vbox_center), entry_pass, FALSE, FALSE, 0);
+
+    // Ajouter le vbox_center au vbox principal
+    gtk_box_pack_start(GTK_BOX(vbox), vbox_center, TRUE, TRUE, 0); // vbox_center occupe la place centrale et l'alignera
+
 
     // Space to push button on the bottom
     GtkWidget *spacer = gtk_label_new(NULL);
