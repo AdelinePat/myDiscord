@@ -63,8 +63,8 @@
 }
 
 /* Style for Login Window Button */
-#login_button label, 
-#register_button label {
+#login_button label
+ {
     color: #2E2C31;
 }
 #login_button {
@@ -83,11 +83,24 @@
     color:#2E2C31;
 }
 #register_button {
-    background-color: #9A80E9;
+    background: #9A80E9;
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px 20px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+#register_button label {
+    color: #2E2C31;
+}
+#register_button:hover {
+    background-color: #2E2C31;
+}
+#register_button:hover label{
+    color: #9A80E9;
 }
 #login_button:hover
  {
-    background-color:#2E2C31 ;
+    background-color:#2E2C31;
      /* Lighter background when hovering */
 }
 #login_button:hover label {
