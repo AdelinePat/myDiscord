@@ -146,6 +146,10 @@
 
 
 /* Apply background color and text style to the password field */
+#login_title {
+    color: #CFBEF8;
+    font-weight: 900;
+}
 
 
 

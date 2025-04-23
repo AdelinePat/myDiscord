@@ -68,7 +68,7 @@ void show_login_window(GtkApplication *app) {
     load_css(app);  // Load and apply the CSS
 
     GtkWidget *window = gtk_application_window_new(app);
-    gtk_window_set_title(GTK_WINDOW(window), "Login");
+    gtk_window_set_title(GTK_WINDOW(window), "Connexion");
     gtk_window_set_default_size(GTK_WINDOW(window), 720, 450);
    
 
@@ -77,6 +77,12 @@ void show_login_window(GtkApplication *app) {
     gtk_container_set_border_width(GTK_CONTAINER(vbox), 20);
     gtk_container_add(GTK_CONTAINER(window), vbox);
     gtk_widget_set_name(vbox, "main_background");
+
+    GtkWidget *title_label = gtk_label_new("WHISPR");
+    gtk_widget_set_name(title_label, "login_title");
+    gtk_widget_set_halign(title_label, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(vbox), title_label, FALSE, FALSE, 0);
+
 
     GtkWidget *entry_user = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_user), "EmailorUsername");
