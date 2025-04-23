@@ -70,9 +70,7 @@ void show_login_window(GtkApplication *app) {
 
     GtkWidget *window = gtk_application_window_new(app);
     gtk_window_set_title(GTK_WINDOW(window), "Connexion");
-    gtk_window_set_default_size(GTK_WINDOW(window), 720, 450);
-   
-
+    gtk_window_set_default_size(GTK_WINDOW(window), 900, 600);
 
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_container_set_border_width(GTK_CONTAINER(vbox), 20);
@@ -88,30 +86,30 @@ void show_login_window(GtkApplication *app) {
     gtk_widget_set_name(label_user, "entry_label");
     gtk_widget_set_halign(label_user, GTK_ALIGN_START);  // Aligné à gauche
     gtk_box_pack_start(GTK_BOX(vbox), label_user, FALSE, FALSE, 0);
-    
 
     GtkWidget *entry_user = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_user), "Email or Username");
     gtk_widget_set_name(entry_user, "EmailorUsername"); // <-- ESSENTIEL
+    gtk_widget_set_size_request(entry_user, 500, -1);  // Limite largeur à 100px
+    gtk_widget_set_halign(entry_user, GTK_ALIGN_START); // Alignement à gauche
     gtk_box_pack_start(GTK_BOX(vbox), entry_user, FALSE, FALSE, 0);
 
     GtkWidget *label_pass = gtk_label_new("Password");
     gtk_widget_set_name(label_pass, "entry_label");
     gtk_widget_set_halign(label_pass, GTK_ALIGN_START);  // Aligné à gauche
     gtk_box_pack_start(GTK_BOX(vbox), label_pass, FALSE, FALSE, 0);
-    
-    
+
     GtkWidget *entry_pass = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_pass), "Password");
     gtk_entry_set_visibility(GTK_ENTRY(entry_pass), FALSE);
+    gtk_widget_set_size_request(entry_pass, 500, -1);  // Limite largeur à 100px
+    gtk_widget_set_halign(entry_pass, GTK_ALIGN_START); // Alignement à gauche
     gtk_widget_set_name(entry_pass, "Password"); // <-- ESSENTIEL
     gtk_box_pack_start(GTK_BOX(vbox), entry_pass, FALSE, FALSE, 0);
 
     // Spacer pour pousser les boutons vers le bas
     GtkWidget *spacer = gtk_label_new(NULL);
     gtk_box_pack_start(GTK_BOX(vbox), spacer, TRUE, TRUE, 0);
-
-    
 
     // Create a horizontal box for the buttons
     GtkWidget *hbox_buttons = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
