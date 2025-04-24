@@ -8,8 +8,12 @@ CFLAGS = -Wall -Wextra -std=c11
 GTK_CFLAGS := $(shell pkg-config --cflags gtk+-3.0)
 GTK_LIBS   := $(shell pkg-config --libs gtk+-3.0)
 
+PQ_CFLAGS := -I $(shell pg_config --includedir)
+PQ_LIBS := $(shell pkg-config --libs libpq)
+
 # Combine les options de compilation
 CFLAGS += $(GTK_CFLAGS)
+CFLAGS += $(PQ_CFLAGS)
 
 # Fichiers sources
 SRC = register_window.c login_window.c chat_window.c main.c
@@ -28,7 +32,7 @@ all: $(EXEC)
 
 # Création de l'exécutable
 $(EXEC): $(OBJ)
-	$(CC) $(OBJ) -o $(EXEC) $(GTK_LIBS)
+	$(CC) $(OBJ) -o $(EXEC) $(LDFLAGS) $(GTK_LIBS) $(PQ_LIBS)
 
 # Compilation des .c en .o
 %.o: %.c
