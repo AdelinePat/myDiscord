@@ -54,6 +54,10 @@ void show_register_window(GtkApplication *app) {
     gtk_widget_set_halign(title_label, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(vbox), title_label, FALSE, FALSE, 0);
 
+    GtkWidget *separator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+    gtk_widget_set_name(separator, "separator_line");  // Donne un ID personnalisé à la ligne de séparatseparator_lineion
+    gtk_box_pack_start(GTK_BOX(vbox), separator, FALSE, FALSE, 5);
+
      // Créer une box pour les labels et les entrées avec un alignement vertical
     GtkWidget *vbox_center = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10); // Cette box va contenir les labels et champs de saisie
     gtk_box_set_homogeneous(GTK_BOX(vbox_center), FALSE); // Les éléments peuvent avoir des tailles différentes
