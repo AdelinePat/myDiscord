@@ -71,6 +71,11 @@ void show_register_window(GtkApplication *app) {
     
     GtkWidget *entry_user = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_user), "Username");
+    gtk_widget_set_size_request(entry_user, 500, -1);
+    gtk_widget_set_halign(entry_user, GTK_ALIGN_CENTER);
+
+
+    
     gtk_widget_set_name(entry_user, "Password");
     gtk_box_pack_start(GTK_BOX(vbox_center), entry_user, FALSE, FALSE, 0);
     
@@ -86,6 +91,8 @@ void show_register_window(GtkApplication *app) {
     
     GtkWidget *entry_email = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_email), "Email");
+    gtk_widget_set_size_request(entry_email, 500, -1);
+    gtk_widget_set_halign(entry_email, GTK_ALIGN_CENTER);
     gtk_widget_set_name(entry_email, "Password");
     gtk_box_pack_start(GTK_BOX(vbox_center), entry_email, FALSE, FALSE, 0);
 
@@ -112,6 +119,7 @@ void show_register_window(GtkApplication *app) {
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_pass), "Password");
     gtk_entry_set_visibility(GTK_ENTRY(entry_pass), FALSE);
     gtk_widget_set_size_request(entry_pass, 500, -1);  //
+    gtk_widget_set_halign(entry_pass, GTK_ALIGN_CENTER);
     gtk_widget_set_name(entry_pass, "Password");
     gtk_box_pack_start(GTK_BOX(vbox_center), entry_pass, FALSE, FALSE, 0);
 
@@ -130,6 +138,8 @@ void show_register_window(GtkApplication *app) {
     GtkWidget *entry_confirm_pass = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_confirm_pass), "Confirm Password");
     gtk_entry_set_visibility(GTK_ENTRY(entry_confirm_pass), FALSE);
+    gtk_widget_set_size_request(entry_confirm_pass, 500, -1);
+    gtk_widget_set_halign(entry_confirm_pass, GTK_ALIGN_CENTER);
     gtk_widget_set_name(entry_confirm_pass, "Password");
     gtk_box_pack_start(GTK_BOX(vbox_center), entry_confirm_pass, FALSE, FALSE, 0);
 
