@@ -42,24 +42,59 @@ static void on_return_clicked(GtkButton *button, gpointer user_data) {
 void show_register_window(GtkApplication *app) {
     GtkWidget *window = gtk_application_window_new(app);
     gtk_window_set_title(GTK_WINDOW(window), "Create Account");
-    gtk_window_set_default_size(GTK_WINDOW(window), 720, 450);
+    gtk_window_set_default_size(GTK_WINDOW(window), 900, 600);
 
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_container_set_border_width(GTK_CONTAINER(vbox), 20);
     gtk_container_add(GTK_CONTAINER(window), vbox);
     gtk_widget_set_name(vbox, "main_background");
 
+    GtkWidget *title_label = gtk_label_new("Création de Compte");
+    gtk_widget_set_name(title_label, "create_title");
+    gtk_widget_set_halign(title_label, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(vbox), title_label, FALSE, FALSE, 0);
+
+     // Créer une box pour les labels et les entrées avec un alignement vertical
+    GtkWidget *vbox_center = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10); // Cette box va contenir les labels et champs de saisie
+    gtk_box_set_homogeneous(GTK_BOX(vbox_center), FALSE); // Les éléments peuvent avoir des tailles différentes
+    
+    // Ajoutez un espace au-dessus
+    GtkWidget *spacer_top = gtk_label_new(NULL);
+    gtk_box_pack_start(GTK_BOX(vbox_center), spacer_top, TRUE, TRUE, 0); // Cette box pousse les éléments vers le centre verticalement
+
+    
+
+
+    
+
+
     GtkWidget *entry_user = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_user), "Username");
     gtk_box_pack_start(GTK_BOX(vbox), entry_user, FALSE, FALSE, 0);
+
+    // Créer un autre espace (si nécessaire) entre les éléments
+    GtkWidget *spacer_middle = gtk_label_new(NULL);
+    gtk_box_pack_start(GTK_BOX(vbox_center), spacer_middle, TRUE, TRUE, 0);
+
+    // Créer le label pour l'email
+    GtkWidget *label_user = gtk_label_new("Password");
+    gtk_widget_set_name(label_user, "entry_label");
+    gtk_widget_set_halign(label_user, GTK_ALIGN_CENTER);  // Aligné au centre
+    gtk_box_pack_start(GTK_BOX(vbox_center), label_user, FALSE, FALSE, 0);
 
     GtkWidget *entry_email = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_email), "Email");
     gtk_box_pack_start(GTK_BOX(vbox), entry_email, FALSE, FALSE, 0);
 
+    // Ajouter le vbox_center au vbox principal
+    gtk_box_pack_start(GTK_BOX(vbox),vbox_center, TRUE, TRUE, 0); // vbox_center occupe la place centrale et l'alignera
+
+
+
     GtkWidget *entry_pass = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_pass), "Password");
     gtk_entry_set_visibility(GTK_ENTRY(entry_pass), FALSE);
+    gtk_widget_set_size_request(entry_pass, 500, -1);  //
     gtk_box_pack_start(GTK_BOX(vbox), entry_pass, FALSE, FALSE, 0);
 
     GtkWidget *entry_confirm_pass = gtk_entry_new();
@@ -67,13 +102,14 @@ void show_register_window(GtkApplication *app) {
     gtk_entry_set_visibility(GTK_ENTRY(entry_confirm_pass), FALSE);
     gtk_box_pack_start(GTK_BOX(vbox), entry_confirm_pass, FALSE, FALSE, 0);
 
+    // Ajouter le vbox_center au vbox principal
+    gtk_box_pack_start(GTK_BOX(vbox),vbox_center, TRUE, TRUE, 0); // vbox_center occupe la place centrale et l'alignera
+
     // Spacer to push the buttons to the bottom
-    GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    GtkWidget *spacer = gtk_label_new(NULL);
     gtk_box_pack_start(GTK_BOX(vbox), spacer, TRUE, TRUE, 0);
 
     GtkWidget *hbox_buttons = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
-    gtk_widget_set_halign(hbox_buttons, GTK_ALIGN_CENTER);
-    gtk_widget_set_valign(hbox_buttons, GTK_ALIGN_END);
     gtk_box_pack_start(GTK_BOX(vbox), hbox_buttons, FALSE, FALSE, 0);
 
     GtkWidget *btn_confirm = gtk_button_new_with_label("Confirmer");
