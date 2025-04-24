@@ -110,12 +110,24 @@ void show_register_window(GtkApplication *app) {
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_pass), "Password");
     gtk_entry_set_visibility(GTK_ENTRY(entry_pass), FALSE);
     gtk_widget_set_size_request(entry_pass, 500, -1);  //
-    gtk_box_pack_start(GTK_BOX(vbox), entry_pass, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(vbox_center), entry_pass, FALSE, FALSE, 0);
+
+    // Créer un autre espace (si nécessaire) entre les éléments
+    GtkWidget *spacer_end_labels = gtk_label_new(NULL);
+    gtk_box_pack_start(GTK_BOX(vbox_center), spacer_end_labels, TRUE, TRUE, 0);
+
+
+
+    // Créer le label pour confirmer password
+    GtkWidget *label_confirm_pass = gtk_label_new("Confirm Password");
+    gtk_widget_set_name(label_confirm_pass, "entry_label");
+    gtk_widget_set_halign(label_confirm_pass, GTK_ALIGN_CENTER);  // Aligné au centre
+    gtk_box_pack_start(GTK_BOX(vbox_center), label_confirm_pass, FALSE, FALSE, 0);
 
     GtkWidget *entry_confirm_pass = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_confirm_pass), "Confirm Password");
     gtk_entry_set_visibility(GTK_ENTRY(entry_confirm_pass), FALSE);
-    gtk_box_pack_start(GTK_BOX(vbox), entry_confirm_pass, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(vbox_center), entry_confirm_pass, FALSE, FALSE, 0);
 
     // Ajouter le vbox_center au vbox principal
     gtk_box_pack_start(GTK_BOX(vbox),vbox_center, TRUE, TRUE, 0); // vbox_center occupe la place centrale et l'alignera
