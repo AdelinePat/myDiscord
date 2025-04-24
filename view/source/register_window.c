@@ -50,7 +50,7 @@ void show_register_window(GtkApplication *app) {
     gtk_widget_set_name(vbox, "main_background");
 
     GtkWidget *title_label = gtk_label_new("Création de Compte");
-    gtk_widget_set_name(title_label, "create_title");
+    gtk_widget_set_name(title_label, "login_title");
     gtk_widget_set_halign(title_label, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(vbox), title_label, FALSE, FALSE, 0);
 
@@ -156,8 +156,8 @@ void show_register_window(GtkApplication *app) {
     GtkWidget *btn_confirm = gtk_button_new_with_label("Confirmer");
     GtkWidget *btn_return = gtk_button_new_with_label("Retour");
 
-    gtk_widget_set_name(btn_confirm, "confirm_button");
-    gtk_widget_set_name(btn_return, "return_button");
+    gtk_widget_set_name(btn_confirm, "login_button");
+    gtk_widget_set_name(btn_return, "register_button");
 
     gtk_box_pack_start(GTK_BOX(hbox_buttons), btn_confirm, TRUE, TRUE, 5);
     gtk_box_pack_start(GTK_BOX(hbox_buttons), btn_return, TRUE, TRUE, 5);
