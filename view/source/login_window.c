@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
-#include "chat_window.h"
-#include "register_window.h"
+#include "../header/chat_window.h"
+#include "../header/register_window.h"
 
 // Function to load the CSS file
 void load_css(GtkApplication *app) {
@@ -8,7 +8,7 @@ void load_css(GtkApplication *app) {
     GtkCssProvider *css_provider = gtk_css_provider_new();
 
     // Load the CSS file (replace "style.css" with the path to your CSS file)
-    GFile *css_file = g_file_new_for_path("style.css");
+    GFile *css_file = g_file_new_for_path(STYLE_PATH);
     GError *error = NULL;
     
     if (!gtk_css_provider_load_from_file(css_provider, css_file, &error)) {
