@@ -1,4 +1,3 @@
-
 #main_background {
     background-color: #3A383E;
 }
@@ -9,7 +8,12 @@
 
 #main_background label {
     color: #d6d6d6;
-    font: bold 12pt "Arial";  /* Applique Arial en gras et taille 24pt */
+    font: bold 12pt "Arial";  /* Applies bold Arial font with size 12pt */
+}
+
+#login_title {
+    color: #CFBEF8;
+    font-weight: 900;
 }
 
 #user_label {
@@ -35,7 +39,7 @@
     border-radius: 8px;
 }
 
-/* Cible le contenu interne du GtkTextView */
+/* Targets the internal content of GtkTextView */
 #chat_display text,
 #chat_display text view,
 #chat_display textview {
@@ -61,65 +65,76 @@
     background-color: #222;
     border-radius: 8px;
 }
+
 #emoji_button {
     font-size: 20px;
 }
 
-/* Style for Login Window Button */
-#login_button label
- {
+#login_button label {
     color: #2E2C31;
 }
+
 #login_button {
     background: #D3FBD8;
     color: #2E2C31; /* Dark color for text */
     font: bold 14pt 'Arial'; /* Bold Arial font */
     border-radius: 15px; /* Rounded corners */
-    padding: 10px 20px; /* Padding for the button */
+    padding: 10px 20px; /* Button padding */
     border: none; /* No border */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow to match chat window button */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Matches chat window button shadow */
+    background-color: #D3FBD8;
+    padding: 20px 20px; /* Button padding */
 }
 
-/* Hover effect for login and register buttons */
-#login_button label
-{
-    color:#2E2C31;
+#login_button:hover {
+    background-color: #2E2C31;
+    /* Lighter background on hover */
 }
+
+#login_button:hover label {
+    color: #D3FBD8;
+}
+
 #register_button {
     background: #9A80E9;
     border: none; /* No border */
     border-radius: 15px; /* Rounded corners */
-    padding: 10px 20px; 
+    padding: 10px 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 #register_button label {
     color: #2E2C31;
 }
+
 #register_button:hover {
     background-color: #2E2C31;
 }
-#register_button:hover label{
+
+#register_button:hover label {
     color: #9A80E9;
 }
-#login_button:hover
- {
-    background-color:#2E2C31;
-     /* Lighter background when hovering */
-}
-#login_button:hover label {
-    color : #D3FBD8;
-}
+
 #confirm_button label {
     color: #2E2C31;
 }
+
 #confirm_button {
     background: #9A80E9;
     border: none; /* No border */
     border-radius: 20px; /* Rounded corners */
-    padding: 10px 20px; 
+    padding: 10px 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-image: linear-gradient(to right, #D3FBD8, #9A80E9);
+    color: black;
+    font: bold 14pt 'Arial';
+    border-radius: 15px;
 }
-/* Style for the 'Retour' and 'Confirmer' buttons in the register window */
+
+#confirm_button:hover {
+    background-color: #2E2C31;
+}
+
 #return_button {
     background-image: linear-gradient(to right, #D3FBD8, #9A80E9);
     color: #2E2C31;
@@ -128,47 +143,13 @@
     padding: 10px 20px;
     border: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Hover effect for confirm and return buttons */
-#confirm_button:hover,
-#return_button:hover {
-    background-color: #CFBEF8;
-}
-/* Style for Login Window Button */
-#login_button
- {
-    background-color: #D3FBD8;
-    color: #2E2C31; /* Dark color for text */
-    font: bold 14pt 'Arial'; /* Bold Arial font */
-    border-radius: 15px; /* Rounded corners */
-    padding: 20px 20px; /* Padding for the button */
-    border: none; /* No border */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow to match chat window button */
-}
-
-/* Hover effect for login and register buttons */
-
-
-/* Style for the 'Retour' and 'Confirmer' buttons in the register window */
-#confirm_button,
-#return_button {
-    background-image: linear-gradient(to right, #D3FBD8, #9A80E9);
     color: black;
-    font: bold 14pt 'Arial';
-    border-radius: 15px;
-    padding: 10px 20px;
-    border: none;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Hover effect for confirm and return buttons */
-#confirm_button:hover,
 #return_button:hover {
     background-color: #2E2C31;
 }
 
-/* Apply background color and text style to the email field */
 #EmailorUsername,
 #Password {
     background-color: #534C62;
@@ -179,14 +160,6 @@
     border-radius: 20px;
 }
 
-
-/* Apply background color and text style to the password field */
-#login_title {
-    color: #CFBEF8;
-    font-weight: 900;
-
-}
 #separator_line {
-    background-color: #534C62;  /* Définit la couleur de la ligne de tour de la ligne */
+    background-color: #534C62;  /* Defines the outline color of the separator line */
 }
-
