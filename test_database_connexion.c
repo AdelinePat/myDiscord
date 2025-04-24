@@ -1,6 +1,5 @@
 
 #include "test_database_connexion.h"
-// #include <confuse.h>
 
 void load_variable(FILE* file, char* password, char* user_name)
 {
