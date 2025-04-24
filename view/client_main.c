@@ -1,5 +1,5 @@
 #include <gtk/gtk.h>
-#include "login_window.h"
+#include "./header/login_window.h"
 
 static void on_activate(GtkApplication *app, gpointer user_data) {
     (void)user_data;

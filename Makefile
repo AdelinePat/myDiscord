@@ -16,16 +16,16 @@ CFLAGS += $(GTK_CFLAGS)
 CFLAGS += $(PQ_CFLAGS)
 
 # Fichiers sources
-SRC = register_window.c login_window.c chat_window.c main.c
+SRC = ./view/source/register_window.c ./view/source/login_window.c ./view/source/chat_window.c ./view/client_main.c
 
 # Fichiers objets générés
 OBJ = $(SRC:.c=.o)
 
 # Nom de l'exécutable
-EXEC = main.exe
+EXEC = client_main.exe
 
 # Feuilles de style (copiées à l'installation)
-CSS = style.css
+CSS = ./view/style.css
 
 # Cible par défaut
 all: $(EXEC)

@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
-#include "login_window.h"
-#include "register_window.h"
+#include "../header/login_window.h"
+#include "../header/register_window.h"
 
 typedef struct {
     GtkWidget *chat_display;
@@ -22,8 +22,8 @@ static void on_disconnect_clicked(GtkButton *button, gpointer user_data) {
 // === Called when an emoji button is clicked inside the popover ===
 static void on_emoji_clicked(GtkButton *button, gpointer user_data) {
     GtkEntry *entry = GTK_ENTRY(user_data);
+    // const gchar *emoji = gtk_button_get_label(GTK_WIDGET(button));
     const gchar *emoji = gtk_button_get_label(button);
-
     const gchar *current_text = gtk_entry_get_text(entry);
 
     gchar *new_text = g_strconcat(current_text, emoji, NULL);
@@ -85,7 +85,7 @@ void show_chat_window(GtkApplication *app) {
     gtk_widget_set_vexpand(spacer, TRUE);
     gtk_box_pack_start(GTK_BOX(channels_box), spacer, TRUE, TRUE, 0);
 
-    user_label = gtk_label_new("User: Shadows");
+    user_label = gtk_label_new("User: Luffy");
     gtk_widget_set_name(user_label, "user_label");
     gtk_box_pack_start(GTK_BOX(channels_box), user_label, FALSE, FALSE, 0);
 
