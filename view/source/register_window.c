@@ -73,10 +73,26 @@ void show_register_window(GtkApplication *app) {
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_user), "Username");
     gtk_box_pack_start(GTK_BOX(vbox_center), entry_user, FALSE, FALSE, 0);
     
-
+   
     // Créer un autre espace (si nécessaire) entre les éléments
     GtkWidget *spacer_middle = gtk_label_new(NULL);
     gtk_box_pack_start(GTK_BOX(vbox_center), spacer_middle, TRUE, TRUE, 0);
+
+    GtkWidget *label_email = gtk_label_new("Email");
+    gtk_widget_set_name(label_email, "entry_label");
+    gtk_widget_set_halign(label_email, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(vbox_center), label_email, FALSE, FALSE, 0);
+    
+    GtkWidget *entry_email = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(entry_email), "Email");
+    gtk_box_pack_start(GTK_BOX(vbox_center), entry_email, FALSE, FALSE, 0);
+
+    // Créer un autre espace (si nécessaire) entre les éléments
+    GtkWidget *spacer_between_labels = gtk_label_new(NULL);
+    gtk_box_pack_start(GTK_BOX(vbox_center), spacer_between_labels, TRUE, TRUE, 0);
+
+
+
 
     // Créer le label pour l'email
     GtkWidget *label_user = gtk_label_new("Password");
@@ -84,9 +100,6 @@ void show_register_window(GtkApplication *app) {
     gtk_widget_set_halign(label_user, GTK_ALIGN_CENTER);  // Aligné au centre
     gtk_box_pack_start(GTK_BOX(vbox_center), label_user, FALSE, FALSE, 0);
 
-    GtkWidget *entry_email = gtk_entry_new();
-    gtk_entry_set_placeholder_text(GTK_ENTRY(entry_email), "Email");
-    gtk_box_pack_start(GTK_BOX(vbox), entry_email, FALSE, FALSE, 0);
 
     // Ajouter le vbox_center au vbox principal
     gtk_box_pack_start(GTK_BOX(vbox),vbox_center, TRUE, TRUE, 0); // vbox_center occupe la place centrale et l'alignera
