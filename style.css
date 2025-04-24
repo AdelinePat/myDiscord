@@ -1,0 +1,191 @@
+
+#main_background {
+    background-color: #3A383E;
+}
+
+#main_background #login_title {
+    font-size: 70px;  
+}
+
+#main_background label {
+    color: #d6d6d6;
+    font: bold 12pt "Arial";  /* Applique Arial en gras et taille 24pt */
+}
+
+#user_label {
+    font: italic 12pt 'Arial';
+    color: white;
+}
+
+#chat_entry {
+    background-color: #5f4d5b;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+#chat_display {
+    background-color: #534C62;
+    color: #D6D6D6;
+    font: 12pt 'Arial';
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Cible le contenu interne du GtkTextView */
+#chat_display text,
+#chat_display text view,
+#chat_display textview {
+    background-color: #3A383E;
+    color: #D6D6D6;
+}
+
+#disconnect_button {
+    background-image: linear-gradient(to right, #D3FBD8, #9A80E9);
+    color: #2E2C31;
+    font: bold 14pt 'Arial';
+    border-radius: 4px;
+    padding: 10px 20px;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)
+}
+
+#disconnect_button:hover {
+    background-color: #CFBEF8;
+}
+
+#emoji_popover {
+    background-color: #222;
+    border-radius: 8px;
+}
+#emoji_button {
+    font-size: 20px;
+}
+
+/* Style for Login Window Button */
+#login_button label
+ {
+    color: #2E2C31;
+}
+#login_button {
+    background: #D3FBD8;
+    color: #2E2C31; /* Dark color for text */
+    font: bold 14pt 'Arial'; /* Bold Arial font */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px 20px; /* Padding for the button */
+    border: none; /* No border */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow to match chat window button */
+}
+
+/* Hover effect for login and register buttons */
+#login_button label
+{
+    color:#2E2C31;
+}
+#register_button {
+    background: #9A80E9;
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px 20px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+#register_button label {
+    color: #2E2C31;
+}
+#register_button:hover {
+    background-color: #2E2C31;
+}
+#register_button:hover label{
+    color: #9A80E9;
+}
+#login_button:hover
+ {
+    background-color:#2E2C31;
+     /* Lighter background when hovering */
+}
+#login_button:hover label {
+    color : #D3FBD8;
+}
+#confirm_button label {
+    color: #2E2C31;
+}
+#confirm_button {
+    background: #9A80E9;
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px 20px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+/* Style for the 'Retour' and 'Confirmer' buttons in the register window */
+#return_button {
+    background-image: linear-gradient(to right, #D3FBD8, #9A80E9);
+    color: #2E2C31;
+    font: bold 14pt 'Arial';
+    border-radius: 4px;
+    padding: 10px 20px;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover effect for confirm and return buttons */
+#confirm_button:hover,
+#return_button:hover {
+    background-color: #CFBEF8;
+}
+/* Style for Login Window Button */
+#login_button
+ {
+    background-color: #D3FBD8;
+    color: #2E2C31; /* Dark color for text */
+    font: bold 14pt 'Arial'; /* Bold Arial font */
+    border-radius: 4px; /* Rounded corners */
+    padding: 20px 20px; /* Padding for the button */
+    border: none; /* No border */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow to match chat window button */
+}
+
+/* Hover effect for login and register buttons */
+
+
+/* Style for the 'Retour' and 'Confirmer' buttons in the register window */
+#confirm_button,
+#return_button {
+    background-image: linear-gradient(to right, #D3FBD8, #9A80E9);
+    color: black;
+    font: bold 14pt 'Arial';
+    border-radius: 4px;
+    padding: 10px 20px;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover effect for confirm and return buttons */
+#confirm_button:hover,
+#return_button:hover {
+    background-color: #2E2C31;
+}
+
+/* Apply background color and text style to the email field */
+#EmailorUsername,
+#Password {
+    background-color: #534C62;
+    color: #D6D6D6;
+    font: 12pt 'Arial';
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+
+/* Apply background color and text style to the password field */
+#login_title {
+    color: #CFBEF8;
+    font-weight: 900;
+
+}
+
+
+
