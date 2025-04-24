@@ -64,13 +64,15 @@ void show_register_window(GtkApplication *app) {
 
     
 
-
+    GtkWidget *label_username = gtk_label_new("Username");
+    gtk_widget_set_name(label_username, "entry_label");
+    gtk_widget_set_halign(label_username, GTK_ALIGN_CENTER);
+    gtk_box_pack_start(GTK_BOX(vbox_center), label_username, FALSE, FALSE, 0);
     
-
-
     GtkWidget *entry_user = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_user), "Username");
-    gtk_box_pack_start(GTK_BOX(vbox), entry_user, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(vbox_center), entry_user, FALSE, FALSE, 0);
+    
 
     // Créer un autre espace (si nécessaire) entre les éléments
     GtkWidget *spacer_middle = gtk_label_new(NULL);
