@@ -109,9 +109,17 @@
 #login_button:hover label {
     color : #D3FBD8;
 }
-
+#confirm_button label {
+    color: #2E2C31;
+}
+#confirm_button {
+    background: #9A80E9;
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px 20px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 /* Style for the 'Retour' and 'Confirmer' buttons in the register window */
-#confirm_button,
 #return_button {
     background-image: linear-gradient(to right, #D3FBD8, #9A80E9);
     color: #2E2C31;
