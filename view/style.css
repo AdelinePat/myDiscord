@@ -186,5 +186,7 @@
     font-weight: 900;
 
 }
-
+#separator_line {
+    background-color: #534C62;  /* Définit la couleur de la ligne de tour de la ligne */
+}
 
