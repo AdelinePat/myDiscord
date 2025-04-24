@@ -3,6 +3,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #define DEFAULT_PORT "27015"
+#define DEFAULT_BUFLEN 512
 
 #include <windows.h>
 #include <winsock2.h>
