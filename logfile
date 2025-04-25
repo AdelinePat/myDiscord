@@ -1,0 +1,5 @@
+2025-04-25 20:18:59.990 CEST [16396] LOG:  démarrage de PostgreSQL 17.2 on x86_64-windows, compiled by gcc-14.2.0, 64-bit
+2025-04-25 20:18:59.998 CEST [16396] LOG:  en écoute sur IPv6, adresse « ::1 », port 5432
+2025-04-25 20:18:59.998 CEST [16396] LOG:  en écoute sur IPv4, adresse « 127.0.0.1 », port 5432
+2025-04-25 20:19:00.105 CEST [21936] LOG:  le système de bases de données a été arrêté à 2025-04-25 20:18:45 CEST
+2025-04-25 20:19:00.182 CEST [16396] LOG:  le système de bases de données est prêt pour accepter les connexions
