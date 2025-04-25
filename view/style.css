@@ -151,8 +151,8 @@
     background-color: #2E2C31;
 }
 
-#EmailorUsername,
-#Password {
+#Placeholder
+{
     background-color: #534C62;
     color: #D6D6D6;
     font: 12pt 'Arial';
