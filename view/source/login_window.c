@@ -139,8 +139,8 @@ void show_login_window(GtkApplication *app) {
     GtkWidget *btn_register = gtk_button_new_with_label("Create Account");
 
     // Set the CSS classes to apply styles from your stylesheet
-    gtk_widget_set_name(btn_login, "login_button"); // Assign CSS ID for button styling
-    gtk_widget_set_name(btn_register, "register_button"); // Assign CSS ID for button styling
+    gtk_widget_set_name(btn_login, "left_button"); // Assign CSS ID for button styling
+    gtk_widget_set_name(btn_register, "right_button"); // Assign CSS ID for button styling
 
     // Add buttons to the hbox
     gtk_box_pack_start(GTK_BOX(hbox_buttons), btn_login, TRUE, TRUE, 5); 
