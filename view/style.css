@@ -1,10 +1,13 @@
-#main_background {
+#main_background,
+window {
     background-color: #3A383E;
 }
 
 #main_background #ui_title {
     font-size: 70px;  
 }
+
+
 #ui_title {
     color: #CFBEF8;
     font-weight: 900;

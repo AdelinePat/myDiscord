@@ -66,7 +66,7 @@ void show_chat_window(GtkApplication *app) {
     GtkWidget *connect_button, *disconnect_button;
 
     window = gtk_application_window_new(app);
-    gtk_window_set_title(GTK_WINDOW(window), "Whisper");
+    gtk_window_set_title(GTK_WINDOW(window), "MyDiscord");
     gtk_window_set_default_size(GTK_WINDOW(window), 1280, 720);
 
     outer_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
