@@ -99,7 +99,7 @@ void show_login_window(GtkApplication *app) {
     // Create the input field for email
     GtkWidget *entry_user = gtk_entry_new();
     gtk_entry_set_placeholder_text(GTK_ENTRY(entry_user), "Email or Username");
-    gtk_widget_set_name(entry_user, "EmailorUsername");
+    gtk_widget_set_name(entry_user, "Placeholder");
     gtk_widget_set_size_request(entry_user, 500, -1);  // Limit width to 500px
     gtk_widget_set_halign(entry_user, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(vbox_center), entry_user, FALSE, FALSE, 0);
@@ -120,7 +120,7 @@ void show_login_window(GtkApplication *app) {
     gtk_entry_set_visibility(GTK_ENTRY(entry_pass), FALSE);
     gtk_widget_set_size_request(entry_pass, 500, -1);  // Limit width to 500px
     gtk_widget_set_halign(entry_pass, GTK_ALIGN_CENTER);
-    gtk_widget_set_name(entry_pass, "Password");
+    gtk_widget_set_name(entry_pass, "Placeholder");
     gtk_box_pack_start(GTK_BOX(vbox_center), entry_pass, FALSE, FALSE, 0);
 
     // Add the vbox_center to the main vbox
