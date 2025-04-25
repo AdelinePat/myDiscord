@@ -78,7 +78,7 @@ void show_login_window(GtkApplication *app) {
     gtk_widget_set_name(vbox, "main_background");
 
     GtkWidget *title_label = gtk_label_new("WHISPR");
-    gtk_widget_set_name(title_label, "login_title");
+    gtk_widget_set_name(title_label, "ui_title");
     gtk_widget_set_halign(title_label, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(vbox), title_label, FALSE, FALSE, 0);
 
