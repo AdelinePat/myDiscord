@@ -1,6 +1,6 @@
 #include "../model/header/connection_sockets_test.h"
 
-int main(int argc, char const *argv[])
+int __cdecl main(int argc, char const *argv[])
 {
     WSADATA wsaData;
     SOCKET ConnectSocket = INVALID_SOCKET;
