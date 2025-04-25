@@ -4,6 +4,13 @@
 
 // Function to load the CSS file
 void load_css(GtkApplication *app) {
+
+    // change default settings from bright theme to dark theme
+    GtkSettings *default_settings = gtk_settings_get_default();
+    g_object_set(G_OBJECT(default_settings),
+                 "gtk-application-prefer-dark-theme", TRUE,
+                 NULL);
+
     // Create a new CssProvider to load the CSS
     GtkCssProvider *css_provider = gtk_css_provider_new();
 
