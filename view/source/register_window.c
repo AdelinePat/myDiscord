@@ -146,8 +146,8 @@ void show_register_window(GtkApplication *app) {
     GtkWidget *btn_confirm = gtk_button_new_with_label("Confirmer");
     GtkWidget *btn_return = gtk_button_new_with_label("Retour");
 
-    gtk_widget_set_name(btn_confirm, "login_button");
-    gtk_widget_set_name(btn_return, "register_button");
+    gtk_widget_set_name(btn_confirm, "left_button");
+    gtk_widget_set_name(btn_return, "right_button");
 
     gtk_box_pack_start(GTK_BOX(hbox_buttons), btn_confirm, TRUE, TRUE, 5);
     gtk_box_pack_start(GTK_BOX(hbox_buttons), btn_return, TRUE, TRUE, 5);

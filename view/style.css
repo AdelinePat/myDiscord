@@ -71,11 +71,11 @@
     font-size: 20px;
 }
 
-#login_button label {
+#left_button label {
     color: #2E2C31;
 }
 
-#login_button {
+#left_button {
     background: #D3FBD8;
     color: #2E2C31; /* Dark color for text */
     font: bold 14pt 'Arial'; /* Bold Arial font */
@@ -87,16 +87,16 @@
     padding: 20px 20px; /* Button padding */
 }
 
-#login_button:hover {
+#left_button:hover {
     background-color: #2E2C31;
     /* Lighter background on hover */
 }
 
-#login_button:hover label {
+#left_button:hover label {
     color: #D3FBD8;
 }
 
-#register_button {
+#right_button {
     background: #9A80E9;
     border: none; /* No border */
     border-radius: 15px; /* Rounded corners */
@@ -104,15 +104,15 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-#register_button label {
+#right_button label {
     color: #2E2C31;
 }
 
-#register_button:hover {
+#right_button:hover {
     background-color: #2E2C31;
 }
 
-#register_button:hover label {
+#right_button:hover label {
     color: #9A80E9;
 }
 
