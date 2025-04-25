@@ -82,6 +82,10 @@ void show_login_window(GtkApplication *app) {
     gtk_widget_set_halign(title_label, GTK_ALIGN_CENTER);
     gtk_box_pack_start(GTK_BOX(vbox), title_label, FALSE, FALSE, 0);
 
+    GtkWidget *separator = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+    gtk_widget_set_name(separator, "separator_line");  // Give a custom ID to the separator line
+    gtk_box_pack_start(GTK_BOX(vbox), separator, FALSE, FALSE, 5);
+
     // Create a box for labels and input fields with vertical alignment
     GtkWidget *vbox_center = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10); // This box will contain the labels and input fields
     gtk_box_set_homogeneous(GTK_BOX(vbox_center), FALSE); // Elements can have different sizes
