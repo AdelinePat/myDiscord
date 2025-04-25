@@ -5,3 +5,12 @@
 2025-04-25 20:19:00.182 CEST [16396] LOG:  le système de bases de données est prêt pour accepter les connexions
 2025-04-25 20:24:00.089 CEST [19876] LOG:  début du checkpoint : time
 2025-04-25 20:24:04.013 CEST [19876] LOG:  checkpoint complete: wrote 38 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.855 s, sync=0.039 s, total=3.932 s; sync files=11, longest=0.016 s, average=0.004 s; distance=202 kB, estimate=202 kB; lsn=0/1522218, redo lsn=0/1522188
+2025-04-25 20:53:01.160 CEST [16396] LOG:  could not reserve shared memory region (addr=00000297ce410000) for child 0000000000001498: error code 487
+2025-04-25 21:06:08.494 CEST [16396] LOG:  a reçu une demande d'arrêt rapide
+2025-04-25 21:06:08.498 CEST [16396] LOG:  annulation des transactions actives
+2025-04-25 21:06:08.498 CEST [33604] ERREUR:  annulation de la requête à la demande de l'utilisateur
+2025-04-25 21:06:08.504 CEST [16396] LOG:  processus en tâche de fond « logical replication launcher » (PID 33604) a quitté avec le code de sortie 1
+2025-04-25 21:06:08.505 CEST [19876] LOG:  arrêt en cours
+2025-04-25 21:06:08.506 CEST [19876] LOG:  début du checkpoint : shutdown immediate
+2025-04-25 21:06:08.511 CEST [19876] LOG:  checkpoint complete: wrote 0 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.007 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=181 kB; lsn=0/15222C8, redo lsn=0/15222C8
+2025-04-25 21:06:08.519 CEST [16396] LOG:  le système de base de données est arrêté
