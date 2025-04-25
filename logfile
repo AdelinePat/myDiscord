@@ -3,3 +3,5 @@
 2025-04-25 20:18:59.998 CEST [16396] LOG:  en écoute sur IPv4, adresse « 127.0.0.1 », port 5432
 2025-04-25 20:19:00.105 CEST [21936] LOG:  le système de bases de données a été arrêté à 2025-04-25 20:18:45 CEST
 2025-04-25 20:19:00.182 CEST [16396] LOG:  le système de bases de données est prêt pour accepter les connexions
+2025-04-25 20:24:00.089 CEST [19876] LOG:  début du checkpoint : time
+2025-04-25 20:24:04.013 CEST [19876] LOG:  checkpoint complete: wrote 38 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.855 s, sync=0.039 s, total=3.932 s; sync files=11, longest=0.016 s, average=0.004 s; distance=202 kB, estimate=202 kB; lsn=0/1522218, redo lsn=0/1522188
