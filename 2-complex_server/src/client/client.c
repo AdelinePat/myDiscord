@@ -1,6 +1,6 @@
 #include "connector.h"
 
 int main() {
-    start_clients();
+    client_start();
     return 0;
 }

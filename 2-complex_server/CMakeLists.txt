@@ -17,7 +17,7 @@ add_executable(server
     src/common/utils.c
 )
 
-if(UNIX)
-    target_link_libraries(client pthread)
-    target_link_libraries(server pthread)
+if(WIN32)
+    target_link_libraries(client ws2_32 pthread)
+    target_link_libraries(server ws2_32 pthread)
 endif()

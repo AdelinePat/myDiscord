@@ -1,1 +1,0 @@
-/usr/bin/cc CMakeFiles/client.dir/src/client/client.c.o CMakeFiles/client.dir/src/client/connector.c.o CMakeFiles/client.dir/src/common/utils.c.o -o client  -lpthread 
