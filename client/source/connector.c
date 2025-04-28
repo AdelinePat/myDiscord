@@ -6,8 +6,8 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
-#include "../common/utils.h"
-#include "connector.h"
+#include "../../controller/header/utils.h"
+#include "../header/connector.h"
 
 #define PORT 8080
 

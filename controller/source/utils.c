@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "utils.h"
+#include "../header/utils.h"
 
 struct tm get_timestamp() {
     time_t now = time(NULL);

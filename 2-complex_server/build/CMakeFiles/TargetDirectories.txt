@@ -1,4 +1,0 @@
-C:/Users/josur/OneDrive/Documents/Vaults/Plateforme/Perso Hors-ligne/myDiscord/2-complex_server/build/CMakeFiles/client.dir
-C:/Users/josur/OneDrive/Documents/Vaults/Plateforme/Perso Hors-ligne/myDiscord/2-complex_server/build/CMakeFiles/server.dir
-C:/Users/josur/OneDrive/Documents/Vaults/Plateforme/Perso Hors-ligne/myDiscord/2-complex_server/build/CMakeFiles/edit_cache.dir
-C:/Users/josur/OneDrive/Documents/Vaults/Plateforme/Perso Hors-ligne/myDiscord/2-complex_server/build/CMakeFiles/rebuild_cache.dir

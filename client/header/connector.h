@@ -1,7 +1,7 @@
 #ifndef CONNECTOR_H
 #define CONNECTOR_H
 #include <winsock2.h>
-#include "utils.h"
+#include "../../controller/header/utils.h"
 
 void client_start();
 int login_attempts(SOCKET sock);
