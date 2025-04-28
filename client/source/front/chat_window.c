@@ -1,6 +1,7 @@
 #include <gtk/gtk.h>
 #include "../../header/login_window.h"
 #include "../../header/register_window.h"
+#include "../../header/chat_window.h"
 
 typedef struct {
     GtkWidget *chat_display;
@@ -8,15 +9,17 @@ typedef struct {
 } ChatWidgets;
 
 // === Called when the "Disconnect" button is clicked ===
-static void on_disconnect_clicked(GtkButton *button, gpointer user_data) {
-    GtkApplication *app = GTK_APPLICATION(user_data);
+static void on_disconnect_clicked(GtkButton *button,  Login_package_for_front *login_pack) {
+    GtkWidget **data = login_pack->data;
+    GtkApplication *app = GTK_APPLICATION(data);
+    Login_infos *login_info = login_pack->login_info;
 
     GtkWidget *window = gtk_widget_get_toplevel(GTK_WIDGET(button));
     if (GTK_IS_WINDOW(window)) {
         gtk_widget_destroy(window);  // Close the chat window
     }
 
-    show_login_window(app, user_data);  // Return to login screen
+    show_login_window(app, data, login_info);  // Return to login screen
 }
 
 // === Called when an emoji button is clicked inside the popover ===
@@ -60,7 +63,7 @@ static void on_connect_clicked(GtkButton *button, gpointer user_data) {
 }
 
 // === Displays the main chat window ===
-void show_chat_window(GtkApplication *app, gpointer user_data) {
+void show_chat_window(GtkApplication *app, gpointer user_data, Login_infos *login_info) {
     GtkWidget *window, *outer_box, *chat_box, *chat_display, *chat_entry;
     GtkWidget *scrolled_window, *channels_box, *user_label, *bottom_box;
     GtkWidget *connect_button, *disconnect_button;
@@ -136,6 +139,12 @@ void show_chat_window(GtkApplication *app, gpointer user_data) {
     bottom_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_widget_set_name(bottom_box, "bottom_box");
     gtk_box_pack_start(GTK_BOX(channels_box), bottom_box, FALSE, FALSE, 0);
+
+    Login_package_for_front *login_pack;
+    login_pack->data = g_new(GtkWidget *, 1);
+    login_pack->data[0] = GTK_WIDGET(app);
+    login_pack->login_info = login_info;
+
 
     disconnect_button = gtk_button_new_with_label("Déconnexion");
     gtk_widget_set_name(disconnect_button, "disconnect_button");

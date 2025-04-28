@@ -64,7 +64,7 @@ static void on_login_clicked(GtkButton *button, Login_package_for_front *login_p
     // Example: if (!validate_credentials(username, password)) { show a generic error and return; }
 
     gtk_widget_destroy(login_window); // Closes the login window
-    show_chat_window(app, data);           // Launches the chat window
+    show_chat_window(app, data, login_info);           // Launches the chat window
 }
 
 // === CALLBACK: When the "Register" button is clicked ===
