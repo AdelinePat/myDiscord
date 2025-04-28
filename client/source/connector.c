@@ -5,39 +5,49 @@
 #include <pthread.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
-
+#include "../header/client_front.h"
 #include "../../controller/header/utils.h"
 #include "../header/connector.h"
 
 #define PORT 8080
 
 int login_attempts(SOCKET sock) {
-    Login_infos login_info;
+    Login_infos *login_info = malloc(sizeof(Login_infos));
+
+    launch_front(login_info);
+
     int login_status;
     while (1) {
-        char username[64];
-        printf("Entrez votre identifiant : ");
-        scanf("%s", username);
+        // char username[64];
+        // printf("Entrez votre identifiant : ");
+        // scanf("%s", username);
 
-        char password[64];
-        printf("Entrez votre mot de passe : ");
-        scanf("%s", password);
+        // char password[64];
+        // printf("Entrez votre mot de passe : ");
+        // scanf("%s", password);
 
-        strncpy(login_info.username, username, sizeof(login_info.username));
-        strncpy(login_info.password, password, sizeof(login_info.password));
+        // strncpy(login_info.username, username, sizeof(login_info.username));
+        // strncpy(login_info.password, password, sizeof(login_info.password));
 
-        printf("[DEBUG] Envoi des informations de connexion - username: %s, password: %s\n", login_info.username, login_info.password);
+        printf("[DEBUG] Envoi des informations de connexion - username: %s, password: %s\n", login_info->username, login_info->password);
 
+        // envoie des infos du client
         send(sock, (char *)&login_info, sizeof(Login_infos), 0);
+
+        // check côté serveur si le user existe puis renvoie des infos (autant ça kick)
         recv(sock, (char *)&login_status, sizeof(int), 0);
 
+        
         if (login_status == 1) {
             printf("Connexion réussie\n");
+            free(login_info);
             return 0;
         } else {
             printf("Une erreur est survenue lors de la connexion\n");
         }
+        
     }
+    free(login_info);
     return 1;
 }
 
@@ -46,13 +56,13 @@ void send_message(Client_data *client, char text[1024]) {
     message.client_id = client->client_id;
     strncpy(message.message, text, sizeof(message.message));
     message.message[sizeof(message.message) - 1] = '\0';
-    printf("Infos envoyées : %s %d à %d\n", message.message, message.client_id, client->sock_pointer);
+    printf("Infos envoyées : %s %d à %lld\n", message.message, message.client_id, client->sock_pointer);
     send(client->sock_pointer, (char *)&message, sizeof(Message), 0);
 }
 
 void *receive_messages(void *arg) { // permet de recevoir une notification lorsqu'un message est broadcasté par le serveur
     SOCKET sock = *(SOCKET *)arg;
-    printf("socket :%d\n", sock);
+    printf("socket :%lld\n", sock);
     char buffer[1200];
     while (1) {
         int bytes = recv(sock, buffer, sizeof(buffer) - 1, 0);
@@ -90,11 +100,11 @@ void client_start() {
     recv(server_sock, (char *)client, sizeof(Client_data), 0);
     client->sock_pointer = server_sock;
 
-    printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%d\n", client->client_id, client->client_name, client->sock_pointer);
+    printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%lld\n", client->client_id, client->client_name, client->sock_pointer);
 
     SOCKET *sock_copy = malloc(sizeof(SOCKET));
     *sock_copy = server_sock;
-    printf("%d", *sock_copy);
+    printf("%lld", *sock_copy);
     pthread_t recv_thread;
     pthread_create(&recv_thread, NULL, receive_messages, (void *)sock_copy);
 

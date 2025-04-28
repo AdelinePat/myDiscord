@@ -3,7 +3,7 @@
 
 #include <gtk/gtk.h>
 
-void show_chat_window(GtkApplication *app);
+void show_chat_window(GtkApplication *app, gpointer user_data);
 
 
 
