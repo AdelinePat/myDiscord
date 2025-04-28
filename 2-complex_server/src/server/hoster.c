@@ -5,7 +5,7 @@
 #include <pthread.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#pragma comment(lib, "ws2_32.lib")
+// #pragma comment(lib, "ws2_32.lib")
 
 #include "utils.h"
 
@@ -68,7 +68,7 @@ void *handle_client(void *arg) {
 
     Server_state *state = client_package->server;
     Client_data *client = client_package->client;
-    SOCKET sock = client->sock_pointer;
+    SOCKET client_sock = client->sock_pointer;
 
     client->client_id = user_id;
     strcpy(client->client_name, "user"); // Ajout des données client avant de les envoyer après connexion
@@ -76,7 +76,7 @@ void *handle_client(void *arg) {
     Client_data *client_copy = malloc(sizeof(Client_data)); // On crée une copie de client pour ne pas créer de conflit dans la mémoire entre serveur et client
 
     *client_copy = *client;
-    send(sock, (char *)client_copy, sizeof(Client_data), 0);
+    send(client_sock, (char *)client_copy, sizeof(Client_data), 0);
     printf("[INFO] Client %d connecté.\n", client_package->client->client_id);
 
     pthread_mutex_lock(&state->lock);
@@ -85,8 +85,8 @@ void *handle_client(void *arg) {
 
     while (1) {
         Message *client_message = malloc(sizeof(Message));
-        printf("hihi1 sock : %d\n", sock);
-        int bytes = recv(sock, (char *)client_message, sizeof(Message), 0);
+        printf("hihi1 sock : %d\n", client_sock);
+        int bytes = recv(client_sock, (char *)client_message, sizeof(Message), 0);
         if (bytes <= 0) {
             printf("haha\n");
             break;
@@ -102,7 +102,7 @@ void *handle_client(void *arg) {
     }
 
     printf("[INFO] Client %d déconnecté.\n", client->client_id);
-    close(sock);
+    close(client_sock);
 
     pthread_mutex_lock(&state->lock);
     for (int i = 0; i < state->client_count; i++) {
@@ -129,12 +129,12 @@ void start_server() {
     state->client_count = 0;
     pthread_mutex_init(&state->lock, NULL);
 
-    int server_fd;
+    int server_sock;
     struct sockaddr_in server, client;
     int client_size = sizeof(client);
 
-    server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_fd == INVALID_SOCKET) {
+    server_sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (server_sock == INVALID_SOCKET) {
         printf("[ERROR] Erreur socket: %d\n", WSAGetLastError());
         exit(EXIT_FAILURE);
     }
@@ -143,22 +143,23 @@ void start_server() {
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_port = htons(PORT);
 
-    if (bind(server_fd, (struct sockaddr *)&server, sizeof(server)) == SOCKET_ERROR) {
+    if (bind(server_sock, (struct sockaddr *)&server, sizeof(server)) == SOCKET_ERROR) {
         printf("[ERROR] Erreur bind: %d\n", WSAGetLastError());
-        closesocket(server_fd);
+        closesocket(server_sock);
         exit(EXIT_FAILURE);
     }
 
-    if (listen(server_fd, 3) == SOCKET_ERROR) {
+    if (listen(server_sock, 3) == SOCKET_ERROR) {
         printf("[ERROR] Erreur listen: %d\n", WSAGetLastError());
-        closesocket(server_fd);
+        closesocket(server_sock);
         exit(EXIT_FAILURE);
     }
 
     printf("Serveur en écoute sur le port %d\n", PORT);
 
     SOCKET new_sock;
-    while ((new_sock = accept(server_fd, (struct sockaddr *)&client, &client_size))) {
+
+    while ((new_sock = accept(server_sock, (struct sockaddr *)&client, &client_size))) {
         Client_data *client_data = malloc(sizeof(Client_data));
         client_data->sock_pointer = new_sock;
 

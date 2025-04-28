@@ -70,30 +70,30 @@ void client_start() {
     WSADATA wsa;
     WSAStartup(MAKEWORD(2, 2), &wsa);
 
-    SOCKET sock;
+    SOCKET server_sock;
     struct sockaddr_in server;
 
-    sock = socket(AF_INET, SOCK_STREAM, 0);
+    server_sock = socket(AF_INET, SOCK_STREAM, 0);
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = inet_addr("127.0.0.1");
     server.sin_port = htons(PORT);
 
-    connect(sock, (struct sockaddr *)&server, sizeof(server));
-    if (login_attempts(sock) == 1) {
-        closesocket(sock);
+    connect(server_sock, (struct sockaddr *)&server, sizeof(server));
+    if (login_attempts(server_sock) == 1) {
+        closesocket(server_sock);
         WSACleanup();
         return;
     }
 
     Client_data *client = malloc(sizeof(Client_data));
 
-    recv(sock, (char *)client, sizeof(Client_data), 0);
-    client->sock_pointer = sock;
+    recv(server_sock, (char *)client, sizeof(Client_data), 0);
+    client->sock_pointer = server_sock;
 
     printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%d\n", client->client_id, client->client_name, client->sock_pointer);
 
     SOCKET *sock_copy = malloc(sizeof(SOCKET));
-    *sock_copy = sock;
+    *sock_copy = server_sock;
     printf("%d", *sock_copy);
     pthread_t recv_thread;
     pthread_create(&recv_thread, NULL, receive_messages, (void *)sock_copy);
@@ -111,7 +111,7 @@ void client_start() {
         }
     }
 
-    closesocket(sock);
+    closesocket(server_sock);
     free(sock_copy);
     free(client);
     WSACleanup();

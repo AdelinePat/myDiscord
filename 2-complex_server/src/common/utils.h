@@ -15,6 +15,7 @@ typedef struct {
 
 typedef struct {
     int client_id;
+    int channel_id;
     struct tm timestamp;
     char message[1024];
 } Message;
