@@ -56,3 +56,5 @@ fichier test
 *toto.c
 
 .env
+
+*.vscode
