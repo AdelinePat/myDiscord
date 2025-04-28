@@ -11,6 +11,10 @@
         "system_error": "c",
         "login_window.h": "c",
         "chat_window.h": "c",
-        "utils.h": "c"
+        "utils.h": "c",
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "span": "c"
     }
 }

@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
-#include "../header/chat_window.h"
-#include "../header/register_window.h"
+#include "../../header/chat_window.h"
+#include "../../header/register_window.h"
 
 // Function to load the CSS file
 void load_css(GtkApplication *app) {
@@ -36,31 +36,47 @@ void load_css(GtkApplication *app) {
 }
 
 // === CALLBACK: When the "Login" button is clicked ===
-static void on_login_clicked(GtkButton *button, gpointer user_data) {
-    GtkWidget **data = user_data;
+static void on_login_clicked(GtkButton *button, Login_package_for_front *login_pack) {
+    // GtkWidget **data = user_data;
+    // GtkWidget *login_window = data[0];
+    // GtkWidget *entry_user = data[1];
+    // GtkWidget *entry_pass = data[2];
+    // GtkApplication *app = GTK_APPLICATION(data[3]);
+    GtkWidget **data = login_pack->data;
     GtkWidget *login_window = data[0];
     GtkWidget *entry_user = data[1];
     GtkWidget *entry_pass = data[2];
     GtkApplication *app = GTK_APPLICATION(data[3]);
 
-    const gchar *username = gtk_entry_get_text(GTK_ENTRY(entry_user));
-    const gchar *password = gtk_entry_get_text(GTK_ENTRY(entry_pass));
+    const gchar *user_name = gtk_entry_get_text(GTK_ENTRY(entry_user));
+    const gchar *pass_word = gtk_entry_get_text(GTK_ENTRY(entry_pass));
 
-    g_print("Attempting login: %s / %s\n", username, password);
+    Login_infos *login_info = login_pack->login_info;
+    // login_info->username = user_name;
+    strcpy(login_info->username, user_name);
+    // login_info->password = pass_word;
+    strcpy(login_info->password, pass_word);
+
+    g_print("Attempting login: %s / %s\n", user_name, pass_word);
 
     // TODO: Call the validate_credentials() function here to check the format of the email/username and password with regex
     //       Do not specify if it's the email or password that is incorrect
     // Example: if (!validate_credentials(username, password)) { show a generic error and return; }
 
     gtk_widget_destroy(login_window); // Closes the login window
-    show_chat_window(app);           // Launches the chat window
+    show_chat_window(app, data);           // Launches the chat window
 }
 
 // === CALLBACK: When the "Register" button is clicked ===
-static void on_register_clicked(GtkButton *button, gpointer user_data) {
-    GtkWidget **data = user_data;
+static void on_register_clicked(GtkButton *button, Login_package_for_front *login_pack) {
+    
+    GtkWidget **data = login_pack->data;
     GtkWidget *login_window = data[0];
     GtkApplication *app = GTK_APPLICATION(data[3]);
+
+    // GtkWidget **data = user_data;
+    // GtkWidget *login_window = data[0];
+    // GtkApplication *app = GTK_APPLICATION(data[3]);
 
     g_print("Register link clicked!\n");
 
@@ -68,11 +84,11 @@ static void on_register_clicked(GtkButton *button, gpointer user_data) {
     gtk_widget_destroy(login_window);
 
     // Opens the registration window
-    show_register_window(app);
+    show_register_window(app, data, login_pack->login_info);
 }
 
 // === MAIN FUNCTION: Creates the login window ===
-void show_login_window(GtkApplication *app) {
+void show_login_window(GtkApplication *app,  gpointer user_data, Login_infos *login_info) {
     load_css(app);  // Load and apply the CSS
 
     GtkWidget *window = gtk_application_window_new(app);
@@ -158,15 +174,23 @@ void show_login_window(GtkApplication *app) {
     gtk_box_pack_start(GTK_BOX(hbox_buttons), btn_register, TRUE, TRUE, 5);
 
     // Allocate data to pass to the signal function
-    GtkWidget **data = g_new(GtkWidget *, 4);
-    data[0] = window;
-    data[1] = entry_user;
-    data[2] = entry_pass;
-    data[3] = GTK_WIDGET(app);
+    Login_package_for_front *login_pack;
+    login_pack->data = g_new(GtkWidget *, 4);
+    login_pack->login_info = login_info;
+
+    login_pack->data[0] = window;
+    login_pack->data[1] = entry_user;
+    login_pack->data[2] = entry_pass;
+    login_pack->data[3] = GTK_WIDGET(app);
+    // GtkWidget **data = g_new(GtkWidget *, 4);
+    // data[0] = window;
+    // data[1] = entry_user;
+    // data[2] = entry_pass;
+    // data[3] = GTK_WIDGET(app);
 
     // Connect signals for login and register buttons
-    g_signal_connect(btn_login, "clicked", G_CALLBACK(on_login_clicked), data);
-    g_signal_connect(btn_register, "clicked", G_CALLBACK(on_register_clicked), data); // Call on_register_clicked
+    g_signal_connect(btn_login, "clicked", G_CALLBACK(on_login_clicked), login_pack);
+    g_signal_connect(btn_register, "clicked", G_CALLBACK(on_register_clicked), login_pack); // Call on_register_clicked
 
     gtk_widget_show_all(window);
 }

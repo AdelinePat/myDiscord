@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
-#include "../header/login_window.h"
-#include "../header/register_window.h"
+#include "../../header/login_window.h"
+#include "../../header/register_window.h"
 
 typedef struct {
     GtkWidget *chat_display;
@@ -16,7 +16,7 @@ static void on_disconnect_clicked(GtkButton *button, gpointer user_data) {
         gtk_widget_destroy(window);  // Close the chat window
     }
 
-    show_login_window(app);  // Return to login screen
+    show_login_window(app, user_data);  // Return to login screen
 }
 
 // === Called when an emoji button is clicked inside the popover ===
@@ -60,7 +60,7 @@ static void on_connect_clicked(GtkButton *button, gpointer user_data) {
 }
 
 // === Displays the main chat window ===
-void show_chat_window(GtkApplication *app) {
+void show_chat_window(GtkApplication *app, gpointer user_data) {
     GtkWidget *window, *outer_box, *chat_box, *chat_display, *chat_entry;
     GtkWidget *scrolled_window, *channels_box, *user_label, *bottom_box;
     GtkWidget *connect_button, *disconnect_button;
