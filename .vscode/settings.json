@@ -10,6 +10,7 @@
         "libpq-fe.h": "c",
         "system_error": "c",
         "login_window.h": "c",
-        "chat_window.h": "c"
+        "chat_window.h": "c",
+        "utils.h": "c"
     }
 }

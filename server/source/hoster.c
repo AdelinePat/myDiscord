@@ -7,7 +7,8 @@
 #include <ws2tcpip.h>
 // #pragma comment(lib, "ws2_32.lib")
 
-#include "utils.h"
+// #include "../controller/header/utils.h"
+#include "../header/hoster.h"
 
 #define PORT 8080
 
@@ -85,7 +86,7 @@ void *handle_client(void *arg) {
 
     while (1) {
         Message *client_message = malloc(sizeof(Message));
-        printf("hihi1 sock : %d\n", client_sock);
+        printf("hihi1 sock : %lld\n", client_sock);
         int bytes = recv(client_sock, (char *)client_message, sizeof(Message), 0);
         if (bytes <= 0) {
             printf("haha\n");
