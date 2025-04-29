@@ -1,0 +1,20 @@
+{
+    "files.associations": {
+        "*.sqlbook": "sql",
+        "*.ndjson": "jsonl",
+        "*.dbclient-js": "javascript",
+        "login_widgets.h": "c",
+        "activate.h": "c",
+        "gtk.h": "c",
+        "register_window.h": "c",
+        "libpq-fe.h": "c",
+        "system_error": "c",
+        "login_window.h": "c",
+        "chat_window.h": "c",
+        "utils.h": "c",
+        "array": "c",
+        "string": "c",
+        "string_view": "c",
+        "span": "c"
+    }
+}
