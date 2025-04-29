@@ -13,6 +13,10 @@
 
 int login_attempts(SOCKET sock) {
     Login_infos *login_info = malloc(sizeof(Login_infos));
+    if (login_info == NULL) {
+        g_warning("Failed to allocate memory for login_pack.");
+        return; // Or handle the error in an appropriate way
+    }
 
     launch_front(login_info);
 
@@ -29,7 +33,7 @@ int login_attempts(SOCKET sock) {
         // strncpy(login_info.username, username, sizeof(login_info.username));
         // strncpy(login_info.password, password, sizeof(login_info.password));
 
-        printf("[DEBUG] Envoi des informations de connexion - username: %s, password: %s\n", login_info->username, login_info->password);
+        // printf("[DEBUG] Envoi des informations de connexion - username: %s, password: %s\n", login_info->username, login_info->password);
 
         // envoie des infos du client
         send(sock, (char *)&login_info, sizeof(Login_infos), 0);
@@ -103,6 +107,11 @@ void client_start() {
     printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%lld\n", client->client_id, client->client_name, client->sock_pointer);
 
     SOCKET *sock_copy = malloc(sizeof(SOCKET));
+    if (sock_copy == NULL) {
+        g_warning("Failed to allocate memory for login_pack.");
+        return; // Or handle the error in an appropriate way
+    }
+
     *sock_copy = server_sock;
     printf("%lld", *sock_copy);
     pthread_t recv_thread;
