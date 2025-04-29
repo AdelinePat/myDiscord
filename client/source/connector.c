@@ -15,7 +15,7 @@ int login_attempts(SOCKET sock) {
     Login_infos *login_info = malloc(sizeof(Login_infos));
     if (login_info == NULL) {
         g_warning("Failed to allocate memory for login_pack.");
-        return; // Or handle the error in an appropriate way
+        printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
     }
 
     launch_front(login_info);
@@ -109,7 +109,7 @@ void client_start() {
     SOCKET *sock_copy = malloc(sizeof(SOCKET));
     if (sock_copy == NULL) {
         g_warning("Failed to allocate memory for login_pack.");
-        return; // Or handle the error in an appropriate way
+        printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
     }
 
     *sock_copy = server_sock;
