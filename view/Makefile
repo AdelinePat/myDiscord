@@ -25,7 +25,7 @@ OBJ = $(SRC:.c=.o)
 EXEC = client_main.exe
 
 # Feuilles de style (copiées à l'installation)
-CSS = ./client/source/style.css
+CSS = ./style.css
 
 # Cible par défaut
 all: $(EXEC)
