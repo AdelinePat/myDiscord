@@ -114,13 +114,13 @@ void show_login_window(Login_package_for_front *login_pack) {
     printf("Je print l'app via login_pack dans show_login_window : %d\n", login_pack->app);
     GtkWidget *window = gtk_application_window_new(login_pack->app);
     printf("j'essaye de print window %d\n", window);
-    gtk_window_set_title(GTK_WINDOW(login_pack->data[0]), "Connexion");
-    gtk_window_set_default_size(GTK_WINDOW(login_pack->data[0]), 900, 600);
+    gtk_window_set_title(GTK_WINDOW(window), "Connexion");
+    gtk_window_set_default_size(GTK_WINDOW(window), 900, 600);
     printf("9. je créé la première fenêtre\n");
 
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_container_set_border_width(GTK_CONTAINER(vbox), 20);
-    gtk_container_add(GTK_CONTAINER(login_pack->data[0]), vbox);
+    gtk_container_add(GTK_CONTAINER(window), vbox);
     gtk_widget_set_name(vbox, "main_background");
 
     GtkWidget *title_label = gtk_label_new("WHISPR");

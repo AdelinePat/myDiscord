@@ -7,7 +7,8 @@
 //     show_login_window(app);  // Start with the login screen
 // }
 
-static void on_activate(Login_package_for_front *login_pack) {
+static void on_activate(GtkApplication *app, gpointer user_data) {
+    Login_package_for_front *login_pack = (Login_package_for_front *)user_data;
     printf("5. Dans le callback\n");
     // (void)user_data;
     // GtkApplication *app = login_pack->app;
@@ -17,7 +18,7 @@ static void on_activate(Login_package_for_front *login_pack) {
         g_warning("Login package is NULL.");
         printf("DANS ON ACTIVATE : login_pack est vide ? malloc failed");
     }
-    printf("Je print l'app via login_pack dans on_activate : %d\n", login_pack->app);
+    printf("Je print l'app via login_pack dans on_activate : %d\n", app);
     show_login_window(login_pack); // Start with the login screen
     printf("X. Après show_login_window\n");
 }
