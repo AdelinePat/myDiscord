@@ -1,6 +1,8 @@
-#include "../header/connector.h"
+// #include "../header/connector.h"
+#include "../header/client_front.h"
 
 int main() {
-    client_start();
+    launch_front();
+    // client_start();
     return 0;
 }
