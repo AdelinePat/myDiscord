@@ -68,7 +68,14 @@ static void on_connect_clicked(GtkButton *button, gpointer user_data) {
 }
 
 // === Displays the main chat window ===
-void show_chat_window(GtkApplication *app, gpointer user_data, Login_infos *login_info) {
+// void show_chat_window(GtkApplication *app, gpointer user_data, Login_infos *login_info) 
+void show_chat_window(Login_package_for_front *login_pack) {
+    GtkWidget **data = login_pack->data;
+    GtkApplication *app = login_pack->app;
+    Login_infos *login_info
+
+
+
     GtkWidget *window, *outer_box, *chat_box, *chat_display, *chat_entry;
     GtkWidget *scrolled_window, *channels_box, *user_label, *bottom_box;
     GtkWidget *connect_button, *disconnect_button;
@@ -154,7 +161,7 @@ void show_chat_window(GtkApplication *app, gpointer user_data, Login_infos *logi
     Login_package_for_front *login_pack = malloc(sizeof(Login_package_for_front));
     if (login_pack == NULL) {
         g_warning("Failed to allocate memory for login_pack.");
-        return; // Or handle the error in an appropriate way
+        printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
     }
 
     login_pack->app = app;
@@ -174,7 +181,7 @@ void show_chat_window(GtkApplication *app, gpointer user_data, Login_infos *logi
     ChatWidgets *chat_widgets = g_malloc(sizeof(ChatWidgets));
     if (chat_widgets == NULL) {
         g_warning("Failed to allocate memory for login_pack.");
-        return; // Or handle the error in an appropriate way
+        printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
     }
 
     chat_widgets->chat_display = chat_display;

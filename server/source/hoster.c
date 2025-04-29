@@ -77,7 +77,7 @@ void *handle_client(void *arg) {
     Client_data *client_copy = malloc(sizeof(Client_data)); // On crée une copie de client pour ne pas créer de conflit dans la mémoire entre serveur et client
     if (client_copy == NULL) {
         g_warning("Failed to allocate memory for login_pack.");
-        return; // Or handle the error in an appropriate way
+        printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
     }
 
     *client_copy = *client;
@@ -92,7 +92,7 @@ void *handle_client(void *arg) {
         Message *client_message = malloc(sizeof(Message));
         if (client_message == NULL) {
             g_warning("Failed to allocate memory for login_pack.");
-            return; // Or handle the error in an appropriate way
+            printf("Failed to allocate memory for login_pack.");; // Or handle the error in an appropriate way
         }
         
         printf("hihi1 sock : %lld\n", client_sock);
@@ -138,7 +138,7 @@ void start_server() {
     Server_state *state = malloc(sizeof(Server_state));
     if (state == NULL) {
         g_warning("Failed to allocate memory for login_pack.");
-        return; // Or handle the error in an appropriate way
+        printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
     }
 
     state->client_count = 0;
@@ -178,7 +178,7 @@ void start_server() {
         Client_data *client_data = malloc(sizeof(Client_data));
         if (client_data == NULL) {
             g_warning("Failed to allocate memory for login_pack.");
-            return; // Or handle the error in an appropriate way
+            printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
         }
 
         client_data->sock_pointer = new_sock;
@@ -186,7 +186,7 @@ void start_server() {
         Client_package *client_package = malloc(sizeof(Client_package));
         if (client_package == NULL) {
             g_warning("Failed to allocate memory for login_pack.");
-            return; // Or handle the error in an appropriate way
+            printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
         }
 
         client_package->client = client_data;
