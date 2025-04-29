@@ -35,7 +35,8 @@ static void on_confirm_clicked(GtkButton *button, Login_package_for_front *login
     g_print("Registration with: %s / %s / %s\n", username, email, password);
     g_print("Registration with (struct value): %s / %s / %s\n", login_info->username, login_info->email, login_info->password);
     gtk_widget_destroy(register_window);
-    show_login_window(app, data, login_info);
+    show_login_window(login_pack);
+    // show_login_window(app, data, login_info);
 }
 
 // === CALLBACK: When the "Retour" button is clicked ===
@@ -48,7 +49,8 @@ static void on_return_clicked(GtkButton *button, Login_package_for_front *login_
 
     Login_infos *login_info = login_pack->login_info;
     gtk_widget_destroy(register_window);
-    show_login_window(app, data, login_info);
+    // show_login_window(app, data, login_info);
+    show_login_window(login_pack);
 }
 
 // === MAIN FUNCTION: Creates the registration window ===

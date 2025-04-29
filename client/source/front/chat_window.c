@@ -13,7 +13,8 @@ static void on_disconnect_clicked(GtkButton *button,  Login_package_for_front *l
     // GtkWidget **data = login_pack->data;
     GtkApplication *app = login_pack->app;
     // login_pack->data = NULL;
-    gpointer data = NULL;
+    GtkWidget **data = NULL;
+    // gpointer data = NULL;
     // GtkApplication *app = GTK_APPLICATION(data);
     Login_infos *login_info = login_pack->login_info;
 
@@ -22,7 +23,8 @@ static void on_disconnect_clicked(GtkButton *button,  Login_package_for_front *l
         gtk_widget_destroy(window);  // Close the chat window
     }
 
-    show_login_window(app, data, login_info);  // Return to login screen
+    show_login_window(login_pack);
+    // show_login_window(app, data, login_info);  // Return to login screen
     g_free(login_pack->data);
     free(login_pack);
 }
@@ -72,9 +74,7 @@ static void on_connect_clicked(GtkButton *button, gpointer user_data) {
 void show_chat_window(Login_package_for_front *login_pack) {
     GtkWidget **data = login_pack->data;
     GtkApplication *app = login_pack->app;
-    Login_infos *login_info
-
-
+    Login_infos *login_info;
 
     GtkWidget *window, *outer_box, *chat_box, *chat_display, *chat_entry;
     GtkWidget *scrolled_window, *channels_box, *user_label, *bottom_box;
@@ -153,21 +153,20 @@ void show_chat_window(Login_package_for_front *login_pack) {
     gtk_box_pack_start(GTK_BOX(channels_box), bottom_box, FALSE, FALSE, 0);
 
     // Login_package_for_front *login_pack;
-    // login_pack->app = app;
     // // login_pack->data = g_new(GtkWidget *, 1);
     // // login_pack->data[0] = GTK_WIDGET(app);
     // login_pack->login_info = login_info;
 
-    Login_package_for_front *login_pack = malloc(sizeof(Login_package_for_front));
-    if (login_pack == NULL) {
-        g_warning("Failed to allocate memory for login_pack.");
-        printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
-    }
-
-    login_pack->app = app;
+    // Login_package_for_front *login_pack = malloc(sizeof(Login_package_for_front));
+    // if (login_pack == NULL) {
+    //     g_warning("Failed to allocate memory for login_pack.");
+    //     printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
+    // }
+    // GtkApplication *app = login_pack->app;
     // login_pack->data = g_new(GtkWidget *, 1);  // Optional: since you're not using it here
     // login_pack->data[0] = window;
-    login_pack->login_info = login_info;
+    // login_pack->login_info = login_info;
+    // Login_infos *login_info = login_pack->login_info;
 
 
     disconnect_button = gtk_button_new_with_label("Déconnexion");

@@ -18,10 +18,16 @@ int login_attempts(SOCKET sock) {
         printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
     }
 
-    launch_front(login_info);
+    int login_status = 0;
 
-    int login_status;
-    while (1) {
+    launch_front(login_info);
+    if (login_info->password != NULL && login_info->username != NULL)
+    {
+        login_status = 1;
+    }
+
+    while (login_status) {
+        
         // char username[64];
         // printf("Entrez votre identifiant : ");
         // scanf("%s", username);

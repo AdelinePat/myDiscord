@@ -66,7 +66,7 @@ static void on_login_clicked(GtkButton *button, Login_package_for_front *login_p
 
     gtk_widget_destroy(login_window); // Closes the login window
     printf("AVANT CHAT WINDOW : Ceci est le username %s et voici le pseudo %s", login_info->username, login_info->password);
-    show_chat_window(app, data, login_info);           // Launches the chat window
+    show_chat_window(login_pack);           // Launches the chat window
     // g_free(login_pack->data);
     // free(login_pack);
     printf("APRES CHAT WINDOW : Ceci est le username %s et voici le pseudo %s", login_info->username, login_info->password);
@@ -74,6 +74,8 @@ static void on_login_clicked(GtkButton *button, Login_package_for_front *login_p
 
 // === CALLBACK: When the "Register" button is clicked ===
 static void on_register_clicked(GtkButton *button, Login_package_for_front *login_pack) {
+
+    printf("j'ai cliqué sur login???");
     
     GtkWidget **data = login_pack->data;
     GtkWidget *login_window = data[0];
@@ -98,20 +100,27 @@ static void on_register_clicked(GtkButton *button, Login_package_for_front *logi
 // === MAIN FUNCTION: Creates the login window ===
 // void show_login_window(GtkApplication *app,  gpointer user_data, Login_infos *login_info)
 void show_login_window(Login_package_for_front *login_pack) {
-    GtkApplication *app = login_pack->app;
-    // gpointer user_data = login_pack->data;
+    printf("7. Dans show_login_window\n");
+    // GtkApplication *app = login_pack->app;
+    printf("8. je récupère gtkapplication app\n");
+    // GtkWidget **data = login_pack->data;
+    // data[0] = window;
     // Login_infos *login_info = login_pack->login_info;
 
-    load_css(app);  // Load and apply the CSS
+    load_css(login_pack->app);  // Load and apply the CSS
 
 
-    GtkWidget *window = gtk_application_window_new(app);
-    gtk_window_set_title(GTK_WINDOW(window), "Connexion");
-    gtk_window_set_default_size(GTK_WINDOW(window), 900, 600);
+    // window = login_pack->data[0]
+    printf("Je print l'app via login_pack dans show_login_window : %d\n", login_pack->app);
+    GtkWidget *window = gtk_application_window_new(login_pack->app);
+    printf("j'essaye de print window %d\n", window);
+    gtk_window_set_title(GTK_WINDOW(login_pack->data[0]), "Connexion");
+    gtk_window_set_default_size(GTK_WINDOW(login_pack->data[0]), 900, 600);
+    printf("9. je créé la première fenêtre\n");
 
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_container_set_border_width(GTK_CONTAINER(vbox), 20);
-    gtk_container_add(GTK_CONTAINER(window), vbox);
+    gtk_container_add(GTK_CONTAINER(login_pack->data[0]), vbox);
     gtk_widget_set_name(vbox, "main_background");
 
     GtkWidget *title_label = gtk_label_new("WHISPR");
@@ -195,13 +204,13 @@ void show_login_window(Login_package_for_front *login_pack) {
     // }
 
     login_pack->data = g_new(GtkWidget *, 4);
-    login_pack->login_info = login_info;
+    Login_infos *login_info = login_pack->login_info;
 
     login_pack->data[0] = window;
     login_pack->data[1] = entry_user;
     login_pack->data[2] = entry_pass;
     // login_pack->data[3] = GTK_WIDGET(app);
-    login_pack->app = app;
+    // GtkApplication *app = login_pack->app;
     // GtkWidget **data = g_new(GtkWidget *, 4);
     // data[0] = window;
     // data[1] = entry_user;
