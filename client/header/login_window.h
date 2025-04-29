@@ -2,7 +2,7 @@
 #define LOGIN_WINDOW_H
 #include <gtk/gtk.h>
 #include "../../controller/header/utils.h"
-#define STYLE_PATH "../../source/front/style.css"
+#define STYLE_PATH "./client/source/front/style.css"
 
 void show_login_window(GtkApplication *app, gpointer user_data, Login_infos *login_info);
 // TODO: Declare the validate_credentials function here once created

@@ -75,6 +75,10 @@ void *handle_client(void *arg) {
     strcpy(client->client_name, "user"); // Ajout des données client avant de les envoyer après connexion
 
     Client_data *client_copy = malloc(sizeof(Client_data)); // On crée une copie de client pour ne pas créer de conflit dans la mémoire entre serveur et client
+    if (client_copy == NULL) {
+        g_warning("Failed to allocate memory for login_pack.");
+        return; // Or handle the error in an appropriate way
+    }
 
     *client_copy = *client;
     send(client_sock, (char *)client_copy, sizeof(Client_data), 0);
@@ -86,6 +90,11 @@ void *handle_client(void *arg) {
 
     while (1) {
         Message *client_message = malloc(sizeof(Message));
+        if (client_message == NULL) {
+            g_warning("Failed to allocate memory for login_pack.");
+            return; // Or handle the error in an appropriate way
+        }
+        
         printf("hihi1 sock : %lld\n", client_sock);
         int bytes = recv(client_sock, (char *)client_message, sizeof(Message), 0);
         if (bytes <= 0) {
@@ -127,6 +136,11 @@ void start_server() {
     WSAStartup(MAKEWORD(2, 2), &wsa);
     
     Server_state *state = malloc(sizeof(Server_state));
+    if (state == NULL) {
+        g_warning("Failed to allocate memory for login_pack.");
+        return; // Or handle the error in an appropriate way
+    }
+
     state->client_count = 0;
     pthread_mutex_init(&state->lock, NULL);
 
@@ -162,9 +176,19 @@ void start_server() {
 
     while ((new_sock = accept(server_sock, (struct sockaddr *)&client, &client_size))) {
         Client_data *client_data = malloc(sizeof(Client_data));
+        if (client_data == NULL) {
+            g_warning("Failed to allocate memory for login_pack.");
+            return; // Or handle the error in an appropriate way
+        }
+
         client_data->sock_pointer = new_sock;
 
         Client_package *client_package = malloc(sizeof(Client_package));
+        if (client_package == NULL) {
+            g_warning("Failed to allocate memory for login_pack.");
+            return; // Or handle the error in an appropriate way
+        }
+
         client_package->client = client_data;
         client_package->server = state;
         
