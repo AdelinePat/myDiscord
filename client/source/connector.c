@@ -28,7 +28,7 @@ int login_attempts(Login_package_for_front *login_pack) {
 
     // printf("[DEBUG] Envoi des informations de connexion - username: %s, password: %s\n", login_info.username, login_info.password);
 
-    send(login_pack->client->sock_pointer, (char *)&login_pack->login_info, sizeof(Login_infos), 0);
+    send(login_pack->client->sock_pointer, (char *)login_pack->login_info, sizeof(Login_infos), 0);
     recv(login_pack->client->sock_pointer, (char *)&login_status, sizeof(int), 0);
 
     if (login_status == 1) {
