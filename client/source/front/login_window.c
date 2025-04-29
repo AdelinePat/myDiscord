@@ -179,7 +179,7 @@ void show_login_window(Login_package_for_front *login_pack) {
     gtk_box_pack_start(GTK_BOX(hbox_buttons), btn_register, TRUE, TRUE, 5);
 
     // Allocate data to pass to the signal function
-    GtkWidget **data = g_new(GtkWidget *, 4);
+    login_pack->data = g_new(GtkWidget *, 10);
     login_pack->data[0] = window;
     login_pack->data[1] = entry_user;
     login_pack->data[2] = entry_pass;
