@@ -41,7 +41,7 @@ SERVER_EXEC = server.exe
 CLIENT_EXEC = client.exe
 
 # Feuilles de style (copiées à l'installation)
-CSS = ./view/style.css
+CSS = ./client/source/front/style.css
 
 # Cible par défaut
 all: $(SERVER_EXEC) $(CLIENT_EXEC)

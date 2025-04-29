@@ -44,6 +44,7 @@ typedef struct {
 typedef struct {
     Login_infos *login_info;
     GtkWidget **data;
+    GtkApplication *app;  
 } Login_package_for_front;
 
 #endif

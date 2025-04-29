@@ -10,8 +10,11 @@ typedef struct {
 
 // === Called when the "Disconnect" button is clicked ===
 static void on_disconnect_clicked(GtkButton *button,  Login_package_for_front *login_pack) {
-    GtkWidget **data = login_pack->data;
-    GtkApplication *app = GTK_APPLICATION(data);
+    // GtkWidget **data = login_pack->data;
+    GtkApplication *app = login_pack->app;
+    // login_pack->data = NULL;
+    gpointer data = NULL;
+    // GtkApplication *app = GTK_APPLICATION(data);
     Login_infos *login_info = login_pack->login_info;
 
     GtkWidget *window = gtk_widget_get_toplevel(GTK_WIDGET(button));
@@ -20,6 +23,8 @@ static void on_disconnect_clicked(GtkButton *button,  Login_package_for_front *l
     }
 
     show_login_window(app, data, login_info);  // Return to login screen
+    g_free(login_pack->data);
+    free(login_pack);
 }
 
 // === Called when an emoji button is clicked inside the popover ===
@@ -140,21 +145,38 @@ void show_chat_window(GtkApplication *app, gpointer user_data, Login_infos *logi
     gtk_widget_set_name(bottom_box, "bottom_box");
     gtk_box_pack_start(GTK_BOX(channels_box), bottom_box, FALSE, FALSE, 0);
 
-    Login_package_for_front *login_pack;
-    login_pack->data = g_new(GtkWidget *, 1);
-    login_pack->data[0] = GTK_WIDGET(app);
+    // Login_package_for_front *login_pack;
+    // login_pack->app = app;
+    // // login_pack->data = g_new(GtkWidget *, 1);
+    // // login_pack->data[0] = GTK_WIDGET(app);
+    // login_pack->login_info = login_info;
+
+    Login_package_for_front *login_pack = malloc(sizeof(Login_package_for_front));
+    if (login_pack == NULL) {
+        g_warning("Failed to allocate memory for login_pack.");
+        return; // Or handle the error in an appropriate way
+    }
+
+    login_pack->app = app;
+    // login_pack->data = g_new(GtkWidget *, 1);  // Optional: since you're not using it here
+    // login_pack->data[0] = window;
     login_pack->login_info = login_info;
 
 
     disconnect_button = gtk_button_new_with_label("Déconnexion");
     gtk_widget_set_name(disconnect_button, "disconnect_button");
-    g_signal_connect(disconnect_button, "clicked", G_CALLBACK(on_disconnect_clicked), app);
+    g_signal_connect(disconnect_button, "clicked", G_CALLBACK(on_disconnect_clicked), login_pack);
     gtk_box_pack_start(GTK_BOX(bottom_box), disconnect_button, FALSE, FALSE, 0);
 
     gtk_widget_show_all(emoji_grid);
     g_signal_connect(emoji_button, "clicked", G_CALLBACK(on_emoji_button_clicked), emoji_popover);
 
     ChatWidgets *chat_widgets = g_malloc(sizeof(ChatWidgets));
+    if (chat_widgets == NULL) {
+        g_warning("Failed to allocate memory for login_pack.");
+        return; // Or handle the error in an appropriate way
+    }
+
     chat_widgets->chat_display = chat_display;
     chat_widgets->chat_entry = chat_entry;
     g_signal_connect(chat_entry, "activate", G_CALLBACK(on_chat_entry_activate), chat_widgets);
