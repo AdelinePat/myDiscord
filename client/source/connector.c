@@ -11,17 +11,26 @@
 
 #define PORT 8080
 
-int login_attempts(SOCKET sock) {
+int login_attempts(SOCKET sock)
+{
     Login_infos *login_info = malloc(sizeof(Login_infos));
-    if (login_info == NULL) {
+    if (login_info == NULL)
+    {
         g_warning("Failed to allocate memory for login_pack.");
         printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
     }
 
-    launch_front(login_info);
+    int login_status = 0;
 
-    int login_status;
-    while (1) {
+    launch_front(login_info);
+    if (login_info->password != NULL && login_info->username != NULL)
+    {
+        login_status = 1;
+    }
+
+    while (login_status)
+    {
+
         // char username[64];
         // printf("Entrez votre identifiant : ");
         // scanf("%s", username);
@@ -36,26 +45,30 @@ int login_attempts(SOCKET sock) {
         // printf("[DEBUG] Envoi des informations de connexion - username: %s, password: %s\n", login_info->username, login_info->password);
 
         // envoie des infos du client
+        printf("start send login_info\n");
         send(sock, (char *)&login_info, sizeof(Login_infos), 0);
-
+        printf("wait reponse server\n");
         // check côté serveur si le user existe puis renvoie des infos (autant ça kick)
         recv(sock, (char *)&login_status, sizeof(int), 0);
+        printf("reponse server done\n");
 
-        
-        if (login_status == 1) {
+        if (login_status == 1)
+        {
             printf("Connexion réussie\n");
             free(login_info);
             return 0;
-        } else {
+        }
+        else
+        {
             printf("Une erreur est survenue lors de la connexion\n");
         }
-        
     }
     free(login_info);
     return 1;
 }
 
-void send_message(Client_data *client, char text[1024]) {
+void send_message(Client_data *client, char text[1024])
+{
     Message message;
     message.client_id = client->client_id;
     strncpy(message.message, text, sizeof(message.message));
@@ -64,15 +77,20 @@ void send_message(Client_data *client, char text[1024]) {
     send(client->sock_pointer, (char *)&message, sizeof(Message), 0);
 }
 
-void *receive_messages(void *arg) { // permet de recevoir une notification lorsqu'un message est broadcasté par le serveur
+void *receive_messages(void *arg)
+{ // permet de recevoir une notification lorsqu'un message est broadcasté par le serveur
     SOCKET sock = *(SOCKET *)arg;
     printf("socket :%lld\n", sock);
     char buffer[1200];
-    while (1) {
+    while (1)
+    {
         int bytes = recv(sock, buffer, sizeof(buffer) - 1, 0);
-        if (bytes > 0) {
+        if (bytes > 0)
+        {
             printf("%s", buffer);
-        } else {
+        }
+        else
+        {
             printf("haha\n");
             break;
         }
@@ -80,7 +98,8 @@ void *receive_messages(void *arg) { // permet de recevoir une notification lorsq
     return NULL;
 }
 
-void client_start() {
+void client_start()
+{
     WSADATA wsa;
     WSAStartup(MAKEWORD(2, 2), &wsa);
 
@@ -93,7 +112,8 @@ void client_start() {
     server.sin_port = htons(PORT);
 
     connect(server_sock, (struct sockaddr *)&server, sizeof(server));
-    if (login_attempts(server_sock) == 1) {
+    if (login_attempts(server_sock) == 1)
+    {
         closesocket(server_sock);
         WSACleanup();
         return;
@@ -107,7 +127,8 @@ void client_start() {
     printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%lld\n", client->client_id, client->client_name, client->sock_pointer);
 
     SOCKET *sock_copy = malloc(sizeof(SOCKET));
-    if (sock_copy == NULL) {
+    if (sock_copy == NULL)
+    {
         g_warning("Failed to allocate memory for login_pack.");
         printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
     }
@@ -120,11 +141,15 @@ void client_start() {
     printf("Tu peux envoyer un message :\n");
 
     char message[1024];
-    while (fgets(message, sizeof(message), stdin)) {
+    while (fgets(message, sizeof(message), stdin))
+    {
         size_t len = strlen(message);
-        if (len == 1) {
+        if (len == 1)
+        {
             printf("[DEBUG] Message vide, on continue sans envoyer\n");
-        } else {
+        }
+        else
+        {
             message[len - 1] = '\0';
             send_message(client, message);
         }
