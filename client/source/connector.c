@@ -1,44 +1,44 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-
-#include "../../controller/header/utils.h"
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include <string.h>
+// #include <unistd.h>
+// #include <pthread.h>
+// #include <winsock2.h>
+// #include <ws2tcpip.h>
+// #include "../../controller/header/utils.h"
 #include "../header/connector.h"
+#include "../header/client_front.h"
 
 #define PORT 8080
 
-int login_attempts(SOCKET sock) {
-    Login_infos login_info;
+int login_attempts(Login_package_for_front *login_pack) {
+    // Login_infos login_info;
     int login_status;
-    while (1) {
-        char username[64];
-        printf("Entrez votre identifiant : ");
-        scanf("%s", username);
 
-        char password[64];
-        printf("Entrez votre mot de passe : ");
-        scanf("%s", password);
+    // char username[64];
+    // printf("Entrez votre identifiant : ");
+    // scanf("%s", username);
 
-        strncpy(login_info.username, username, sizeof(login_info.username));
-        strncpy(login_info.password, password, sizeof(login_info.password));
+    // char password[64];
+    // printf("Entrez votre mot de passe : ");
+    // scanf("%s", password);
 
-        printf("[DEBUG] Envoi des informations de connexion - username: %s, password: %s\n", login_info.username, login_info.password);
+    // strncpy(login_info.username, username, sizeof(login_info.username));
+    // strncpy(login_info.password, password, sizeof(login_info.password));
 
-        send(sock, (char *)&login_info, sizeof(Login_infos), 0);
-        recv(sock, (char *)&login_status, sizeof(int), 0);
+    // printf("[DEBUG] Envoi des informations de connexion - username: %s, password: %s\n", login_info.username, login_info.password);
 
-        if (login_status == 1) {
-            printf("Connexion réussie\n");
-            return 0;
-        } else {
-            printf("Une erreur est survenue lors de la connexion\n");
-        }
+    send(login_pack->client->sock_pointer, (char *)&login_pack->login_info, sizeof(Login_infos), 0);
+    recv(login_pack->client->sock_pointer, (char *)&login_status, sizeof(int), 0);
+
+    if (login_status == 1) {
+        printf("Connexion réussie\n");
+        return 0;
+    } else {
+        printf("Une erreur est survenue lors de la connexion\n");
+        return 1;
     }
-    return 1;
+    
 }
 
 void send_message(Client_data *client, char text[1024]) {
@@ -66,7 +66,7 @@ void *receive_messages(void *arg) { // permet de recevoir une notification lorsq
     return NULL;
 }
 
-void client_start() {
+SOCKET client_start() {
     WSADATA wsa;
     WSAStartup(MAKEWORD(2, 2), &wsa);
 
@@ -79,40 +79,45 @@ void client_start() {
     server.sin_port = htons(PORT);
 
     connect(server_sock, (struct sockaddr *)&server, sizeof(server));
-    if (login_attempts(server_sock) == 1) {
-        closesocket(server_sock);
-        WSACleanup();
-        return;
+    return server_sock;
     }
 
-    Client_data *client = malloc(sizeof(Client_data));
+// void after_login()
+//     {
+//     if (login_attempts(server_sock) == 1) {
+//         closesocket(server_sock);
+//         WSACleanup();
+//         return;
+//     }
 
-    recv(server_sock, (char *)client, sizeof(Client_data), 0);
-    client->sock_pointer = server_sock;
+//     Client_data *client = malloc(sizeof(Client_data));
 
-    printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%d\n", client->client_id, client->client_name, client->sock_pointer);
+//     recv(server_sock, (char *)client, sizeof(Client_data), 0);
+//     client->sock_pointer = server_sock;
 
-    SOCKET *sock_copy = malloc(sizeof(SOCKET));
-    *sock_copy = server_sock;
-    printf("%d", *sock_copy);
-    pthread_t recv_thread;
-    pthread_create(&recv_thread, NULL, receive_messages, (void *)sock_copy);
+//     printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%d\n", client->client_id, client->client_name, client->sock_pointer);
 
-    printf("Tu peux envoyer un message :\n");
+//     SOCKET *sock_copy = malloc(sizeof(SOCKET));
+//     *sock_copy = server_sock;
+//     printf("%d", *sock_copy);
+//     pthread_t recv_thread;
+//     pthread_create(&recv_thread, NULL, receive_messages, (void *)sock_copy);
 
-    char message[1024];
-    while (fgets(message, sizeof(message), stdin)) {
-        size_t len = strlen(message);
-        if (len == 1) {
-            printf("[DEBUG] Message vide, on continue sans envoyer\n");
-        } else {
-            message[len - 1] = '\0';
-            send_message(client, message);
-        }
-    }
+//     printf("Tu peux envoyer un message :\n");
 
-    closesocket(server_sock);
-    free(sock_copy);
-    free(client);
-    WSACleanup();
-}
+//     char message[1024];
+//     while (fgets(message, sizeof(message), stdin)) {
+//         size_t len = strlen(message);
+//         if (len == 1) {
+//             printf("[DEBUG] Message vide, on continue sans envoyer\n");
+//         } else {
+//             message[len - 1] = '\0';
+//             send_message(client, message);
+//         }
+//     }
+
+//     closesocket(server_sock);
+//     free(sock_copy);
+//     free(client);
+//     WSACleanup();
+// }

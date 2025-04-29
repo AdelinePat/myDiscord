@@ -25,7 +25,9 @@ int login_attempts(Client_package *client_package) {
             printf("[ERROR] Taille des données reçues incorrecte. Attendu %zu, reçu %d\n", sizeof(Login_infos), bytes);
             break;
         }
-        printf("Infos reçues\n");
+        
+        // bytes = "\0";
+        printf("Infos reçues : user : << %s >>, pass : << %s >>\n", login_info.username, login_info.password);
 
         if (strcmp(login_info.username, "user") == 0 && strcmp(login_info.password, "pass") == 0) { // condition de vérification des identifiants
             // query ici pour l'id unique et le pseudo du client

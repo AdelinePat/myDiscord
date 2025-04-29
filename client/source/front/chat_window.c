@@ -1,6 +1,7 @@
-#include <gtk/gtk.h>
-#include "../header/login_window.h"
-#include "../header/register_window.h"
+#include "../../header/client_front.h"
+#include "../../header/chat_window.h"
+#include "../../header/login_window.h"
+#include "../../header/register_window.h"
 
 typedef struct {
     GtkWidget *chat_display;
@@ -9,14 +10,15 @@ typedef struct {
 
 // === Called when the "Disconnect" button is clicked ===
 static void on_disconnect_clicked(GtkButton *button, gpointer user_data) {
-    GtkApplication *app = GTK_APPLICATION(user_data);
+    // GtkApplication *app = GTK_APPLICATION(user_data);
+    Login_package_for_front *login_pack = (Login_package_for_front *)user_data;
 
     GtkWidget *window = gtk_widget_get_toplevel(GTK_WIDGET(button));
     if (GTK_IS_WINDOW(window)) {
         gtk_widget_destroy(window);  // Close the chat window
     }
 
-    show_login_window(app);  // Return to login screen
+    show_login_window(login_pack);  // Return to login screen
 }
 
 // === Called when an emoji button is clicked inside the popover ===
@@ -60,12 +62,15 @@ static void on_connect_clicked(GtkButton *button, gpointer user_data) {
 }
 
 // === Displays the main chat window ===
-void show_chat_window(GtkApplication *app) {
+void show_chat_window(Login_package_for_front *login_pack) {
+    // Login_package_for_front *login_pack = login_pack;
+    // GtkApplication **app = login_pack->app;
+
     GtkWidget *window, *outer_box, *chat_box, *chat_display, *chat_entry;
     GtkWidget *scrolled_window, *channels_box, *user_label, *bottom_box;
     GtkWidget *connect_button, *disconnect_button;
 
-    window = gtk_application_window_new(app);
+    window = gtk_application_window_new(login_pack->app);
     gtk_window_set_title(GTK_WINDOW(window), "Whisper");
     gtk_window_set_default_size(GTK_WINDOW(window), 1280, 720);
 
@@ -139,7 +144,7 @@ void show_chat_window(GtkApplication *app) {
 
     disconnect_button = gtk_button_new_with_label("Déconnexion");
     gtk_widget_set_name(disconnect_button, "disconnect_button");
-    g_signal_connect(disconnect_button, "clicked", G_CALLBACK(on_disconnect_clicked), app);
+    g_signal_connect(disconnect_button, "clicked", G_CALLBACK(on_disconnect_clicked), login_pack);
     gtk_box_pack_start(GTK_BOX(bottom_box), disconnect_button, FALSE, FALSE, 0);
 
     gtk_widget_show_all(emoji_grid);
