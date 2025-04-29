@@ -91,13 +91,19 @@ static void on_register_clicked(GtkButton *button, Login_package_for_front *logi
 
     // Opens the registration window
     show_register_window(app, data, login_pack->login_info);
-    g_free(login_pack->data);
-    free(login_pack);
+    // g_free(login_pack->data);
+    // free(login_pack);
 }
 
 // === MAIN FUNCTION: Creates the login window ===
-void show_login_window(GtkApplication *app,  gpointer user_data, Login_infos *login_info) {
+// void show_login_window(GtkApplication *app,  gpointer user_data, Login_infos *login_info)
+void show_login_window(Login_package_for_front *login_pack) {
+    GtkApplication *app = login_pack->app;
+    // gpointer user_data = login_pack->data;
+    // Login_infos *login_info = login_pack->login_info;
+
     load_css(app);  // Load and apply the CSS
+
 
     GtkWidget *window = gtk_application_window_new(app);
     gtk_window_set_title(GTK_WINDOW(window), "Connexion");
@@ -182,11 +188,11 @@ void show_login_window(GtkApplication *app,  gpointer user_data, Login_infos *lo
     gtk_box_pack_start(GTK_BOX(hbox_buttons), btn_register, TRUE, TRUE, 5);
 
     // Allocate data to pass to the signal function
-    Login_package_for_front *login_pack = malloc(sizeof(Login_package_for_front));
-    if (login_pack == NULL) {
-        g_warning("Failed to allocate memory for login_pack.");
-        return; // Or handle the error in an appropriate way
-    }
+    // Login_package_for_front *login_pack = malloc(sizeof(Login_package_for_front));
+    // if (login_pack == NULL) {
+    //     g_warning("Failed to allocate memory for login_pack.");
+    //     printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
+    // }
 
     login_pack->data = g_new(GtkWidget *, 4);
     login_pack->login_info = login_info;
