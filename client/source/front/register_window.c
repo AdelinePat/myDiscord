@@ -1,31 +1,31 @@
-#include <gtk/gtk.h>
+// #include <gtk/gtk.h>
+#include "../../header/client_front.h"
+#include "../../header/register_window.h"
 #include "../../header/login_window.h"
 
 // === CALLBACK: When the "Confirmer" button is clicked ===
-static void on_confirm_clicked(GtkButton *button, Login_package_for_front *login_pack) {
+static void on_confirm_clicked(GtkButton *button, gpointer user_data) {
+    Login_package_for_front *login_pack = (Login_package_for_front *)user_data;
     (void)button;
 
     GtkWidget **data = login_pack->data;
-    // GtkWidget **data = user_data;
     GtkWidget *register_window = data[0];
     GtkWidget *entry_user = data[1];
     GtkWidget *entry_email = data[2];
     GtkWidget *entry_pass = data[3];
     GtkWidget *entry_confirm_pass = data[4];
-    GtkApplication *app = GTK_APPLICATION(data[5]);
+    // GtkApplication *app = GTK_APPLICATION(data[5]);
 
     const gchar *username = gtk_entry_get_text(GTK_ENTRY(entry_user));
     const gchar *email = gtk_entry_get_text(GTK_ENTRY(entry_email));
     const gchar *password = gtk_entry_get_text(GTK_ENTRY(entry_pass));
     const gchar *confirm_password = gtk_entry_get_text(GTK_ENTRY(entry_confirm_pass));
 
-    Login_infos *login_info = login_pack->login_info;
-
-    strcpy(login_info->username, username);
-    strcpy(login_info->email, email);
-    strcpy(login_info->password, password);
-    strcpy(login_info->confirm_password, confirm_password);
-    login_info->login_register = 1; // login_register = NULL or 0 if login and 1 or anything if first time register
+    strcpy(login_pack->login_info->username, username);
+    strcpy(login_pack->login_info->email, email);
+    strcpy(login_pack->login_info->password, password);
+    strcpy(login_pack->login_info->confirm_password, confirm_password);
+    login_pack->login_info->login_register = 1;
 
     if (g_strcmp0(password, confirm_password) != 0) {
         g_print("Passwords do not match!\n");
@@ -33,29 +33,27 @@ static void on_confirm_clicked(GtkButton *button, Login_package_for_front *login
     }
 
     g_print("Registration with: %s / %s / %s\n", username, email, password);
-    g_print("Registration with (struct value): %s / %s / %s\n", login_info->username, login_info->email, login_info->password);
     gtk_widget_destroy(register_window);
     show_login_window(login_pack);
-    // show_login_window(app, data, login_info);
 }
 
 // === CALLBACK: When the "Retour" button is clicked ===
-static void on_return_clicked(GtkButton *button, Login_package_for_front *login_pack) {
+static void on_return_clicked(GtkButton *button, gpointer user_data) {
     (void)button;
-    GtkWidget **data = login_pack->data;
-    // GtkWidget **data = user_data;
-    GtkWidget *register_window = data[0];
-    GtkApplication *app = GTK_APPLICATION(data[5]);
+    Login_package_for_front *login_pack = (Login_package_for_front *)user_data;
 
-    Login_infos *login_info = login_pack->login_info;
+    GtkWidget **data = login_pack->data;
+    GtkWidget *register_window = data[0];
+    // GtkApplication *app = GTK_APPLICATION(data[5]);
+
     gtk_widget_destroy(register_window);
-    // show_login_window(app, data, login_info);
     show_login_window(login_pack);
 }
 
 // === MAIN FUNCTION: Creates the registration window ===
-void show_register_window(GtkApplication *app, Login_infos *login_info) {
-    GtkWidget *window = gtk_application_window_new(app);
+void show_register_window(Login_package_for_front *login_pack) {
+
+    GtkWidget *window = gtk_application_window_new(login_pack->app);
     gtk_window_set_title(GTK_WINDOW(window), "Create Account");
     gtk_window_set_default_size(GTK_WINDOW(window), 900, 600);
 
@@ -167,22 +165,19 @@ void show_register_window(GtkApplication *app, Login_infos *login_info) {
     gtk_box_pack_start(GTK_BOX(hbox_buttons), btn_confirm, TRUE, TRUE, 5);
     gtk_box_pack_start(GTK_BOX(hbox_buttons), btn_return, TRUE, TRUE, 5);
 
-    Login_package_for_front *login_pack;
-    login_pack->data = g_new(GtkWidget *, 6);
-    login_pack->login_info = login_info;
-
-    // login_pack->data[0] = window;
-    // login_pack->data[1] = entry_user;
-    // login_pack->data[2] = entry_pass;
-    // login_pack->data[3] = GTK_WIDGET(app);
-
     // GtkWidget **data = g_new(GtkWidget *, 6);
+    // data[0] = window;
+    // data[1] = entry_user;
+    // data[2] = entry_email;
+    // data[3] = entry_pass;
+    // data[4] = entry_confirm_pass;
+    // data[5] = GTK_WIDGET(app);
+    // login_pack->data[] = data;
     login_pack->data[0] = window;
     login_pack->data[1] = entry_user;
     login_pack->data[2] = entry_email;
     login_pack->data[3] = entry_pass;
     login_pack->data[4] = entry_confirm_pass;
-    login_pack->data[5] = GTK_WIDGET(app);
 
     g_signal_connect(btn_confirm, "clicked", G_CALLBACK(on_confirm_clicked), login_pack);
     g_signal_connect(btn_return, "clicked", G_CALLBACK(on_return_clicked), login_pack);

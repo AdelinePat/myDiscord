@@ -1,60 +1,38 @@
-#include <gtk/gtk.h>
-#include "../../header/login_window.h"
+// #include <gtk/gtk.h>
 #include "../../header/client_front.h"
-
-// static void on_activate(GtkApplication *app, gpointer user_data) {
-//     (void)user_data;
-//     show_login_window(app);  // Start with the login screen
-// }
+// #include "./header/login_window.h"
 
 static void on_activate(GtkApplication *app, gpointer user_data) {
     Login_package_for_front *login_pack = (Login_package_for_front *)user_data;
-    printf("5. Dans le callback\n");
     // (void)user_data;
-    // GtkApplication *app = login_pack->app;
-    // gpointer user_data = login_pack->data;
-    // Login_infos login_info = login_pack->login_info;
-    if (login_pack == NULL) {
-        g_warning("Login package is NULL.");
-        printf("DANS ON ACTIVATE : login_pack est vide ? malloc failed");
-    }
-    printf("Je print l'app via login_pack dans on_activate : %d\n", app);
-    show_login_window(login_pack); // Start with the login screen
-    printf("X. Après show_login_window\n");
+    show_login_window(login_pack);  // Start with the login screen
 }
 
-int launch_front(Login_infos *login_info) {
-    printf("1. je suis dans launch front avant de démarrer l'application\n");
+int launch_front() {
     GtkApplication *app = gtk_application_new("org.my.discord", G_APPLICATION_DEFAULT_FLAGS);
-    printf("2. j'ai tenté d'instancier gtk_application_new\n");
 
-    gpointer user_data = NULL;
     Login_package_for_front *login_pack = malloc(sizeof(Login_package_for_front));
     if (login_pack == NULL) {
         g_warning("Login package is NULL.");
         printf("login_pack est vide ? malloc failed");
     }
-
-    printf("3. gpointer créé ? login_package_for_front créé ?\n");
-
-    if (login_pack == NULL) {
+    login_pack->client = malloc(sizeof(Client_data));
+    if (login_pack->client == NULL) {
         g_warning("Failed to allocate memory for login_pack.");
-        printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
+        printf("Failed to allocate memory for login_pack->client."); // Or handle the error in an appropriate way
     }
 
-    login_pack->login_info = login_info;
-    // GtkApplication *app = login_pack->app;
-    login_pack->app = app;
-    printf("Je print l'app native : %d\n", app);
-    printf("Je print l'app via login_pack : %d\n", login_pack->app);
-    // login_pack->data = user_data;
-    // GtkWidget **data = login_pack->data;
-    login_pack->data = NULL;
+    login_pack->login_info = malloc(sizeof(Login_infos));
+    // Login_infos *login_info = malloc(sizeof(Login_infos));
+    if (login_pack->login_info == NULL) {
+        g_warning("Failed to allocate memory for login_pack.");
+        printf("Failed to allocate memory for login_pack->login_info."); // Or handle the error in an appropriate way
+    }
 
-    printf("4. Juste avant le callback\n");
+    // login_pack->login_info = login_info;
+    login_pack->app = app;
+    
     g_signal_connect(app, "activate", G_CALLBACK(on_activate), (void *)login_pack);
-    printf("Après le callback'\n");
-    // int status = g_application_run(G_APPLICATION(app), argc, argv);
     int status = g_application_run(G_APPLICATION(app), 0, NULL);
     g_object_unref(app);
     return status;

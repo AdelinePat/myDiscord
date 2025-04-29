@@ -1,6 +1,9 @@
-#include <gtk/gtk.h>
+// #include <gtk/gtk.h>
+#include "../../header/client_front.h"
+#include "../../header/login_window.h"
 #include "../../header/chat_window.h"
 #include "../../header/register_window.h"
+#include "../../header/connector.h"
 
 // Function to load the CSS file
 void load_css(GtkApplication *app)
@@ -18,7 +21,7 @@ void load_css(GtkApplication *app)
     // Load the CSS file (replace "style.css" with the path to your CSS file)
     GFile *css_file = g_file_new_for_path(STYLE_PATH);
     GError *error = NULL;
-    g_print("Mon CSS file path pour debug: %s\n", g_file_get_path(css_file));
+
     if (!gtk_css_provider_load_from_file(css_provider, css_file, &error))
     {
         g_warning("Failed to load CSS: %s", error->message);
@@ -37,56 +40,44 @@ void load_css(GtkApplication *app)
 }
 
 // === CALLBACK: When the "Login" button is clicked ===
-static void on_login_clicked(GtkButton *button, Login_package_for_front *login_pack)
+static void on_login_clicked(GtkButton *button, gpointer user_data)
 {
-    // GtkWidget **data = user_data;
-    // GtkWidget *login_window = data[0];
-    // GtkWidget *entry_user = data[1];
-    // GtkWidget *entry_pass = data[2];
-    // GtkApplication *app = GTK_APPLICATION(data[3]);^
-    g_print("Start : on_login_clicked \n");
+    Login_package_for_front *login_pack = (Login_package_for_front *)user_data;
 
-    GtkWidget **data = login_pack->data;
-    GtkWidget *login_window = data[0];
-    GtkWidget *entry_user = data[1];
-    GtkWidget *entry_pass = data[2];
-    // GtkApplication *app = GTK_APPLICATION(data[3]);
+    // GtkWidget **data = user_data;
+    GtkWidget *login_window = login_pack->data[0];
+    GtkWidget *entry_user = login_pack->data[1];
+    GtkWidget *entry_pass = login_pack->data[2];
     GtkApplication *app = login_pack->app;
 
-    const gchar *user_name = gtk_entry_get_text(GTK_ENTRY(entry_user));
-    const gchar *pass_word = gtk_entry_get_text(GTK_ENTRY(entry_pass));
+    const gchar *username = gtk_entry_get_text(GTK_ENTRY(entry_user));
+    const gchar *password = gtk_entry_get_text(GTK_ENTRY(entry_pass));
 
-    Login_infos *login_info = login_pack->login_info;
-    // login_info->username = user_name;
-    strcpy(login_info->username, user_name);
-    // login_info->password = pass_word;
-    strcpy(login_info->password, pass_word);
+    strcpy(login_pack->login_info->username, username);
+    strcpy(login_pack->login_info->password, password);
+    login_pack->login_info->login_register = 0;
 
-    g_print("Attempting login: %s / %s\n", user_name, pass_word);
+    g_print("Attempting login: %s / %s\n", login_pack->login_info->username, login_pack->login_info->password);
 
+    int login_status = login_attempts(login_pack);
     // TODO: Call the validate_credentials() function here to check the format of the email/username and password with regex
     //       Do not specify if it's the email or password that is incorrect
     // Example: if (!validate_credentials(username, password)) { show a generic error and return; }
-
-    gtk_widget_destroy(login_window); // Closes the login window
-    printf("AVANT CHAT WINDOW : Ceci est le username %s et voici le pseudo %s", login_info->username, login_info->password);
-    show_chat_window(login_pack); // Launches the chat window
-    // g_free(login_pack->data);
-    // free(login_pack);
-    printf("APRES CHAT WINDOW : Ceci est le username %s et voici le pseudo %s", login_info->username, login_info->password);
-    g_print("End : on_login_clicked \n");
+    if (login_status == 0)
+    {
+        gtk_widget_destroy(login_window); // Closes the login window
+        show_chat_window(login_pack);     // Launches the chat window
+    }
 }
 
 // === CALLBACK: When the "Register" button is clicked ===
-static void on_register_clicked(GtkButton *button, Login_package_for_front *login_pack)
+static void on_register_clicked(GtkButton *button, gpointer user_data)
 {
+    Login_package_for_front *login_pack = (Login_package_for_front *)user_data;
 
-    printf("j'ai cliqué sur login???");
-
-    GtkWidget **data = login_pack->data;
-    GtkWidget *login_window = data[0];
-    // GtkApplication *app = GTK_APPLICATION(data[3]);
-    GtkApplication *app = login_pack->app;
+    // GtkWidget **data = user_data;
+    GtkWidget *login_window = login_pack->data[0];
+    // GtkApplication *app = login_pack->app;
 
     // GtkWidget **data = user_data;
     // GtkWidget *login_window = data[0];
@@ -98,31 +89,20 @@ static void on_register_clicked(GtkButton *button, Login_package_for_front *logi
     gtk_widget_destroy(login_window);
 
     // Opens the registration window
-    show_register_window(app, data, login_pack->login_info);
-    // g_free(login_pack->data);
-    // free(login_pack);
+    show_register_window(login_pack);
 }
 
 // === MAIN FUNCTION: Creates the login window ===
-// void show_login_window(GtkApplication *app,  gpointer user_data, Login_infos *login_info)
 void show_login_window(Login_package_for_front *login_pack)
 {
-    printf("7. Dans show_login_window\n");
-    // GtkApplication *app = login_pack->app;
-    printf("8. je récupère gtkapplication app\n");
-    // GtkWidget **data = login_pack->data;
-    // data[0] = window;
-    // Login_infos *login_info = login_pack->login_info;
+    // Login_package_for_front *login_pack = login_pack;
+    login_pack->client->sock_pointer = client_start();
 
     load_css(login_pack->app); // Load and apply the CSS
 
-    // window = login_pack->data[0]
-    printf("Je print l'app via login_pack dans show_login_window : %d\n", login_pack->app);
     GtkWidget *window = gtk_application_window_new(login_pack->app);
-    printf("j'essaye de print window %d\n", window);
     gtk_window_set_title(GTK_WINDOW(window), "Connexion");
     gtk_window_set_default_size(GTK_WINDOW(window), 900, 600);
-    printf("9. je créé la première fenêtre\n");
 
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_container_set_border_width(GTK_CONTAINER(vbox), 20);
@@ -203,25 +183,11 @@ void show_login_window(Login_package_for_front *login_pack)
     gtk_box_pack_start(GTK_BOX(hbox_buttons), btn_register, TRUE, TRUE, 5);
 
     // Allocate data to pass to the signal function
-    // Login_package_for_front *login_pack = malloc(sizeof(Login_package_for_front));
-    // if (login_pack == NULL) {
-    //     g_warning("Failed to allocate memory for login_pack.");
-    //     printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
-    // }
-
-    login_pack->data = g_new(GtkWidget *, 4);
-    Login_infos *login_info = login_pack->login_info;
-
+    login_pack->data = g_new(GtkWidget *, 10);
     login_pack->data[0] = window;
     login_pack->data[1] = entry_user;
     login_pack->data[2] = entry_pass;
-    // login_pack->data[3] = GTK_WIDGET(app);
-    // GtkApplication *app = login_pack->app;
-    // GtkWidget **data = g_new(GtkWidget *, 4);
-    // data[0] = window;
-    // data[1] = entry_user;
-    // data[2] = entry_pass;
-    // data[3] = GTK_WIDGET(app);
+    // login_pack->data = data;
 
     // Connect signals for login and register buttons
     g_signal_connect(btn_login, "clicked", G_CALLBACK(on_login_clicked), login_pack);
