@@ -1,3 +1,8 @@
+**/build
+build/*
+
+**/bin
+bin/*
 # Prerequisites
 *.d
 
@@ -56,5 +61,3 @@ fichier test
 *toto.c
 
 .env
-
-*.vscode

@@ -1,0 +1,166 @@
+#main_background {
+    background-color: #3A383E;
+}
+
+#main_background #ui_title {
+    font-size: 70px;  
+}
+#ui_title {
+    color: #CFBEF8;
+    font-weight: 900;
+}
+
+#main_background label {
+    color: #d6d6d6;
+    font: bold 12pt "Arial";  /* Applies bold Arial font with size 12pt */
+}
+
+
+
+#user_label {
+    font: italic 12pt 'Arial';
+    color: white;
+}
+
+#chat_entry {
+    background-color: #5f4d5b;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+#chat_display {
+    background-color: #534C62;
+    color: #D6D6D6;
+    font: 12pt 'Arial';
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Targets the internal content of GtkTextView */
+#chat_display text,
+#chat_display text view,
+#chat_display textview {
+    background-color: #3A383E;
+    color: #D6D6D6;
+}
+
+#disconnect_button {
+    background-image: linear-gradient(to right, #D3FBD8, #9A80E9);
+    color: #2E2C31;
+    font: bold 14pt 'Arial';
+    border-radius: 4px;
+    padding: 10px 20px;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)
+}
+
+#disconnect_button:hover {
+    background-color: #CFBEF8;
+}
+
+#emoji_popover {
+    background-color: #222;
+    border-radius: 8px;
+}
+
+#emoji_button {
+    font-size: 20px;
+}
+
+#left_button label {
+    color: #2E2C31;
+}
+
+#left_button {
+    background: #D3FBD8;
+    color: #2E2C31; /* Dark color for text */
+    font: bold 14pt 'Arial'; /* Bold Arial font */
+    border-radius: 15px; /* Rounded corners */
+    padding: 10px 20px; /* Button padding */
+    border: none; /* No border */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Matches chat window button shadow */
+    background-color: #D3FBD8;
+    padding: 20px 20px; /* Button padding */
+}
+
+#left_button:hover {
+    background-color: #2E2C31;
+    /* Lighter background on hover */
+}
+
+#left_button:hover label {
+    color: #D3FBD8;
+}
+
+#right_button {
+    background: #9A80E9;
+    border: none; /* No border */
+    border-radius: 15px; /* Rounded corners */
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#right_button label {
+    color: #2E2C31;
+}
+
+#right_button:hover {
+    background-color: #2E2C31;
+}
+
+#right_button:hover label {
+    color: #9A80E9;
+}
+
+#confirm_button label {
+    color: #2E2C31;
+}
+
+#confirm_button {
+    background: #9A80E9;
+    border: none; /* No border */
+    border-radius: 20px; /* Rounded corners */
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-image: linear-gradient(to right, #D3FBD8, #9A80E9);
+    color: black;
+    font: bold 14pt 'Arial';
+    border-radius: 15px;
+}
+
+#confirm_button:hover {
+    background-color: #2E2C31;
+}
+
+#return_button {
+    background-image: linear-gradient(to right, #D3FBD8, #9A80E9);
+    color: #2E2C31;
+    font: bold 14pt 'Arial';
+    border-radius: 15px;
+    padding: 10px 20px;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: black;
+}
+
+#return_button:hover {
+    background-color: #2E2C31;
+}
+
+#Placeholder
+{
+    background-color: #534C62;
+    color: #D6D6D6;
+    font: 12pt 'Arial';
+    border: none;
+    padding: 10px;
+    border-radius: 20px;
+}
+
+#separator_line {
+    background-color: #534C62;  /* Defines the outline color of the separator line */
+}
