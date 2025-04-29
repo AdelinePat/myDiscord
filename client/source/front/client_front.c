@@ -11,19 +11,25 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
 int launch_front() {
     GtkApplication *app = gtk_application_new("org.my.discord", G_APPLICATION_DEFAULT_FLAGS);
 
-    Login_infos *login_info = malloc(sizeof(Login_infos));
-    if (login_info == NULL) {
-        g_warning("Failed to allocate memory for login_pack.");
-        printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
-    }
-
     Login_package_for_front *login_pack = malloc(sizeof(Login_package_for_front));
     if (login_pack == NULL) {
         g_warning("Login package is NULL.");
         printf("login_pack est vide ? malloc failed");
     }
+    login_pack->client = malloc(sizeof(Client_data));
+    if (login_pack->client == NULL) {
+        g_warning("Failed to allocate memory for login_pack.");
+        printf("Failed to allocate memory for login_pack->client."); // Or handle the error in an appropriate way
+    }
 
-    login_pack->login_info = login_info;
+    login_pack->login_info = malloc(sizeof(Login_infos));
+    // Login_infos *login_info = malloc(sizeof(Login_infos));
+    if (login_pack->login_info == NULL) {
+        g_warning("Failed to allocate memory for login_pack.");
+        printf("Failed to allocate memory for login_pack->login_info."); // Or handle the error in an appropriate way
+    }
+
+    // login_pack->login_info = login_info;
     login_pack->app = app;
     
     g_signal_connect(app, "activate", G_CALLBACK(on_activate), (void *)login_pack);

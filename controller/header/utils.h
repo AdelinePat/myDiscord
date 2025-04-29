@@ -50,7 +50,7 @@ typedef struct {
     Client_data *client;
     Message message_send;
     Login_infos *login_info;
-    GtkWidget *data[10];
+    GtkWidget **data;
     GtkApplication *app;  
 } Login_package_for_front;
 
