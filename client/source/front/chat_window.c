@@ -200,7 +200,7 @@ void show_chat_window(Login_package_for_front *login_pack)
 
     GtkCssProvider *provider = gtk_css_provider_new();
 
-    GFile *css_file = g_file_new_for_path("./client/source/front/style.css");
+    GFile *css_file = g_file_new_for_path(.5);
     GError *error = NULL;
     gtk_css_provider_load_from_file(provider, css_file, &error);
     if (error)
