@@ -5,7 +5,7 @@
 // #include <gtk/gtk.h>
 #include <unistd.h> // pour send()
 #include <string.h> // pour strlen()
-#include "../../controller/header/utils.h"
+#include "../../../controller/header/utils.h"
 
 typedef struct
 {
