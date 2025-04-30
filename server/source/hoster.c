@@ -109,20 +109,16 @@ void *handle_client(void *arg)
     while (1)
     {
         Message *client_message = malloc(sizeof(Message));
-        printf("hihi1 sock : %lld\n", client_sock);
         int bytes = recv(client_sock, (char *)client_message, sizeof(Message), 0);
         if (bytes <= 0)
         {
-            printf("haha\n");
+            printf("haha, le client a disparu\n");
             break;
         }
-        printf("hihi2\n");
         client_message->timestamp = get_timestamp();
 
         // Enregistrement du message dans la db
-        printf("hihi3\n");
         broadcast_message(state, client_message); // Envoie d'une notification de nouveau message dans la db aux clients connectés
-        printf("hihi4\n");
         free(client_message);
     }
 

@@ -37,34 +37,31 @@ int login_attempts(Login_package_for_front *login_pack) {
 
     if (login_status == 1) {
         printf("Connexion réussie\n");
+        receive_client_data(login_pack);
         return 0;
     } else {
         printf("Une erreur est survenue lors de la connexion\n");
         return 1;
     }
-    
-    // Client_data *client = malloc(sizeof(Client_data));
+}
 
-    SOCKET *socket_client = malloc(sizeof(SOCKET));
-    *socket_client = login_pack->client->sock_pointer;
+void receive_client_data(Login_package_for_front *login_pack) {
+    int socket_client = login_pack->client->sock_pointer;
 
-    recv(*socket_client, (char *)login_pack->client, sizeof(Client_data), 0);
-    login_pack->client->sock_pointer = *socket_client; // when receive, socket client is changed, this line is for change it back
-    // login_pack->client = client;
-
-    // recv(login_pack->client->sock_pointer, (char *)client, sizeof(Client_data), 0);
-    // client->sock_pointer = login_pack->client->sock_pointer;
-    // login_pack->client = client;
+    recv(socket_client, (char *)login_pack->client, sizeof(Client_data), 0);
+    login_pack->client->sock_pointer = socket_client; // when receive, socket client is changed, this line is for change it back
 
     printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%d\n", login_pack->client->client_id, login_pack->client->client_name, login_pack->client->sock_pointer);
 
+    broadcast_notifications_receiver_start(login_pack);
+}
+
+void broadcast_notifications_receiver_start(Login_package_for_front *login_pack) {
     SOCKET *sock_copy = malloc(sizeof(SOCKET));
     *sock_copy = login_pack->client->sock_pointer;
-    printf("%d", *sock_copy);
+    printf("%lld", *sock_copy);
     pthread_t recv_thread;
     pthread_create(&recv_thread, NULL, receive_messages, (void *)sock_copy);
-
-    free(socket_client);
 }
 
 int register_attempts(Login_package_for_front *login_pack) {
@@ -86,7 +83,7 @@ void send_message(Client_data *client, char text[1024]) {
     message.client_id = client->client_id;
     strncpy(message.message, text, sizeof(message.message));
     message.message[sizeof(message.message) - 1] = '\0';
-    printf("Infos envoyées : %s %d à %d\n", message.message, message.client_id, client->sock_pointer);
+    printf("Infos envoyées : %s de %d à %lld\n", message.message, message.client_id, client->sock_pointer);
     send(client->sock_pointer, (char *)&message, sizeof(Message), 0);
 }
 
@@ -103,6 +100,7 @@ void *receive_messages(void *arg) { // permet de recevoir une notification lorsq
             break;
         }
     }
+    free(arg);
     return NULL;
 }
 
@@ -119,6 +117,7 @@ SOCKET client_start() {
     server.sin_port = htons(PORT);
 
     connect(server_sock, (struct sockaddr *)&server, sizeof(server));
+    printf("la sock serveur : %lld", server_sock);
     return server_sock;
     }
 
