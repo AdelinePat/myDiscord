@@ -10,6 +10,7 @@
 // #include "../controller/header/utils.h"
 #include "../header/hoster.h"
 #include "../header/database_communication.h"
+#include "../header/db_connection.h"
 
 #define PORT 8080
 
@@ -17,10 +18,10 @@ int login_attempts(Client_package *client_package)
 {
     while (1)
     {
-        Login_infos login_info;
+        Login_infos *login_info = malloc(sizeof(Login_infos));
         int login_status = 0;
-        int bytes = recv(client_package->client->sock_pointer, (char *)&login_info, sizeof(Login_infos), 0);
-        
+        int bytes = recv(client_package->client->sock_pointer, (char *)login_info, sizeof(Login_infos), 0);
+        client_package->login_info = login_info;
         if (bytes == SOCKET_ERROR)
         {
             printf("[ERROR] Erreur lors de la réception de Login_infos, code %d\n", WSAGetLastError());
@@ -34,9 +35,9 @@ int login_attempts(Client_package *client_package)
 
         // bytes = "\0";
         // fonction_nimporte(login_info);
-        printf("Infos reçues : user : << %s >>, pass : << %s >>\n", login_info.username, login_info.password);
+        printf("Infos reçues : user : << %s >>, pass : << %s >>\n", client_package->login_info->username, client_package->login_info->password);
         printf("\navant le if : Valeur de login_status cote serveur : %d\n", login_status);
-        if (connection_query(login_info) == 1)
+        if (connection_query(client_package->login_info) == 1)
         { // condition de vérification des identifiants
             // query ici pour l'id unique et le pseudo du client
             login_status = 1;
@@ -75,6 +76,7 @@ void *handle_client(void *arg)
 {
     Client_package *client_package = (Client_package *)arg;
 
+
     int user_id = login_attempts(client_package);
 
     if (user_id < 0)
@@ -89,6 +91,7 @@ void *handle_client(void *arg)
     Client_data *client = client_package->client;
     SOCKET client_sock = client->sock_pointer;
 
+    // update_login_info(client_package->login_info);
     client->client_id = user_id;
     strcpy(client->client_name, "user"); // Ajout des données client avant de les envoyer après connexion
 
@@ -189,12 +192,15 @@ void start_server()
 
     while ((new_sock = accept(server_sock, (struct sockaddr *)&client, &client_size)))
     {
+
         Client_data *client_data = malloc(sizeof(Client_data));
         client_data->sock_pointer = new_sock;
 
+        // Login_infos *login_info = malloc(sizeof(Login_infos));
         Client_package *client_package = malloc(sizeof(Client_package));
         client_package->client = client_data;
         client_package->server = state;
+        // client_package->login_info = login_info;
 
         pthread_t thread;
         pthread_create(&thread, NULL, handle_client, (void *)client_package);

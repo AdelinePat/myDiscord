@@ -24,7 +24,7 @@ CFLAGS += $(PQ_CFLAGS)
 # SERVER_DIR = ./server 
 # CLIENT_DIR = ./client
 
-SERVER_SRC = ./server/source/server.c ./server/source/hoster.c ./controller/source/utils.c ./server/source/database_communication.c
+SERVER_SRC = ./server/source/server.c ./server/source/hoster.c ./controller/source/utils.c ./server/source/database_communication.c ./server/source/db_connection.c
 CLIENT_SRC = ./client/source/client.c ./client/source/connector.c ./controller/source/utils.c ./client/source/front/client_front.c ./client/source/front/login_window.c ./client/source/front/register_window.c ./client/source/front/chat_window.c 
 
 # SERVER_OBJ = $(SERVER_DIR)/server.o

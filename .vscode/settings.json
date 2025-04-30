@@ -18,6 +18,9 @@
         "string_view": "c",
         "span": "c",
         "format": "c",
-        "connector.h": "c"
+        "connector.h": "c",
+        "database_communication.h": "c",
+        "stdio.h": "c",
+        "hoster.h": "c"
     }
 }

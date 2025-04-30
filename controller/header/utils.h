@@ -18,7 +18,7 @@ typedef struct {
     int client_id;
     int channel_id;
     struct tm timestamp;
-    char message[1024];
+    char message[999];
 } Message;
 
 typedef struct
@@ -35,12 +35,6 @@ typedef struct
     int client_count;
 } Server_state;
 
-typedef struct
-{
-    Client_data *client;
-    Server_state *server;
-} Client_package;
-
 typedef struct {
     char username[64];
     char password[64];
@@ -48,6 +42,14 @@ typedef struct {
     char email[100];
     int login_register;
 } Login_infos;
+
+typedef struct
+{
+    Client_data *client;
+    Server_state *server;
+    Message message_send;
+    Login_infos *login_info;
+} Client_package;
 
 typedef struct {
     Client_data *client;
