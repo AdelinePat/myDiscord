@@ -55,6 +55,11 @@ int connection_query(Login_infos* login_info) {
     return query_result;
 }
 
-// void update_login_info(Login_infos *login_info) {
-
+// void first_update_client_package(Client_package *client_package) {
+//     client_package->login_info->current_channel = 1;
+//     client_package->login_info->user_id = un int; // => resultat requête  
+//     strcpy(client_package->login_info->username, resultatrequete);
+//     strcpy(client_package->login_info->password, "");
+//     strcpy(client_package->login_info->confirm_password, "");
+//     strcpy(client_package->login_info->email, "");
 // }
