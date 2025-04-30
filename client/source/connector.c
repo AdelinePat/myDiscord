@@ -39,6 +39,33 @@ int login_attempts(Login_package_for_front *login_pack) {
         return 1;
     }
     
+    Client_data *client = malloc(sizeof(Client_data));
+
+    recv(server_sock, (char *)client, sizeof(Client_data), 0);
+    client->sock_pointer = server_sock;
+    login_pack->client = client;
+
+    printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%d\n", client->client_id, client->client_name, client->sock_pointer);
+
+    SOCKET *sock_copy = malloc(sizeof(SOCKET));
+    *sock_copy = server_sock;
+    printf("%d", *sock_copy);
+    pthread_t recv_thread;
+    pthread_create(&recv_thread, NULL, receive_messages, (void *)sock_copy);
+}
+
+int register_attempts(Login_package_for_front *login_pack) {
+    int register_status;
+    send(login_pack->client->sock_pointer, (char *)login_pack->login_info, sizeof(Login_infos), 0);
+    recv(login_pack->client->sock_pointer, (char *)&login_status, sizeof(int), 0);
+
+    if (register_status == 1) {
+        printf("Création de compte réussie\n");
+        return 0;
+    } else {
+        printf("Une erreur est survenue lors de l'inscription'\n");
+        return 1; // in front : go back to login
+    }
 }
 
 void send_message(Client_data *client, char text[1024]) {
