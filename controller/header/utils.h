@@ -41,6 +41,8 @@ typedef struct {
     char confirm_password[64];
     char email[100];
     int login_register;
+    int user_id;
+    int current_channel;
 } Login_infos;
 
 typedef struct

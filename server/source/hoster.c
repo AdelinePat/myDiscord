@@ -91,7 +91,7 @@ void *handle_client(void *arg)
     Client_data *client = client_package->client;
     SOCKET client_sock = client->sock_pointer;
 
-    // update_login_info(client_package->login_info);
+    // update_login_info(client_package);
     client->client_id = user_id;
     strcpy(client->client_name, "user"); // Ajout des données client avant de les envoyer après connexion
 
