@@ -200,13 +200,13 @@ void start_server()
 
         Client_data *client_data = malloc(sizeof(Client_data));
         client_data->sock_pointer = new_sock;
-        Channel_info *channels = malloc(sizeof(Channel_info));
+        // Channel_info *channels = malloc(sizeof(Channel_info));
 
         // Login_infos *login_info = malloc(sizeof(Login_infos));
         Client_package *client_package = malloc(sizeof(Client_package));
         client_package->client = client_data;
         client_package->server = state;
-        client_package->client->channels = &channels;
+        // client_package->client->channels = &channels;
         // client_package->login_info = login_info;
 
         pthread_t thread;

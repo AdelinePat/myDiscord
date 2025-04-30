@@ -32,7 +32,7 @@ typedef struct
     SOCKET sock_pointer;
     char client_name[64];
     int client_id;
-    Channel_info **channels;
+    Channel_info *channels;
 
 } Client_data;
 
@@ -58,7 +58,8 @@ typedef struct
 {
     Client_data *client;
     Server_state *server;
-    Message message_send; // create to a message_list struct
+    Message *message_list;// create to a message_list struct
+    Message message_send; 
     Login_infos *login_info;
 } Client_package;
 

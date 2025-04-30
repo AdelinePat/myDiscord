@@ -5,7 +5,7 @@ WHERE (user_name = 'jolyne' OR email = 'jolyne') AND password = '789012';
 SELECT channel_id, channel_title
 FROM channels
 JOIN channels_access USING(channel_id)
-WHERE user_id = 2 AND role_title != 'ban';
+WHERE user_id = 3 AND role_title != 'ban';
 
 -- INSERT INTO channels_access (user_id, channel_id, role_title)
 -- VALUES (2, 2, 'membre'), (1, 2, 'membre');

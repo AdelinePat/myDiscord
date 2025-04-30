@@ -7,5 +7,9 @@
 #include <string.h>
 
 void get_channel_list(Client_package *client_package);
+PGresult* generate_channel_list_query(PGconn *conn, Client_package *client_package);
+void get_full_chat_content(Client_package *client_package);
+PGresult* generate_full_chat_content_query(PGconn *conn, Client_package *client_package);
+
 
 #endif
