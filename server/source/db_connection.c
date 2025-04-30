@@ -88,10 +88,26 @@ void get_user_data(Client_package* client_package) {
         exit(1);
     }
 
+    printf("user_name before query %s\n", client_package->login_info->username);
+    printf("password before query %s\n", client_package->login_info->password);
+
     snprintf(query, final_size_query,
         "SELECT * FROM users\n\
     WHERE user_name = '%s' AND password = '%s'", client_package->login_info->username, client_package->login_info->password);
     
+    res = PQexec(conn, query);
+    free(query);
+
+    ExecStatusType resStatus = PQresultStatus(res);
+    
+    if (resStatus != PGRES_TUPLES_OK)
+    {
+        printf("il y a eu une erreur dans la requête");
+        PQclear(res);
+        PQfinish(conn);
+        exit(1);
+    }
+
     int rows = PQntuples(res);
     int cols = PQnfields(res);
 
@@ -103,16 +119,18 @@ void get_user_data(Client_package* client_package) {
     if (rows > 0 && cols > 0)
     {
         char *result_user_id = PQgetvalue(res, 0, 0);
-        printf("resulf_user_id = %d", result_user_id);
+        printf("result_user_id before atoi = %d\n", result_user_id);
         char *result_user_name = PQgetvalue(res, 0, 1);
-        printf("resulf_user_name = %d", result_user_name);
+        printf("result_user_name = %s\n", result_user_name);
         int user_id = atoi(result_user_id);  // Convert string to int
+        printf("result_user_id after atoi = %d\n", user_id);
         client_package->login_info->user_id = user_id;
+        
         strcpy(client_package->login_info->username, result_user_name);
-        printf("print du login info après la requête : id %d, name %s", client_package->login_info->user_id, client_package->login_info->username);
+        printf("print du login info après la requête : id %d, name %s\n", client_package->login_info->user_id, client_package->login_info->username);
     }
     else {
-        printf("erreur dans la requête, aucune colonne ou ligne trouvée ?");
+        printf("erreur dans la requête, aucune colonne ou ligne trouvée ?\n");
     }
     
 
