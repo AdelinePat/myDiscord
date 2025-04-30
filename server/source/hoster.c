@@ -95,6 +95,7 @@ void *handle_client(void *arg)
 
     first_update_client_package(client_package);
     get_channel_list(client_package);
+    get_full_chat_content(client_package);
     printf("de retour dans handle_client : valeur user_id %d et user_name : %s\n", client_package->login_info->user_id, client_package->login_info->username);
     // client->client_id = user_id;
     // strcpy(client->client_name, "user"); // Ajout des données client avant de les envoyer après connexion
