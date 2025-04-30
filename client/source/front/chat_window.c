@@ -2,8 +2,13 @@
 #include "../../header/chat_window.h"
 #include "../../header/login_window.h"
 #include "../../header/register_window.h"
+// #include <gtk/gtk.h>
+#include <unistd.h> // pour send()
+#include <string.h> // pour strlen()
+#include "../../controller/header/utils.h"
 
-typedef struct {
+typedef struct
+{
     GtkWidget *chat_display;
     GtkWidget *chat_entry;
 } ChatWidgets;
@@ -12,17 +17,29 @@ typedef struct {
 static void on_disconnect_clicked(GtkButton *button, gpointer user_data) {
     // GtkApplication *app = GTK_APPLICATION(user_data);
     Login_package_for_front *login_pack = (Login_package_for_front *)user_data;
+    // GtkWidget **data = login_pack->data;
+    GtkApplication *app = login_pack->app;
+    // login_pack->data = NULL;
+    GtkWidget **data = NULL;
+    // gpointer data = NULL;
+    // GtkApplication *app = GTK_APPLICATION(data);
+    Login_infos *login_info = login_pack->login_info;
 
     GtkWidget *window = gtk_widget_get_toplevel(GTK_WIDGET(button));
-    if (GTK_IS_WINDOW(window)) {
-        gtk_widget_destroy(window);  // Close the chat window
+    if (GTK_IS_WINDOW(window))
+    {
+        gtk_widget_destroy(window); // Close the chat window
     }
 
-    show_login_window(login_pack);  // Return to login screen
+    show_login_window(login_pack);
+    // show_login_window(app, data, login_info);  // Return to login screen
+    g_free(login_pack->data);
+    free(login_pack);
 }
 
 // === Called when an emoji button is clicked inside the popover ===
-static void on_emoji_clicked(GtkButton *button, gpointer user_data) {
+static void on_emoji_clicked(GtkButton *button, gpointer user_data)
+{
     GtkEntry *entry = GTK_ENTRY(user_data);
     // const gchar *emoji = gtk_button_get_label(GTK_WIDGET(button));
     const gchar *emoji = gtk_button_get_label(button);
@@ -34,11 +51,13 @@ static void on_emoji_clicked(GtkButton *button, gpointer user_data) {
 }
 
 // === Called when the user presses Enter in the chat entry ===
-static void on_chat_entry_activate(GtkEntry *entry, gpointer user_data) {
+static void on_chat_entry_activate(GtkEntry *entry, gpointer user_data)
+{
     ChatWidgets *widgets = (ChatWidgets *)user_data;
 
     const gchar *text = gtk_entry_get_text(entry);
-    if (g_strcmp0(text, "") != 0) {
+    if (g_strcmp0(text, "") != 0)
+    {
         GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widgets->chat_display));
         GtkTextIter end_iter;
         gtk_text_buffer_get_end_iter(buffer, &end_iter);
@@ -49,16 +68,68 @@ static void on_chat_entry_activate(GtkEntry *entry, gpointer user_data) {
 }
 
 // === Called when the main emoji button is clicked to show popover ===
-static void on_emoji_button_clicked(GtkButton *button, gpointer user_data) {
+static void on_emoji_button_clicked(GtkButton *button, gpointer user_data)
+{
     (void)button;
     gtk_popover_popup(GTK_POPOVER(user_data));
 }
 
 // === Called when the "Connect" button is clicked ===
-static void on_connect_clicked(GtkButton *button, gpointer user_data) {
+static void on_connect_clicked(GtkButton *button, gpointer user_data)
+{
     GtkApplication *app = GTK_APPLICATION(user_data);
+    GtkWidget *window = gtk_widget_get_toplevel(GTK_WIDGET(button));
 
-    // TODO: Implement login verification logic here
+    // Récupérer les champs d’entrée
+    GtkEntry *entry_user = g_object_get_data(G_OBJECT(window), "entry_user");
+    GtkEntry *entry_pass = g_object_get_data(G_OBJECT(window), "entry_pass");
+
+    const gchar *username = gtk_entry_get_text(entry_user);
+    const gchar *password = gtk_entry_get_text(entry_pass);
+
+    // Allouer la structure de connexion
+    Login_package_for_front *login_pack = malloc(sizeof(Login_package_for_front));
+    login_pack->login_info = malloc(sizeof(Login_infos));
+    login_pack->client = malloc(sizeof(Client_data));
+    login_pack->app = app;
+
+    strncpy(login_pack->login_info->username, username, sizeof(login_pack->login_info->username) - 1);
+    strncpy(login_pack->login_info->password, password, sizeof(login_pack->login_info->password) - 1);
+
+    SOCKET sock = client_start();
+    login_pack->client->sock_pointer = sock;
+
+    // Tente la connexion
+    if (login_attempts(login_pack) == 0)
+    {
+        // Authentification réussie
+        recv(sock, (char *)login_pack->client, sizeof(Client_data), 0);
+
+        // Lancer le thread de réception
+        SOCKET *sock_ptr = malloc(sizeof(SOCKET));
+        *sock_ptr = sock;
+        pthread_t recv_thread;
+        pthread_create(&recv_thread, NULL, receive_messages, sock_ptr);
+        pthread_detach(recv_thread);
+
+        // Fermer la fenêtre de login
+        gtk_widget_destroy(window);
+        show_chat_window(login_pack);
+    }
+    else
+    {
+        // Échec
+        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(window),
+                                                   GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
+                                                   "Échec de la connexion. Vérifiez vos identifiants.");
+        gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        closesocket(sock);
+
+        free(login_pack->login_info);
+        free(login_pack->client);
+        free(login_pack);
+    }
 }
 
 // === Displays the main chat window ===
@@ -90,9 +161,11 @@ void show_chat_window(Login_package_for_front *login_pack) {
     gtk_widget_set_vexpand(spacer, TRUE);
     gtk_box_pack_start(GTK_BOX(channels_box), spacer, TRUE, TRUE, 0);
 
-    user_label = gtk_label_new("User: Luffy");
-    gtk_widget_set_name(user_label, "user_label");
-    gtk_box_pack_start(GTK_BOX(channels_box), user_label, FALSE, FALSE, 0);
+    gchar *user_display_text = g_strdup_printf("User: %s", login_pack->login_info->username);
+    user_label = gtk_label_new(user_display_text);
+    g_free(user_display_text);                                              // Libérer la mémoire après utilisation
+    gtk_widget_set_name(user_label, "user_label");                          // Définir un nom pour le widget
+    gtk_box_pack_start(GTK_BOX(channels_box), user_label, FALSE, FALSE, 0); // Ajouter le label à la boîte
 
     chat_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_widget_set_name(chat_box, "chat_box");
@@ -132,7 +205,8 @@ void show_chat_window(Login_package_for_front *login_pack) {
     gtk_container_add(GTK_CONTAINER(emoji_popover), emoji_grid);
 
     const gchar *emojis[] = {"😊", "😂", "😍", "😎", "😉", "😭", "😡", "😃"};
-    for (int i = 0; i < 8; ++i) {
+    for (int i = 0; i < 8; ++i)
+    {
         GtkWidget *emoji_btn = gtk_button_new_with_label(emojis[i]);
         gtk_grid_attach(GTK_GRID(emoji_grid), emoji_btn, i % 4, i / 4, 1, 1);
         g_signal_connect(emoji_btn, "clicked", G_CALLBACK(on_emoji_clicked), chat_entry);
@@ -141,6 +215,22 @@ void show_chat_window(Login_package_for_front *login_pack) {
     bottom_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_widget_set_name(bottom_box, "bottom_box");
     gtk_box_pack_start(GTK_BOX(channels_box), bottom_box, FALSE, FALSE, 0);
+
+    // Login_package_for_front *login_pack;
+    // // login_pack->data = g_new(GtkWidget *, 1);
+    // // login_pack->data[0] = GTK_WIDGET(app);
+    // login_pack->login_info = login_info;
+
+    // Login_package_for_front *login_pack = malloc(sizeof(Login_package_for_front));
+    // if (login_pack == NULL) {
+    //     g_warning("Failed to allocate memory for login_pack.");
+    //     printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
+    // }
+    // GtkApplication *app = login_pack->app;
+    // login_pack->data = g_new(GtkWidget *, 1);  // Optional: since you're not using it here
+    // login_pack->data[0] = window;
+    // login_pack->login_info = login_info;
+    // Login_infos *login_info = login_pack->login_info;
 
     disconnect_button = gtk_button_new_with_label("Déconnexion");
     gtk_widget_set_name(disconnect_button, "disconnect_button");
@@ -151,6 +241,12 @@ void show_chat_window(Login_package_for_front *login_pack) {
     g_signal_connect(emoji_button, "clicked", G_CALLBACK(on_emoji_button_clicked), emoji_popover);
 
     ChatWidgets *chat_widgets = g_malloc(sizeof(ChatWidgets));
+    if (chat_widgets == NULL)
+    {
+        g_warning("Failed to allocate memory for login_pack.");
+        printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
+    }
+
     chat_widgets->chat_display = chat_display;
     chat_widgets->chat_entry = chat_entry;
     g_signal_connect(chat_entry, "activate", G_CALLBACK(on_chat_entry_activate), chat_widgets);
@@ -158,13 +254,15 @@ void show_chat_window(Login_package_for_front *login_pack) {
     GtkCssProvider *provider = gtk_css_provider_new();
     GError *error = NULL;
     gtk_css_provider_load_from_path(provider, "style.css", &error);
-    if (error) {
+    if (error)
+    {
         g_warning("CSS error: %s", error->message);
         g_clear_error(&error);
     }
 
     GtkWidget *widgets_to_style[] = {window, outer_box, user_label, chat_entry, chat_display, disconnect_button};
-    for (int i = 0; i < G_N_ELEMENTS(widgets_to_style); ++i) {
+    for (int i = 0; i < G_N_ELEMENTS(widgets_to_style); ++i)
+    {
         GtkStyleContext *context = gtk_widget_get_style_context(widgets_to_style[i]);
         gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
     }

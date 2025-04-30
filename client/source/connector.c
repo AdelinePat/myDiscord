@@ -5,7 +5,7 @@
 // #include <pthread.h>
 // #include <winsock2.h>
 // #include <ws2tcpip.h>
-// #include "../../controller/header/utils.h"
+#include "../../controller/header/utils.h"
 #include "../header/connector.h"
 #include "../header/client_front.h"
 
@@ -41,14 +41,17 @@ int login_attempts(Login_package_for_front *login_pack) {
     
     Client_data *client = malloc(sizeof(Client_data));
 
-    recv(server_sock, (char *)client, sizeof(Client_data), 0);
-    client->sock_pointer = server_sock;
+    // recv(server_sock, (char *)client, sizeof(Client_data), 0);
+    // client->sock_pointer = server_sock;
+    // login_pack->client = client;
+    recv(login_pack->client->sock_pointer, (char *)client, sizeof(Client_data), 0);
+    client->sock_pointer = login_pack->client->sock_pointer;
     login_pack->client = client;
 
     printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%d\n", client->client_id, client->client_name, client->sock_pointer);
 
     SOCKET *sock_copy = malloc(sizeof(SOCKET));
-    *sock_copy = server_sock;
+    *sock_copy = login_pack->client->sock_pointer;
     printf("%d", *sock_copy);
     pthread_t recv_thread;
     pthread_create(&recv_thread, NULL, receive_messages, (void *)sock_copy);

@@ -21,19 +21,22 @@ typedef struct {
     char message[1024];
 } Message;
 
-typedef struct {
+typedef struct
+{
     SOCKET sock_pointer;
     char client_name[64];
     int client_id;
 } Client_data;
 
-typedef struct {
+typedef struct
+{
     Client_data *clients[MAX_CLIENTS];
     pthread_mutex_t lock;
     int client_count;
 } Server_state;
 
-typedef struct {
+typedef struct
+{
     Client_data *client;
     Server_state *server;
 } Client_package;
