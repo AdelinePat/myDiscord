@@ -11,6 +11,8 @@
 #include "../header/hoster.h"
 #include "../header/database_communication.h"
 #include "../header/db_connection.h"
+#include "../header/db_chat_content.h"
+
 
 #define PORT 8080
 
@@ -92,6 +94,7 @@ void *handle_client(void *arg)
     SOCKET client_sock = client->sock_pointer;
 
     first_update_client_package(client_package);
+    get_channel_list(client_package);
     printf("de retour dans handle_client : valeur user_id %d et user_name : %s\n", client_package->login_info->user_id, client_package->login_info->username);
     // client->client_id = user_id;
     // strcpy(client->client_name, "user"); // Ajout des données client avant de les envoyer après connexion
@@ -109,6 +112,7 @@ void *handle_client(void *arg)
     while (1)
     {
         Message *client_message = malloc(sizeof(Message));
+
         printf("hihi1 sock : %lld\n", client_sock);
         int bytes = recv(client_sock, (char *)client_message, sizeof(Message), 0);
         if (bytes <= 0)
@@ -196,11 +200,13 @@ void start_server()
 
         Client_data *client_data = malloc(sizeof(Client_data));
         client_data->sock_pointer = new_sock;
+        Channel_info *channels = malloc(sizeof(Channel_info));
 
         // Login_infos *login_info = malloc(sizeof(Login_infos));
         Client_package *client_package = malloc(sizeof(Client_package));
         client_package->client = client_data;
         client_package->server = state;
+        client_package->client->channels = &channels;
         // client_package->login_info = login_info;
 
         pthread_t thread;
