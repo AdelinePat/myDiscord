@@ -23,10 +23,19 @@ typedef struct {
 
 typedef struct
 {
+    int channel_id;
+    char channel_title[19];
+} Channel_info;
+
+typedef struct
+{
     SOCKET sock_pointer;
     char client_name[64];
     int client_id;
+    Channel_info **channels;
+
 } Client_data;
+
 
 typedef struct
 {
@@ -49,7 +58,7 @@ typedef struct
 {
     Client_data *client;
     Server_state *server;
-    Message message_send;
+    Message message_send; // create to a message_list struct
     Login_infos *login_info;
 } Client_package;
 
