@@ -13,7 +13,7 @@
 
 int login_attempts(Login_package_for_front *login_pack) {
     // Login_infos login_info;
-    int login_status;
+    int login_status = 0;
 
     // char username[64];
     // printf("Entrez votre identifiant : ");
@@ -27,9 +27,10 @@ int login_attempts(Login_package_for_front *login_pack) {
     // strncpy(login_info.password, password, sizeof(login_info.password));
 
     // printf("[DEBUG] Envoi des informations de connexion - username: %s, password: %s\n", login_info.username, login_info.password);
-
+    printf("Avant send : valeur de login_status : %d\n", login_status);
     send(login_pack->client->sock_pointer, (char *)login_pack->login_info, sizeof(Login_infos), 0);
     recv(login_pack->client->sock_pointer, (char *)&login_status, sizeof(int), 0);
+    printf("Après receive : valeur de login_status : %d\n", login_status);
 
     if (login_status == 1) {
         printf("Connexion réussie\n");
@@ -39,28 +40,34 @@ int login_attempts(Login_package_for_front *login_pack) {
         return 1;
     }
     
-    Client_data *client = malloc(sizeof(Client_data));
+    // Client_data *client = malloc(sizeof(Client_data));
 
-    // recv(server_sock, (char *)client, sizeof(Client_data), 0);
-    // client->sock_pointer = server_sock;
+    SOCKET *socket_client = malloc(sizeof(SOCKET));
+    *socket_client = login_pack->client->sock_pointer;
+
+    recv(*socket_client, (char *)login_pack->client, sizeof(Client_data), 0);
+    login_pack->client->sock_pointer = *socket_client; // when receive, socket client is changed, this line is for change it back
     // login_pack->client = client;
-    recv(login_pack->client->sock_pointer, (char *)client, sizeof(Client_data), 0);
-    client->sock_pointer = login_pack->client->sock_pointer;
-    login_pack->client = client;
 
-    printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%d\n", client->client_id, client->client_name, client->sock_pointer);
+    // recv(login_pack->client->sock_pointer, (char *)client, sizeof(Client_data), 0);
+    // client->sock_pointer = login_pack->client->sock_pointer;
+    // login_pack->client = client;
+
+    printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%d\n", login_pack->client->client_id, login_pack->client->client_name, login_pack->client->sock_pointer);
 
     SOCKET *sock_copy = malloc(sizeof(SOCKET));
     *sock_copy = login_pack->client->sock_pointer;
     printf("%d", *sock_copy);
     pthread_t recv_thread;
     pthread_create(&recv_thread, NULL, receive_messages, (void *)sock_copy);
+
+    free(socket_client);
 }
 
 int register_attempts(Login_package_for_front *login_pack) {
-    int register_status;
+    int register_status = 1;
     send(login_pack->client->sock_pointer, (char *)login_pack->login_info, sizeof(Login_infos), 0);
-    recv(login_pack->client->sock_pointer, (char *)&login_status, sizeof(int), 0);
+    recv(login_pack->client->sock_pointer, (char *)&register_status, sizeof(int), 0);
 
     if (register_status == 1) {
         printf("Création de compte réussie\n");

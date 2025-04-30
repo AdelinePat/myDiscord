@@ -4,7 +4,7 @@
 #include "../../header/chat_window.h"
 #include "../../header/register_window.h"
 #include "../../header/connector.h"
-#include "../../controller/header/utils.h"
+#include "../../../controller/header/utils.h"
 
 // Function to load the CSS file
 void load_css(GtkApplication *app)

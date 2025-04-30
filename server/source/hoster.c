@@ -19,6 +19,7 @@ int login_attempts(Client_package *client_package)
         Login_infos login_info;
         int login_status = 0;
         int bytes = recv(client_package->client->sock_pointer, (char *)&login_info, sizeof(Login_infos), 0);
+        
         if (bytes == SOCKET_ERROR)
         {
             printf("[ERROR] Erreur lors de la réception de Login_infos, code %d\n", WSAGetLastError());
@@ -32,12 +33,14 @@ int login_attempts(Client_package *client_package)
 
         // bytes = "\0";
         printf("Infos reçues : user : << %s >>, pass : << %s >>\n", login_info.username, login_info.password);
-
+        printf("\navant le if : Valeur de login_status cote serveur : %d\n", login_status);
         if (strcmp(login_info.username, "Anya") == 0 && strcmp(login_info.password, "pass") == 0)
         { // condition de vérification des identifiants
             // query ici pour l'id unique et le pseudo du client
             login_status = 1;
+            
             send(client_package->client->sock_pointer, (char *)&login_status, sizeof(login_status), 0);
+            printf("Après send : Valeur de login_status cote serveur : %d\n", login_status);
             printf("Connexion réussie\n");
             return client_package->server->client_count; // remplacer le return avec l'id du client dans la db
         }
