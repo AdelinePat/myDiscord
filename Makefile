@@ -20,39 +20,41 @@ LDFLAGS += $(JSON_LIBS)
 CFLAGS += $(GTK_CFLAGS)
 CFLAGS += $(PQ_CFLAGS)
 
-# préciser les dossiers utilisés
-# SERVER_DIR = ./server 
-# CLIENT_DIR = ./client
-
-SERVER_SRC = ./server/source/server.c ./server/source/hoster.c ./controller/source/utils.c ./server/source/database_communication.c ./server/source/db_connection.c
+SERVER_SRC = ./server/source/server.c ./server/source/hoster.c ./controller/source/utils.c ./server/source/database_communication.c ./server/source/db_connection.c ./server/source/db_chat_content.c
 CLIENT_SRC = ./client/source/client.c ./client/source/connector.c ./controller/source/utils.c ./client/source/front/client_front.c ./client/source/front/login_window.c ./client/source/front/register_window.c ./client/source/front/chat_window.c 
-
-# SERVER_OBJ = $(SERVER_DIR)/server.o
-# Fichiers sources
-# SRC = ./source/register_window.c ./source/login_window.c ./source/chat_window.c ./client_main.c
 
 # Fichiers objets générés
 SERVER_OBJ = $(SERVER_SRC:.c=.o)
 CLIENT_OBJ = $(CLIENT_SRC:.c=.o)
-# OBJ = $(SRC:.c=.o)
 
 # Nom de l'exécutable
 SERVER_EXEC = server.exe
 CLIENT_EXEC = client.exe
 
-# Feuilles de style (copiées à l'installation)
 CSS = ./client/source/front/style.css
 
 # Cible par défaut
 all: $(SERVER_EXEC) $(CLIENT_EXEC)
+	@if [ -f $(SERVER_EXEC) ] && [ -f $(CLIENT_EXEC) ]; then \
+		echo -e "\n\n\033[1;32mCongrat'! The build is completed!\033[0m Deleting all .o files..."; \
+		rm -f $(SERVER_OBJ) $(CLIENT_OBJ); \
+	else \
+		echo -e "\n\n\033[1;31mBuild failed. Keeping .o files for inspection.\033[0m"; \
+	fi
 
 # Création de l'exécutable serveur
 $(SERVER_EXEC): $(SERVER_OBJ)
 	$(CC) $(SERVER_OBJ) -o $(SERVER_EXEC) $(LDFLAGS) $(GTK_LIBS) $(PQ_LIBS)
+	@if [ -f $(SERVER_EXEC) ]; then \
+		echo -e "\n\n\033[0;34mBuild server OK.\033[0m\n"; \
+	fi
 
 # Création de l'exécutable client
 $(CLIENT_EXEC): $(CLIENT_OBJ)
 	$(CC) $(CLIENT_OBJ) -o $(CLIENT_EXEC) $(LDFLAGS) $(GTK_LIBS) $(PQ_LIBS)
+	@if [ -f $(CLIENT_EXEC) ]; then \
+		echo -e "\n\n\033[0;34mBuild client OK.\033[0m\n"; \
+	fi
 
 # Compilation des .c en .o
 %.o: %.c
@@ -60,8 +62,7 @@ $(CLIENT_EXEC): $(CLIENT_OBJ)
 
 # Nettoyage
 clean:
-	@rm -f $(SERVER_OBJ) $(SERVER_EXEC)
-	@rm -f $(CLIENT_OBJ) $(CLIENT_EXEC)
+	@rm -f $(SERVER_OBJ) $(CLIENT_OBJ) $(SERVER_EXEC) $(CLIENT_EXEC)
 
 # Recompilation totale
 rebuild: clean all
@@ -73,4 +74,3 @@ install: all
 # Exécution rapide
 run: all
 	./$(SERVER_EXEC)
-	
