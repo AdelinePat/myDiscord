@@ -13,6 +13,5 @@
 
 PGconn * database_connexion();
 void load_variable(FILE* file, char* database_password, char* database_user_name);
-int connection_query(Login_infos login_info);
 
 #endif
