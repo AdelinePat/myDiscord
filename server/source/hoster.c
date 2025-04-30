@@ -9,6 +9,7 @@
 
 // #include "../controller/header/utils.h"
 #include "../header/hoster.h"
+#include "../header/database_communication.h"
 
 #define PORT 8080
 
@@ -32,9 +33,10 @@ int login_attempts(Client_package *client_package)
         }
 
         // bytes = "\0";
+        // fonction_nimporte(login_info);
         printf("Infos reçues : user : << %s >>, pass : << %s >>\n", login_info.username, login_info.password);
         printf("\navant le if : Valeur de login_status cote serveur : %d\n", login_status);
-        if (strcmp(login_info.username, "Anya") == 0 && strcmp(login_info.password, "pass") == 0)
+        if (connection_query(login_info) == 1)
         { // condition de vérification des identifiants
             // query ici pour l'id unique et le pseudo du client
             login_status = 1;
