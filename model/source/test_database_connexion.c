@@ -58,7 +58,7 @@ int main(int argc, char const *argv[])
         exit(1);
     }
 
-    printf("Connexion établie,\nport utilisé %s\nhostname %s\nDBname : %s", PQport(conn), PQhost(conn), PQdb(conn));
+    printf("Connexion établie,\nport utilisé %s\nhostname %s\nDBname : %s\n", PQport(conn), PQhost(conn), PQdb(conn));
     
     // char *query = "SELECT user_name FROM users";
     // char *query = "SELECT c.channel_title, COALESCE(u.user_name, 'Anonymous user'), m.date_time, m.content\n\
