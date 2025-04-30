@@ -15,8 +15,10 @@
 struct tm get_timestamp();
 
 typedef struct {
-    int client_id;
     int channel_id;
+    int message_id;
+    int client_id;
+    char username[19];
     struct tm timestamp;
     char message[999];
 } Message;
@@ -58,7 +60,7 @@ typedef struct
 {
     Client_data *client;
     Server_state *server;
-    Message *message_list;// create to a message_list struct
+    Message *messages_list;// create to a message_list struct
     Message message_send; 
     Login_infos *login_info;
 } Client_package;

@@ -69,47 +69,135 @@ void get_channel_list(Client_package *client_package) {
     PQclear(res);
 
     PQfinish(conn);
-    printf("\n\nBye bye\n\n");
 }
 
 PGresult* generate_full_chat_content_query(PGconn *conn, Client_package *client_package)
 {
-    return 1;
+    int final_size_query = snprintf(NULL, 0, "SELECT m.message_id, u.user_id,\n\
+        COALESCE(u.user_name, 'Anonymous user'), m.date_time, m.content\n\
+        FROM messages AS m\n\
+        JOIN channels AS c ON c.channel_id = m.channel_id\n\
+        LEFT JOIN users AS u ON u.user_id = m.user_id\n\
+        WHERE c.channel_id = %d\n\
+        ORDER BY date_time", client_package->login_info->current_channel) +1;
+    
+    char *query = malloc(final_size_query);
+    if (query == NULL) {
+        fprintf(stderr, "Memory allocation failed for query.\n");
+        PQfinish(conn);
+        exit(1);
+    }
+
+    snprintf(query, final_size_query, "SELECT m.message_id, u.user_id,\n\
+        COALESCE(u.user_name, 'Anonymous user'), m.date_time, m.content\n\
+        FROM messages AS m\n\
+        JOIN channels AS c ON c.channel_id = m.channel_id\n\
+        LEFT JOIN users AS u ON u.user_id = m.user_id\n\
+        WHERE c.channel_id = %d\n\
+        ORDER BY date_time", client_package->login_info->current_channel);
+
+    PGresult *res = PQexec(conn, query);
+    free(query);
+
+    ExecStatusType resStatus = PQresultStatus(res);
+    if (resStatus != PGRES_TUPLES_OK)
+    {
+        printf("il y a eu une erreur dans la requête");
+        PQclear(res);
+        PQfinish(conn);
+        exit(1);
+    }
+    printf("query ok\n");
+    return res;
+}
+
+int check_channel_access(PGconn *conn, Client_package *client_package)
+{
+    int access_granted = 0;
+    int final_size_query = snprintf(NULL, 0, "SELECT role_title\n\
+        FROM channels_access\n\
+        WHERE user_id = %d AND channel_id = %d;", client_package->login_info->user_id, client_package->login_info->current_channel) +1;
+    
+    char *query = malloc(final_size_query);
+    if (query == NULL) {
+        fprintf(stderr, "Memory allocation failed for query.\n");
+        PQfinish(conn);
+        exit(1);
+    }
+
+    snprintf(query, final_size_query, "SELECT role_title\n\
+        FROM channels_access\n\
+        WHERE user_id = %d AND channel_id = %d;", client_package->login_info->user_id, client_package->login_info->current_channel);
+
+    PGresult *res = PQexec(conn, query);
+    free(query);
+
+    ExecStatusType resStatus = PQresultStatus(res);
+    if (resStatus != PGRES_TUPLES_OK)
+    {
+        printf("il y a eu une erreur dans la requête");
+        PQclear(res);
+        PQfinish(conn);
+        exit(1);
+    }
+
+    int rows = PQntuples(res);
+    if (rows == 1)
+    {
+        if (PQgetvalue(res, 0, 0) == 'ban')
+        {
+            access_granted = 0;
+        }
+        access_granted = 1;
+    } else {
+        access_granted = 0;
+    }
+    PQclear(res);
+    PQfinish(conn);
+    printf("access_granted = %d\n", access_granted);
+    return access_granted;
+ 
 }
 
 void get_full_chat_content(Client_package *client_package) {
     PGconn *conn = database_connexion();
     int nFields;
+    printf("\n\n\tdans get_full_chat_content\n");
 
-    PGresult *res = generate_full_chat_content_query(conn, client_package);
-
-    int rows = PQntuples(res);
-    int cols = PQnfields(res);
-
-    printf("\n");
-
-    Channel_info *channels = malloc(sizeof(Channel_info)*rows);
-    client_package->client->channels = channels;
-
-    printf("user_id %d, user_name %s\n", client_package->login_info->user_id, client_package->login_info->username);
-    if (rows > 0 && cols > 0)
+    if (check_channel_access(conn, client_package) == 1)
     {
-        printf("rows : %d, cols : %d\n", rows, cols);
-        for (int row = 0; row < rows; row++)
-            {
-                client_package->client->channels[row].channel_id = atoi(PQgetvalue(res, row, 0));
-                strcpy(client_package->client->channels[row].channel_title, PQgetvalue(res, row, 1));
+        conn = database_connexion();
+        PGresult *res = generate_full_chat_content_query(conn, client_package);
+        int rows = PQntuples(res);
+        int cols = PQnfields(res);
 
-                printf("Valeur row n°%d : %d %s\n", row, client_package->client->channels[row].channel_id, client_package->client->channels[row].channel_title);
+        printf("\n");
 
-            }
+        Message *messages_list = malloc(sizeof(Message)*rows);
+        client_package->messages_list = messages_list;
+
+        printf("user_id %d, current_channel_id %d\n", client_package->login_info->user_id, client_package->login_info->current_channel);
+        if (rows > 0 && cols > 0)
+        {
+            printf("rows : %d, cols : %d\n", rows, cols);
+            for (int row = 0; row < rows; row++)
+                {
+                    client_package->messages_list[row].message_id = atoi(PQgetvalue(res, row, 0));
+                    client_package->messages_list[row].client_id = atoi(PQgetvalue(res, row, 1)); // user_id = client_id ??
+                    strcpy(client_package->messages_list[row].username, PQgetvalue(res, row, 2));
+                    // client_package->messages_list[row].timestamp = PQgetvalue(res, row, 3);
+                    strcpy(client_package->messages_list[row].message, PQgetvalue(res, row, 4));
+
+                    printf("Valeur row n°%d : message_id %d, user_id %d, username %s, content %s\n", row, client_package->messages_list[row].message_id, client_package->messages_list[row].client_id, client_package->messages_list[row].username, client_package->messages_list[row].message);
+
+                }
+        }
+        else {
+            printf("erreur dans la requête, aucune colonne ou ligne trouvée ?\n");
+        }   
+
+        PQclear(res);
+        PQfinish(conn);
     }
-    else {
-        printf("erreur dans la requête, aucune colonne ou ligne trouvée ?\n");
-    }   
-
-    PQclear(res);
-
-    PQfinish(conn);
     printf("\n\nBye bye\n\n");
 }

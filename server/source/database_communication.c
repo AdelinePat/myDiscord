@@ -7,7 +7,6 @@ void load_variable(FILE* file, char* database_password, char* database_user_name
     {
         strncpy(database_password, fgets(database_password, MAX_STRING_SIZE, file), MAX_STRING_SIZE);
         strncpy(database_user_name, fgets(database_user_name, MAX_STRING_SIZE, file), MAX_STRING_SIZE);
-        printf("DANS LA FONCTION LOAD VARIABLE \n user_name : %s\npassword : %s\n\n", database_user_name, database_password);
         // On peut lire et écrire dans le fichier
         fclose(file);
     }
@@ -20,11 +19,9 @@ void load_variable(FILE* file, char* database_password, char* database_user_name
 
 int database_connexion_info(char* db_password, char* db_user_name)
 {
-    printf("AVANT LOAD VARIALBLE :\nuser_name : %s\npassword : %s\n\n", db_user_name, db_password);
-
+    // printf("AVANT LOAD VARIALBLE :\nuser_name : %s\npassword : %s\n\n", db_user_name, db_password);
     FILE* file = NULL;
     load_variable(file, db_password, db_user_name);
-    printf("APRES LOAD VARIABLE\nuser_name : %s\npassword : %s", db_user_name, db_password);
     
     // Count how many caracter for the string
     int final_size_conninfo = snprintf(NULL, 0,
@@ -40,12 +37,9 @@ PGconn * database_connexion()
     
     int final_size_conninfo = database_connexion_info(db_password, db_user_name);
 
-    printf("\n\nfinal size %d", final_size_conninfo);
     const char conninfo[final_size_conninfo];
 
     snprintf(conninfo, final_size_conninfo, "dbname = whispr user=%s password=%s host=localhost port=5432", db_user_name, db_password);
-    printf("\n\nconninfo c'est : %s", conninfo);
-
     PGconn *conn;   
     conn = PQconnectdb(conninfo);
 
@@ -55,8 +49,8 @@ PGconn * database_connexion()
         PQfinish(conn);
         exit(1);
     }
-
-    printf("Connexion établie,\nport utilisé %s\nhostname %s\nDBname : %s", PQport(conn), PQhost(conn), PQdb(conn));
+    printf("Connexion avec la DB établie\n");
+    // printf("Connexion établie,\nport utilisé %s\nhostname %s\nDBname : %s", PQport(conn), PQhost(conn), PQdb(conn));
     return conn;
 }
 
