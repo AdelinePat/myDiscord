@@ -43,7 +43,7 @@ int login_attempts(Login_package_for_front *login_pack) {
         return 1;
     }
     
-    // Client_data *client = malloc(sizeof(Client_data));
+    // Client_data *client = malloc(sizeof(Client_data)) free();
 
     SOCKET *socket_client = malloc(sizeof(SOCKET));
     *socket_client = login_pack->client->sock_pointer;
@@ -130,14 +130,14 @@ SOCKET client_start() {
 //         return;
 //     }
 
-//     Client_data *client = malloc(sizeof(Client_data));
+//     Client_data *client = malloc(sizeof(Client_data)) free();
 
 //     recv(server_sock, (char *)client, sizeof(Client_data), 0);
 //     client->sock_pointer = server_sock;
 
 //     printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%d\n", client->client_id, client->client_name, client->sock_pointer);
 
-//     SOCKET *sock_copy = malloc(sizeof(SOCKET));
+//     SOCKET *sock_copy = malloc(sizeof(SOCKET)) free();
 //     *sock_copy = server_sock;
 //     printf("%d", *sock_copy);
 //     pthread_t recv_thread;

@@ -1,25 +1,30 @@
 #include "../header/database_communication.h"
 #include "../header/db_connection.h"
 
-int connection_query(Login_infos* login_info) {
+int connection_query(Login_infos *login_info)
+{
     PGconn *conn = database_connexion();
     PGresult *res = NULL;
     int nFields;
 
     int final_size_query = snprintf(NULL, 0,
-        "SELECT COUNT(user_name) FROM users\n\
-    WHERE (user_name = '%s' OR email = '%s') AND password = '%s'", login_info->username, login_info->username, login_info->password) +1;
+                                    "SELECT COUNT(user_name) FROM users\n\
+    WHERE (user_name = '%s' OR email = '%s') AND password = '%s'",
+                                    login_info->username, login_info->username, login_info->password) +
+                           1;
 
     char *query = malloc(final_size_query);
-    if (query == NULL) {
+    if (query == NULL)
+    {
         fprintf(stderr, "Memory allocation failed for query.\n");
         PQfinish(conn);
         exit(1);
     }
 
     snprintf(query, final_size_query,
-        "SELECT COUNT(user_name) FROM users\n\
-    WHERE user_name = '%s' AND password = '%s'", login_info->username, login_info->password);
+             "SELECT COUNT(user_name) FROM users\n\
+    WHERE user_name = '%s' AND password = '%s'",
+             login_info->username, login_info->password);
 
     // multiple line query add \n\ at the end of every line OR quote at the begging of every line
 
@@ -27,7 +32,7 @@ int connection_query(Login_infos* login_info) {
     free(query);
 
     ExecStatusType resStatus = PQresultStatus(res);
-    
+
     if (resStatus != PGRES_TUPLES_OK)
     {
         printf("il y a eu une erreur dans la requête");
@@ -47,42 +52,47 @@ int connection_query(Login_infos* login_info) {
     if (rows > 0 && cols > 0)
     {
         char *result_str = PQgetvalue(res, 0, 0);
-        query_result = atoi(result_str);  // Convert string to int
+        query_result = atoi(result_str); // Convert string to int
     }
-    else {
+    else
+    {
         printf("erreur dans la requête, aucune colonne ou ligne trouvée ?");
     }
-    
 
     PQclear(res);
 
     PQfinish(conn);
     printf("\n\nBye bye\n\n");
-    
+
     return query_result;
 }
 
-void first_update_client_package(Client_package *client_package) {
+void first_update_client_package(Client_package *client_package)
+{
     client_package->login_info->current_channel = 1;
     get_user_data(client_package);
-    // client_package->login_info->user_id = un int; // => resultat requête  
+    // client_package->login_info->user_id = un int; // => resultat requête
     // strcpy(client_package->login_info->username, resultatrequete);
     // strcpy(client_package->login_info->password, "");
     // strcpy(client_package->login_info->confirm_password, "");
     // strcpy(client_package->login_info->email, "");
 }
 
-void get_user_data(Client_package* client_package) {
+void get_user_data(Client_package *client_package)
+{
     PGconn *conn = database_connexion();
     PGresult *res = NULL;
     int nFields;
 
     int final_size_query = snprintf(NULL, 0,
-        "SELECT * FROM users\n\
-    WHERE user_name = '%s' AND password = '%s'", client_package->login_info->username, client_package->login_info->password) +1;
+                                    "SELECT * FROM users\n\
+    WHERE user_name = '%s' AND password = '%s'",
+                                    client_package->login_info->username, client_package->login_info->password) +
+                           1;
 
     char *query = malloc(final_size_query);
-    if (query == NULL) {
+    if (query == NULL)
+    {
         fprintf(stderr, "Memory allocation failed for query.\n");
         PQfinish(conn);
         exit(1);
@@ -92,14 +102,15 @@ void get_user_data(Client_package* client_package) {
     printf("password before query %s\n", client_package->login_info->password);
 
     snprintf(query, final_size_query,
-        "SELECT * FROM users\n\
-    WHERE user_name = '%s' AND password = '%s'", client_package->login_info->username, client_package->login_info->password);
-    
+             "SELECT * FROM users\n\
+    WHERE user_name = '%s' AND password = '%s'",
+             client_package->login_info->username, client_package->login_info->password);
+
     res = PQexec(conn, query);
     free(query);
 
     ExecStatusType resStatus = PQresultStatus(res);
-    
+
     if (resStatus != PGRES_TUPLES_OK)
     {
         printf("il y a eu une erreur dans la requête");
@@ -119,20 +130,17 @@ void get_user_data(Client_package* client_package) {
     if (rows > 0 && cols > 0)
     {
         char *result_user_id = PQgetvalue(res, 0, 0);
-        printf("result_user_id before atoi = %d\n", result_user_id);
         char *result_user_name = PQgetvalue(res, 0, 1);
-        printf("result_user_name = %s\n", result_user_name);
-        int user_id = atoi(result_user_id);  // Convert string to int
-        printf("result_user_id after atoi = %d\n", user_id);
+        int user_id = atoi(result_user_id); // Convert string to int
         client_package->login_info->user_id = user_id;
-        
+
         strcpy(client_package->login_info->username, result_user_name);
-        printf("print du login info après la requête : id %d, name %s\n", client_package->login_info->user_id, client_package->login_info->username);
+        // printf("print du login info après la requête : id %d, name %s\n", client_package->login_info->user_id, client_package->login_info->username);
     }
-    else {
+    else
+    {
         printf("erreur dans la requête, aucune colonne ou ligne trouvée ?\n");
     }
-    
 
     PQclear(res);
 
