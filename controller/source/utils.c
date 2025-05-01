@@ -4,10 +4,11 @@
 
 #include "../header/utils.h"
 
-struct tm get_timestamp() {
+char * get_str_timestamp() {
     time_t now = time(NULL);
     struct tm time_now = *localtime(&now);
-    return time_now;
+    char *time_tr = timestamp_to_char(time_now);
+    return time_tr;
 }
 
 // struct tm parse_db_query_time(char *time_str) {
