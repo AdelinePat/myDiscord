@@ -5,6 +5,7 @@
 #include "../../header/register_window.h"
 #include "../../header/connector.h"
 #include "../../../controller/header/utils.h"
+#include "../../header/hash_login.h"
 
 // Function to load the CSS file
 void load_css(GtkApplication *app)
@@ -41,9 +42,10 @@ void load_css(GtkApplication *app)
 }
 
 // === CALLBACK: When the "Login" button is clicked ===
-static void on_login_clicked(GtkButton *button, gpointer user_data) {
+static void on_login_clicked(GtkButton *button, gpointer user_data)
+{
     Login_package_for_front *login_pack = (Login_package_for_front *)user_data;
-    
+
     // GtkWidget **data = user_data;
     GtkWidget *login_window = login_pack->data[0];
     GtkWidget *entry_user = login_pack->data[1];
@@ -54,8 +56,15 @@ static void on_login_clicked(GtkButton *button, gpointer user_data) {
     const gchar *password = gtk_entry_get_text(GTK_ENTRY(entry_pass));
 
     strcpy(login_pack->login_info->username, username);
+
+    char hashed_password[65];
+    hash_password_sha256(password, hashed_password);
+    printf(" on_login_clicked1 : Password: %s\n", password);
+    printf(" on_login_clicked1 : Hashed password: %s\n", hashed_password);
+
     strcpy(login_pack->login_info->password, password);
-    login_pack->login_info->login_register = 0; 
+
+    login_pack->login_info->login_register = 0;
 
     g_print("Attempting login: %s / %s\n", login_pack->login_info->username, login_pack->login_info->password);
 
@@ -66,14 +75,15 @@ static void on_login_clicked(GtkButton *button, gpointer user_data) {
     if (login_status == 0)
     {
         gtk_widget_destroy(login_window); // Closes the login window
-        show_chat_window(login_pack);           // Launches the chat window
+        show_chat_window(login_pack);     // Launches the chat window
     }
 }
 
 // === CALLBACK: When the "Register" button is clicked ===
-static void on_register_clicked(GtkButton *button, gpointer user_data) {
+static void on_register_clicked(GtkButton *button, gpointer user_data)
+{
     Login_package_for_front *login_pack = (Login_package_for_front *)user_data;
-    
+
     // GtkWidget **data = user_data;
     GtkWidget *login_window = login_pack->data[0];
     // GtkApplication *app = login_pack->app;
@@ -92,11 +102,12 @@ static void on_register_clicked(GtkButton *button, gpointer user_data) {
 }
 
 // === MAIN FUNCTION: Creates the login window ===
-void show_login_window(Login_package_for_front *login_pack) {
+void show_login_window(Login_package_for_front *login_pack)
+{
     // Login_package_for_front *login_pack = login_pack;
     login_pack->client->sock_pointer = client_start();
 
-    load_css(login_pack->app);  // Load and apply the CSS
+    load_css(login_pack->app); // Load and apply the CSS
 
     GtkWidget *window = gtk_application_window_new(login_pack->app);
     gtk_window_set_title(GTK_WINDOW(window), "Connexion");
