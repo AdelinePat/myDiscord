@@ -33,11 +33,16 @@ static void on_confirm_clicked(GtkButton *button, gpointer user_data) {
         return;
     }
 
-    register_attempts(login_pack);
-
+    int register_status = register_attempts(login_pack);
     g_print("Registration with: %s / %s / %s\n", username, email, password);
-    gtk_widget_destroy(register_window);
-    show_login_window(login_pack);
+    // TODO: Call the validate_credentials() function here to check the format of the email/username and password with regex
+    //       Do not specify if it's the email or password that is incorrect
+    // Example: if (!validate_credentials(username, password)) { show a generic error and return; }
+    if (register_status == 0)
+    {
+        gtk_widget_destroy(register_window); // Closes the login window
+        show_login_window(login_pack);       // Launches the chat window
+    }
 }
 
 // === CALLBACK: When the "Retour" button is clicked ===
