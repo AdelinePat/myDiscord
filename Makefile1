@@ -1,0 +1,81 @@
+# Le compilateur à utiliser
+CC = gcc
+
+# Options de compilation de base
+CFLAGS = -Wall -Wextra -std=c11
+LDFLAGS = -lws2_32
+
+# Récupère les options GTK via pkg-config
+GTK_CFLAGS := $(shell pkg-config --cflags gtk+-3.0)
+GTK_LIBS   := $(shell pkg-config --libs gtk+-3.0)
+
+PQ_CFLAGS := -I $(shell pg_config --includedir)
+PQ_LIBS := $(shell pkg-config --libs libpq)
+
+JSON_CFLAGS := -I $(shell pkg-config --cflags libcjson)
+JSON_LIBS := $(shell pkg-config --libs libcjson)
+LDFLAGS += $(JSON_LIBS)
+
+# Combine les options de compilation
+CFLAGS += $(GTK_CFLAGS)
+CFLAGS += $(PQ_CFLAGS)
+
+# Files paths for 2 exec files
+SERVER_SRC = ./server/source/server.c ./server/source/hoster.c ./controller/source/utils.c ./server/source/database_communication.c ./server/source/db_connection.c ./server/source/db_chat_content.c
+CLIENT_SRC = ./client/source/client.c ./client/source/connector.c ./controller/source/utils.c ./client/source/front/client_front.c ./client/source/front/login_window.c ./client/source/front/register_window.c ./client/source/front/chat_window.c 
+
+# Generate .o object from .c file in source
+SERVER_OBJ = $(SERVER_SRC:.c=.o)
+CLIENT_OBJ = $(CLIENT_SRC:.c=.o)
+# OBJ = $(SRC:.c=.o)
+
+# Executable name
+SERVER_EXEC = server.exe
+CLIENT_EXEC = client.exe
+
+# Feuilles de style (copiées à l'installation)
+CSS = ./client/source/front/style.css
+
+# Default target
+all: $(SERVER_EXEC) $(CLIENT_EXEC)
+	@if [ -f $(SERVER_EXEC) ] && [ -f $(CLIENT_EXEC) ]; then \
+		printf "\n\n\033[1;32m Congrat' ! The build is completed ! \033[0;34m Deleting all .o files..."; \
+		rm -f $(SERVER_OBJ) $(CLIENT_OBJ); \
+	else \
+		printf "\n\n\033[1;31m Build failed. Keeping .o files for inspection."; \
+	fi
+
+# Server build
+$(SERVER_EXEC): $(SERVER_OBJ)
+	$(CC) $(SERVER_OBJ) -o $(SERVER_EXEC) $(LDFLAGS) $(GTK_LIBS) $(PQ_LIBS)
+	@if [ -f $(SERVER_EXEC) ]; then \
+		printf "\n\n\033[0;34mBuild server OK.\033[0m\n\n";
+	fi
+
+# Client build
+$(CLIENT_EXEC): $(CLIENT_OBJ)
+	$(CC) $(CLIENT_OBJ) -o $(CLIENT_EXEC) $(LDFLAGS) $(GTK_LIBS) $(PQ_LIBS)
+	@if [ -f $(CLIENT_EXEC) ]; then \
+		 printf "\n\n\033[0;34mBuild client OK.\n"; \
+	fi
+
+# Compile .c into .o
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Clean up everything
+clean:
+	@rm -f $(SERVER_OBJ) $(SERVER_EXEC)
+	@rm -f $(CLIENT_OBJ) $(CLIENT_EXEC)
+
+# Recompilation totale
+rebuild: clean all
+
+# Installer les ressources (ici CSS)
+install: all
+	@cp $(CSS) ./ 
+
+# Exécution rapide
+run: all
+	./$(SERVER_EXEC)
+	

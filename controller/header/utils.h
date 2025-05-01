@@ -15,18 +15,29 @@
 struct tm get_timestamp();
 
 typedef struct {
-    int client_id;
     int channel_id;
+    int message_id;
+    int client_id;
+    char username[19];
     struct tm timestamp;
     char message[999];
 } Message;
 
 typedef struct
 {
+    int channel_id;
+    char channel_title[19];
+} Channel_info;
+
+typedef struct
+{
     SOCKET sock_pointer;
     char client_name[64];
     int client_id;
+    Channel_info *channels;
+
 } Client_data;
+
 
 typedef struct
 {
@@ -49,7 +60,8 @@ typedef struct
 {
     Client_data *client;
     Server_state *server;
-    Message message_send;
+    Message *messages_list;// create to a message_list struct
+    Message message_send; 
     Login_infos *login_info;
 } Client_package;
 
