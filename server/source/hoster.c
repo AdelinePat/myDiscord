@@ -42,7 +42,7 @@ int login_attempts(Client_package *client_package)
         {
             case CREATE_ACCOUNT:
                 create_new_user_db(client_package);
-                break;
+                // break;
             case LOGIN:
                 if (check_user_pass_match(client_package->login_info) == 1)
                 { // condition de vérification des identifiants
