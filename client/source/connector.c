@@ -59,12 +59,14 @@ void receive_client_data(Login_package_for_front *login_pack) {
 void broadcast_notifications_receiver_start(Login_package_for_front *login_pack) {
     SOCKET *sock_copy = malloc(sizeof(SOCKET));
     *sock_copy = login_pack->client->sock_pointer;
-    printf("%lld", *sock_copy);
+    // printf("%lld", *sock_copy);
     pthread_t recv_thread;
     pthread_create(&recv_thread, NULL, receive_messages, (void *)sock_copy);
 }
 
 int register_attempts(Login_package_for_front *login_pack) {
+    Login_infos *login_info_copy = malloc(sizeof(Login_infos));
+    *login_info_copy = *login_pack->login_info;
     int register_status = 1;
     send(login_pack->client->sock_pointer, (char *)login_pack->login_info, sizeof(Login_infos), 0);
     recv(login_pack->client->sock_pointer, (char *)&register_status, sizeof(int), 0);

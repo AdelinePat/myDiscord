@@ -129,6 +129,7 @@ void get_user_data(Client_package* client_package) {
         client_package->client->client_id = user_id;
         
         strcpy(client_package->login_info->username, result_user_name);
+        strcpy(client_package->client->client_name, result_user_name);
         // printf("print du login info après la requête : id %d, name %s\n", client_package->login_info->user_id, client_package->login_info->username);
     }
     else {
