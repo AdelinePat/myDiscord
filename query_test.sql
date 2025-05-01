@@ -29,7 +29,7 @@ ORDER BY date_time;
 SELECT * FROM messages;
 
 SELECT COUNT(user_name) FROM users
-    WHERE (user_name = 'jolyne' OR email = 'jolyne');
+    WHERE (user_name = 'adeline' OR email = '');
 
 -- INSERT INTO messages (user_id, channel_id, date_time, content)
 -- VALUES (user_id, channel_id, date_time, content);

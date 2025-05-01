@@ -12,6 +12,7 @@
 #include "../header/database_communication.h"
 #include "../header/db_connection.h"
 #include "../header/db_chat_content.h"
+#include "../header/register_user.h"
 
 
 #define PORT 8080
@@ -35,25 +36,36 @@ int login_attempts(Client_package *client_package)
             break;
         }
 
-        // bytes = "\0";
-        // fonction_nimporte(login_info);
         printf("Infos reçues : user : << %s >>, pass : << %s >>\n", client_package->login_info->username, client_package->login_info->password);
         printf("\navant le if : Valeur de login_status cote serveur : %d\n", login_status);
-        if (check_user_pass_match(client_package->login_info) == 1)
-        { // condition de vérification des identifiants
-            // query ici pour l'id unique et le pseudo du client
-            login_status = 1;
-            
-            send(client_package->client->sock_pointer, (char *)&login_status, sizeof(login_status), 0);
-            printf("Après send : Valeur de login_status cote serveur : %d\n", login_status);
-            printf("Connexion réussie\n");
-            return client_package->server->client_count; // remplacer le return avec l'id du client dans la db
-        }
-        else
+        switch (client_package->login_info->login_register)
         {
-            printf("Informations de connexion erronées.\n");
-            send(client_package->client->sock_pointer, (char *)&login_status, sizeof(login_status), 0);
+            case CREATE_ACCOUNT:
+                create_new_user_db(client_package);
+                break;
+            case LOGIN:
+                if (check_user_pass_match(client_package->login_info) == 1)
+                { // condition de vérification des identifiants
+                    // query ici pour l'id unique et le pseudo du client
+                    login_status = 1;
+                    
+                    send(client_package->client->sock_pointer, (char *)&login_status, sizeof(login_status), 0);
+                    printf("Après send : Valeur de login_status cote serveur : %d\n", login_status);
+                    printf("Connexion réussie\n");
+                    return client_package->server->client_count; // remplacer le return avec l'id du client dans la db
+                }
+                else
+                {
+                    printf("Informations de connexion erronées.\n");
+                    send(client_package->client->sock_pointer, (char *)&login_status, sizeof(login_status), 0);
+                }
+                break;
         }
+
+        
+        // bytes = "\0";
+        // fonction_nimporte(login_info);        
+        
     }
     return -1;
 }

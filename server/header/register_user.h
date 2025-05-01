@@ -12,4 +12,5 @@ int does_user_exists(Login_infos* login_info);
 PGresult* create_new_user_query(PGconn *conn, Client_package *client_package);
 void create_new_user_db(Client_package* client_package);
 
+
 #endif

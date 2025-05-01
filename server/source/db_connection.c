@@ -10,7 +10,7 @@ int check_user_pass_match(Login_infos* login_info) {
 
     int final_size_query = snprintf(NULL, 0,
         "SELECT COUNT(user_name) FROM users\n\
-    WHERE (user_name = '%s' OR email = '%s') AND password = '%s'", login_info->username, login_info->username, login_info->password) +1;
+    WHERE (user_name = '%s' OR email = '%s') AND password = '%s'", login_info->username, login_info->email, login_info->password) +1;
 
     char *query = malloc(final_size_query);
     if (query == NULL) {
@@ -21,8 +21,10 @@ int check_user_pass_match(Login_infos* login_info) {
 
     snprintf(query, final_size_query,
         "SELECT COUNT(user_name) FROM users\n\
-    WHERE (user_name = '%s' OR email = '%s') AND password = '%s'", login_info->username, login_info->username, login_info->password);
-
+    WHERE (user_name = '%s' OR email = '%s') AND password = '%s'",
+    login_info->username,
+    login_info->email,
+    login_info->password);
     // multiple line query add \n\ at the end of every line OR quote at the begging of every line
 
     res = PQexec(conn, query);

@@ -68,10 +68,11 @@ int register_attempts(Login_package_for_front *login_pack) {
     Login_infos *login_info_copy = malloc(sizeof(Login_infos));
     *login_info_copy = *login_pack->login_info;
     int register_status = 1;
+    login_pack->login_info->login_register = CREATE_ACCOUNT;
     send(login_pack->client->sock_pointer, (char *)login_pack->login_info, sizeof(Login_infos), 0);
     recv(login_pack->client->sock_pointer, (char *)&register_status, sizeof(int), 0);
 
-    if (register_status == 1) {
+    if (login_pack->login_info->login_register == CREATE_ACCOUNT) {
         printf("Création de compte réussie\n");
         return 0;
     } else {
