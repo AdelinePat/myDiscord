@@ -126,6 +126,7 @@ void get_user_data(Client_package* client_package) {
         char *result_user_name = PQgetvalue(res, 0, 1);
         int user_id = atoi(result_user_id);  // Convert string to int
         client_package->login_info->user_id = user_id;
+        client_package->client->client_id = user_id;
         
         strcpy(client_package->login_info->username, result_user_name);
         // printf("print du login info après la requête : id %d, name %s\n", client_package->login_info->user_id, client_package->login_info->username);
