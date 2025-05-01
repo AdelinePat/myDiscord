@@ -17,13 +17,14 @@ struct tm get_timestamp();
 typedef enum
 {
     LOGIN = 0,
-    SWITCH_CHANNEL = 1,
-    SEND_MESSAGE = 2,
-    CREATE_CHANNEL = 3,
-    SEND_REACTION = 4,
-    LOGOUT = 5,
-    CHANGE_ACCESS = 6,
-    DELETE_ACCOUNT = 7
+    CREATE_ACCOUNT = 1,
+    SWITCH_CHANNEL = 2,
+    SEND_MESSAGE = 3,
+    CREATE_CHANNEL = 4,
+    SEND_REACTION = 5,
+    LOGOUT = 6,
+    CHANGE_ACCESS = 7,
+    DELETE_ACCOUNT = 8
 } SendType;
 
 typedef struct {
@@ -46,7 +47,7 @@ typedef struct
     SendType send_type;
     SOCKET sock_pointer;
     char client_name[64];
-    int client_id;
+    int client_id; // client_id = user_id in database
     Channel_info *channels;
 
 } Client_data;
@@ -64,7 +65,7 @@ typedef struct {
     char password[64];
     char confirm_password[64];
     char email[100];
-    int login_register;
+    SendType login_register;
     int user_id;
     int current_channel;
 } Login_infos;

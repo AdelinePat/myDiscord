@@ -7,7 +7,7 @@ int does_user_exists(Login_infos* login_info) {
 
     int final_size_query = snprintf(NULL, 0,
         "SELECT COUNT(user_name) FROM users\n\
-    WHERE (user_name = '%s' OR email = '%s')", login_info->username, login_info->username) +1;
+    WHERE (user_name = '%s' OR email = '%s')", login_info->username, login_info->email) +1;
 
     char *query = malloc(final_size_query);
     if (query == NULL) {
@@ -16,15 +16,16 @@ int does_user_exists(Login_infos* login_info) {
         exit(1);
     }
 
+    printf("valeur de user_name %s et de email %s avant la requete\n", login_info->username, login_info->email);
     snprintf(query, final_size_query,
         "SELECT COUNT(user_name) FROM users\n\
-    WHERE (user_name = '%s' OR email = '%s')", login_info->username, login_info->username);
+    WHERE (user_name = '%s' OR email = '%s')", login_info->username, login_info->email);
     res = PQexec(conn, query);
     free(query);
 
     ExecStatusType resStatus = PQresultStatus(res);
     
-    if (resStatus != PGRES_COMMAND_OK)
+    if (resStatus != PGRES_TUPLES_OK)
     {
         printf("il y a eu une erreur dans la requête qui compte le nombre d'utilisateur qui corresponde au username ou email transmis par Gtk");
         PQclear(res);
@@ -71,8 +72,9 @@ PGresult * create_new_user_query(PGconn *conn, Client_package *client_package)
     free(query);
     ExecStatusType resStatus = PQresultStatus(res);
 
-    if (resStatus != PGRES_TUPLES_OK)
+    if (resStatus != PGRES_COMMAND_OK)
     {
+        printf("valeur de resStatus : %d", resStatus);
         printf("il y a eu une erreur dans la requête de création de user");
         PQclear(res);
         PQfinish(conn);
