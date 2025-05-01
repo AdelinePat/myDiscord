@@ -39,3 +39,7 @@ SELECT COUNT(user_name) FROM users
 -- VALUES (user_id, channel_id, date_time, content);
 
 ALTER TABLE users
+
+ALTER TABLE messages
+  ALTER COLUMN date_time TYPE timestamp WITHOUT time zone
+  USING CURRENT_DATE + date_time;

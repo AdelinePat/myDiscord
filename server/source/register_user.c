@@ -7,7 +7,9 @@ int does_user_exists(Login_infos* login_info) {
 
     int final_size_query = snprintf(NULL, 0,
         "SELECT COUNT(user_name) FROM users\n\
-    WHERE (user_name = '%s' OR email = '%s')", login_info->username, login_info->email) +1;
+    WHERE (user_name = '%s' OR email = '%s')",
+    login_info->username,
+    login_info->email) +1;
 
     char *query = malloc(final_size_query);
     if (query == NULL) {
@@ -16,10 +18,17 @@ int does_user_exists(Login_infos* login_info) {
         exit(1);
     }
 
-    printf("valeur de user_name %s et de email %s et password : %s avant la requete\n", login_info->username, login_info->email, login_info->password);
+    printf("valeur de user_name %s et de email %s et password : %s avant la requete\n",
+        login_info->username,
+        login_info->email,
+        login_info->password);
+        
     snprintf(query, final_size_query,
         "SELECT COUNT(user_name) FROM users\n\
-    WHERE (user_name = '%s' OR email = '%s')", login_info->username, login_info->email);
+    WHERE (user_name = '%s' OR email = '%s')", 
+    login_info->username,
+    login_info->email);
+
     res = PQexec(conn, query);
     free(query);
 
