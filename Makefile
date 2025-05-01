@@ -32,8 +32,23 @@ CFLAGS += $(GTK_CFLAGS)
 CFLAGS += $(PQ_CFLAGS)
 
 # Définir les sources
-SERVER_SRC = ./server/source/server.c ./server/source/hoster.c ./controller/source/utils.c ./server/source/database_communication.c ./server/source/db_connection.c ./server/source/db_chat_content.c
-CLIENT_SRC = ./client/source/client.c ./client/source/connector.c ./controller/source/utils.c ./client/source/front/client_front.c ./client/source/front/hash_login.c ./client/source/front/login_window.c ./client/source/front/register_window.c ./client/source/front/chat_window.c
+SERVER_SRC = ./server/source/server.c \
+./server/source/hoster.c \
+./controller/source/utils.c \
+./server/source/database_communication.c \
+./server/source/db_connection.c \
+./server/source/db_chat_content.c \
+./server/source/register_user.c \
+./server/source/save_message.c
+
+CLIENT_SRC = ./client/source/client.c \
+./client/source/connector.c \
+./controller/source/utils.c \
+./client/source/front/client_front.c \
+./client/source/front/hash_login.c \
+./client/source/front/login_window.c \
+./client/source/front/register_window.c \
+./client/source/front/chat_window.c
 
 # Fichiers objets générés
 SERVER_OBJ = $(SERVER_SRC:.c=.o)

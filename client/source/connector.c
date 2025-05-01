@@ -29,8 +29,8 @@ int login_attempts(Login_package_for_front *login_pack) {
 
 
     // printf("[DEBUG] Envoi des informations de connexion - username: %s, password: %s\n", login_info.username, login_info.password);
-    printf("Avant send : valeur de login_status : %d\n", login_status);
-    printf("Attempting login: %s / %s\n", login_pack->login_info->username, login_pack->login_info->password);
+    // printf("Avant send : valeur de login_status : %d\n", login_status);
+    printf("Attempting login: %s password :\n %s\n", login_pack->login_info->username, login_pack->login_info->password);
     send(login_pack->client->sock_pointer, (char *)login_info_copy, sizeof(Login_infos), 0);
     recv(login_pack->client->sock_pointer, (char *)&login_status, sizeof(int), 0);
     printf("Après receive : valeur de login_status : %d\n", login_status);
@@ -68,7 +68,7 @@ int register_attempts(Login_package_for_front *login_pack) {
     Login_infos *login_info_copy = malloc(sizeof(Login_infos));
     *login_info_copy = *login_pack->login_info;
     int register_status = 1;
-    login_pack->login_info->login_register = CREATE_ACCOUNT;
+    // login_pack->login_info->login_register = CREATE_ACCOUNT;
     send(login_pack->client->sock_pointer, (char *)login_pack->login_info, sizeof(Login_infos), 0);
     recv(login_pack->client->sock_pointer, (char *)&register_status, sizeof(int), 0);
 

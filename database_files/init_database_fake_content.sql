@@ -1,4 +1,4 @@
--- Active: 1744914038452@@127.0.0.1@5432@whispr
+-- Active: 1745348025971@@127.0.0.1@5432@whispr
 -- creating fake channels --
 INSERT INTO channels (channel_title, channel_status)
 VALUES ('General_chat', 'public');

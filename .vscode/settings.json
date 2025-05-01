@@ -3,6 +3,7 @@
         "*.sqlbook": "sql",
         "*.ndjson": "jsonl",
         "*.dbclient-js": "javascript",
-        "register_window.h": "c"
+        "register_window.h": "c",
+        "sha.h": "c"
     }
 }
