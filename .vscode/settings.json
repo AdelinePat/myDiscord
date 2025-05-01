@@ -4,6 +4,7 @@
         "*.ndjson": "jsonl",
         "*.dbclient-js": "javascript",
         "register_window.h": "c",
-        "sha.h": "c"
+        "sha.h": "c",
+        "time.h": "c"
     }
 }

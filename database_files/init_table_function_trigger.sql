@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS messages
     message_id SERIAL NOT NULL,
     user_id integer,
     channel_id integer NOT NULL,
-    date_time time without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    date_time TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     content character varying(1000) NOT NULL,
     PRIMARY KEY (message_id),
 	FOREIGN KEY (user_id) REFERENCES users (user_id) MATCH SIMPLE

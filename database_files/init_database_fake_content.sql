@@ -11,15 +11,15 @@ VALUES ('florence_toto', 'private');
 
 -- creating fake users --
 INSERT INTO users (user_name, email, password)
-VALUES('Toto', 'toto@gmail.com', '123456');
+VALUES('Toto', 'toto@gmail.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92');
 
 INSERT INTO users(user_name, email, password)
-VALUES('jolyne', 'jolyne@gmail.com', '789012');
+VALUES('jolyne', 'jolyne@gmail.com', '29be3ceb88fd41ed9282b399cad1dd60a30634448634e75480197f792ea482bb');
 
 INSERT INTO users(user_name, email, password)
-VALUES('florence', 'florence@gmail.com', '123456');
+VALUES('florence', 'florence@gmail.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92');
 INSERT INTO users(user_name, email, password)
-VALUES('adeline', 'adeline@gmail.com', '123456');
+VALUES('adeline', 'adeline@gmail.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92');
 
 
 -- creating fake messages in different channels --

@@ -13,6 +13,8 @@
 #define MAX_CLIENTS 20
 
 struct tm get_timestamp();
+struct tm parse_db_query_time(char *time_str);
+char * timestamp_to_char(struct tm time);
 
 typedef enum
 {
