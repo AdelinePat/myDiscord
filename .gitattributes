@@ -1,0 +1,26 @@
+# Gérer automatiquement les fins de ligne pour tous les fichiers texte
+* text=auto
+
+# Forcer LF pour les scripts et SQL (important pour compatibilité Unix/Linux)
+*.sh text eol=lf
+*.sql text eol=lf
+*.psql text eol=lf
+
+# Forcer LF pour les fichiers de config et autres fichiers sensibles
+*.conf text eol=lf
+*.ini text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Forcer CRLF pour les fichiers Windows batch
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files: ne pas les modifier
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.ico binary

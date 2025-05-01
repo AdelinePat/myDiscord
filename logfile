@@ -1,0 +1,95 @@
+2025-04-30 19:57:41.635 CEST [29316] LOG:  démarrage de PostgreSQL 17.2 on x86_64-windows, compiled by gcc-14.2.0, 64-bit
+2025-04-30 19:57:41.640 CEST [29316] LOG:  en écoute sur IPv6, adresse « ::1 », port 5432
+2025-04-30 19:57:41.640 CEST [29316] LOG:  en écoute sur IPv4, adresse « 127.0.0.1 », port 5432
+2025-04-30 19:57:41.745 CEST [25264] LOG:  le système de bases de données a été arrêté à 2025-04-25 21:06:08 CEST
+2025-04-30 19:57:41.819 CEST [29316] LOG:  le système de bases de données est prêt pour accepter les connexions
+2025-04-30 19:57:52.561 CEST [2496] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 19:57:56.157 CEST [28964] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 19:57:57.604 CEST [15572] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 19:58:01.297 CEST [22640] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 19:58:01.665 CEST [19432] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 19:58:05.167 CEST [25024] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 19:58:05.205 CEST [28636] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 19:58:11.469 CEST [9612] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 19:58:12.098 CEST [27580] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:00:24.701 CEST [15476] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:01:31.106 CEST [8828] FATAL:  la base de données « enola » n'existe pas
+2025-04-30 20:02:41.722 CEST [16956] LOG:  début du checkpoint : time
+2025-04-30 20:02:41.754 CEST [16956] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.011 s, sync=0.014 s, total=0.035 s; sync files=2, longest=0.013 s, average=0.007 s; distance=0 kB, estimate=0 kB; lsn=0/15223D0, redo lsn=0/1522378
+2025-04-30 20:04:36.042 CEST [10548] FATAL:  la base de données « enola » n'existe pas
+2025-04-30 20:05:14.461 CEST [10396] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:05:15.858 CEST [17748] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:05:16.301 CEST [17908] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:05:16.687 CEST [16680] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:05:17.157 CEST [22648] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:05:19.320 CEST [13800] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:06:45.404 CEST [14980] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:10:25.360 CEST [29316] LOG:  a reçu une demande d'arrêt rapide
+2025-04-30 20:10:25.364 CEST [29316] LOG:  annulation des transactions actives
+2025-04-30 20:10:25.370 CEST [29316] LOG:  processus en tâche de fond « logical replication launcher » (PID 16524) a quitté avec le code de sortie 1
+2025-04-30 20:10:25.370 CEST [16956] LOG:  arrêt en cours
+2025-04-30 20:10:25.371 CEST [16956] LOG:  début du checkpoint : shutdown immediate
+2025-04-30 20:10:25.380 CEST [16956] LOG:  checkpoint complete: wrote 0 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.011 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=0 kB; lsn=0/1522480, redo lsn=0/1522480
+2025-04-30 20:10:25.390 CEST [29316] LOG:  le système de base de données est arrêté
+2025-04-30 20:10:25.651 CEST [14420] LOG:  démarrage de PostgreSQL 17.2 on x86_64-windows, compiled by gcc-14.2.0, 64-bit
+2025-04-30 20:10:25.655 CEST [14420] LOG:  en écoute sur IPv6, adresse « ::1 », port 5432
+2025-04-30 20:10:25.655 CEST [14420] LOG:  en écoute sur IPv4, adresse « 127.0.0.1 », port 5432
+2025-04-30 20:10:25.721 CEST [12144] LOG:  le système de bases de données a été arrêté à 2025-04-30 20:10:25 CEST
+2025-04-30 20:10:25.805 CEST [14420] LOG:  le système de bases de données est prêt pour accepter les connexions
+2025-04-30 20:10:32.633 CEST [20500] FATAL:  la base de données « enola » n'existe pas
+2025-04-30 20:10:41.253 CEST [27940] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:10:41.488 CEST [10684] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:13:27.814 CEST [14420] LOG:  a reçu une demande d'arrêt rapide
+2025-04-30 20:13:27.817 CEST [14420] LOG:  annulation des transactions actives
+2025-04-30 20:13:27.821 CEST [14420] LOG:  processus en tâche de fond « logical replication launcher » (PID 4612) a quitté avec le code de sortie 1
+2025-04-30 20:13:27.823 CEST [21156] LOG:  arrêt en cours
+2025-04-30 20:13:27.824 CEST [21156] LOG:  début du checkpoint : shutdown immediate
+2025-04-30 20:13:27.851 CEST [21156] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.021 s, total=0.028 s; sync files=2, longest=0.012 s, average=0.011 s; distance=0 kB, estimate=0 kB; lsn=0/1522530, redo lsn=0/1522530
+2025-04-30 20:13:27.858 CEST [14420] LOG:  le système de base de données est arrêté
+2025-04-30 20:15:30.580 CEST [21108] LOG:  démarrage de PostgreSQL 17.2 on x86_64-windows, compiled by gcc-14.2.0, 64-bit
+2025-04-30 20:15:30.585 CEST [21108] LOG:  en écoute sur IPv6, adresse « ::1 », port 5432
+2025-04-30 20:15:30.586 CEST [21108] LOG:  en écoute sur IPv4, adresse « 127.0.0.1 », port 5432
+2025-04-30 20:15:30.649 CEST [25844] LOG:  le système de bases de données a été arrêté à 2025-04-30 20:14:59 CEST
+2025-04-30 20:15:30.698 CEST [21108] LOG:  le système de bases de données est prêt pour accepter les connexions
+2025-04-30 20:16:01.722 CEST [25852] FATAL:  la base de données « enola » n'existe pas
+2025-04-30 20:17:32.005 CEST [28964] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:20:30.644 CEST [14532] LOG:  début du checkpoint : time
+2025-04-30 20:20:34.502 CEST [14532] LOG:  checkpoint complete: wrote 38 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.842 s, sync=0.009 s, total=3.863 s; sync files=11, longest=0.003 s, average=0.001 s; distance=202 kB, estimate=202 kB; lsn=0/15221A8, redo lsn=0/1522150
+2025-04-30 20:22:23.102 CEST [13576] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:22:23.178 CEST [26540] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:22:34.781 CEST [29816] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:22:35.591 CEST [9588] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:22:36.011 CEST [30340] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:22:36.304 CEST [18228] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:22:36.505 CEST [17872] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:22:36.715 CEST [29872] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:22:37.000 CEST [19844] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:22:37.248 CEST [22740] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:22:38.154 CEST [24248] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:22:38.403 CEST [3296] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:22:38.786 CEST [18208] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:22:39.055 CEST [8968] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:22:57.990 CEST [10308] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:23:07.038 CEST [10752] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:23:07.106 CEST [30700] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:23:16.640 CEST [24448] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:23:24.779 CEST [20568] FATAL:  le rôle « postgres » n'existe pas
+2025-04-30 20:28:19.140 CEST [21108] LOG:  a reçu une demande d'arrêt rapide
+2025-04-30 20:28:19.142 CEST [21108] LOG:  annulation des transactions actives
+2025-04-30 20:28:19.146 CEST [21108] LOG:  processus en tâche de fond « logical replication launcher » (PID 22004) a quitté avec le code de sortie 1
+2025-04-30 20:28:19.146 CEST [14532] LOG:  arrêt en cours
+2025-04-30 20:28:19.147 CEST [14532] LOG:  début du checkpoint : shutdown immediate
+2025-04-30 20:28:19.161 CEST [14532] LOG:  checkpoint complete: wrote 0 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.016 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=181 kB; lsn=0/1522258, redo lsn=0/1522258
+2025-04-30 20:28:19.169 CEST [21108] LOG:  le système de base de données est arrêté
+2025-04-30 20:38:02.119 CEST [19968] LOG:  démarrage de PostgreSQL 17.2 on x86_64-windows, compiled by gcc-14.2.0, 64-bit
+2025-04-30 20:38:02.124 CEST [19968] LOG:  en écoute sur IPv6, adresse « ::1 », port 5432
+2025-04-30 20:38:02.124 CEST [19968] LOG:  en écoute sur IPv4, adresse « 127.0.0.1 », port 5432
+2025-04-30 20:38:02.186 CEST [29576] LOG:  le système de bases de données a été arrêté à 2025-04-30 20:28:19 CEST
+2025-04-30 20:38:02.234 CEST [19968] LOG:  le système de bases de données est prêt pour accepter les connexions
+2025-04-30 20:41:49.642 CEST [19968] LOG:  a reçu une demande d'arrêt rapide
+2025-04-30 20:41:49.645 CEST [19968] LOG:  annulation des transactions actives
+2025-04-30 20:41:49.649 CEST [19968] LOG:  processus en tâche de fond « logical replication launcher » (PID 9960) a quitté avec le code de sortie 1
+2025-04-30 20:41:49.652 CEST [27328] LOG:  arrêt en cours
+2025-04-30 20:41:49.653 CEST [27328] LOG:  début du checkpoint : shutdown immediate
+2025-04-30 20:41:49.682 CEST [27328] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.021 s, total=0.030 s; sync files=2, longest=0.012 s, average=0.011 s; distance=0 kB, estimate=0 kB; lsn=0/1522308, redo lsn=0/1522308
+2025-04-30 20:41:49.689 CEST [19968] LOG:  le système de base de données est arrêté
