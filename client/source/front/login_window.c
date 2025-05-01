@@ -44,7 +44,7 @@ void load_css(GtkApplication *app)
 // === CALLBACK: When the "Login" button is clicked ===
 static void on_login_clicked(GtkButton *button, gpointer user_data)
 {
-    Login_package_for_front *login_pack = (Login_package_for_front *)user_data;
+    Client_package_for_frontend *login_pack = (Client_package_for_frontend *)user_data;
 
     // GtkWidget **data = user_data;
     GtkWidget *login_window = login_pack->data[0];
@@ -55,8 +55,8 @@ static void on_login_clicked(GtkButton *button, gpointer user_data)
     const gchar *username = gtk_entry_get_text(GTK_ENTRY(entry_user));
     const gchar *password = gtk_entry_get_text(GTK_ENTRY(entry_pass));
 
-    strcpy(login_pack->login_info->username, username);
-    strcpy(login_pack->login_info->email, username);
+    strcpy(login_pack->client_package->login_info->username, username);
+    strcpy(login_pack->client_package->login_info->email, username);
 
     char hashed_password[65];
     hash_password_sha256(password, hashed_password);
@@ -64,11 +64,13 @@ static void on_login_clicked(GtkButton *button, gpointer user_data)
     printf(" on_login_clicked1 : Hashed password: %s\n", hashed_password);
 
     // strcpy(login_pack->login_info->password, password);
-    strcpy(login_pack->login_info->password, hashed_password);
+    strcpy(login_pack->client_package->login_info->password, hashed_password);
 
-    login_pack->login_info->login_register = LOGIN;
+    login_pack->client_package->send_type = LOGIN;
 
-    g_print("Attempting login: %s / %s\n", login_pack->login_info->username, login_pack->login_info->password);
+    g_print("Attempting login: %s / %s\n",
+        login_pack->client_package->login_info->username,
+        login_pack->client_package->login_info->password);
 
     int login_status = login_attempts(login_pack);
     // TODO: Call the validate_credentials() function here to check the format of the email/username and password with regex
@@ -84,7 +86,7 @@ static void on_login_clicked(GtkButton *button, gpointer user_data)
 // === CALLBACK: When the "Register" button is clicked ===
 static void on_register_clicked(GtkButton *button, gpointer user_data)
 {
-    Login_package_for_front *login_pack = (Login_package_for_front *)user_data;
+    Client_package_for_frontend *login_pack = (Client_package_for_frontend *)user_data;
 
     // GtkWidget **data = user_data;
     GtkWidget *login_window = login_pack->data[0];
@@ -104,10 +106,11 @@ static void on_register_clicked(GtkButton *button, gpointer user_data)
 }
 
 // === MAIN FUNCTION: Creates the login window ===
-void show_login_window(Login_package_for_front *login_pack)
+void show_login_window(Client_package_for_frontend *login_pack)
 {
-    // Login_package_for_front *login_pack = login_pack;
-    login_pack->client->sock_pointer = client_start();
+    // Client_package_for_frontend *login_pack = login_pack;
+    login_pack->client_package->client->sock_pointer = client_start();
+    printf("on a reçu la socket client après connexion ??? %d", login_pack->client_package->client->sock_pointer);
 
     load_css(login_pack->app); // Load and apply the CSS
 

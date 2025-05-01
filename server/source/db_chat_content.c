@@ -49,7 +49,7 @@ void get_channel_list(Client_package *client_package) {
     printf("\n");
 
     Channel_info *channels = malloc(sizeof(Channel_info)*rows);
-    client_package->client->channels = channels;
+    client_package->channels = channels;
 
     printf("user_id %d, user_name %s\n",
         client_package->login_info->user_id,
@@ -60,13 +60,13 @@ void get_channel_list(Client_package *client_package) {
         printf("rows : %d, cols : %d\n", rows, cols);
         for (int row = 0; row < rows; row++)
             {
-                client_package->client->channels[row].channel_id = atoi(PQgetvalue(res, row, 0));
-                strcpy(client_package->client->channels[row].channel_title, PQgetvalue(res, row, 1));
+                client_package->channels[row].channel_id = atoi(PQgetvalue(res, row, 0));
+                strcpy(client_package->channels[row].channel_title, PQgetvalue(res, row, 1));
 
                 printf("Valeur row n°%d : %d %s\n",
                     row,
-                    client_package->client->channels[row].channel_id,
-                    client_package->client->channels[row].channel_title);
+                    client_package->channels[row].channel_id,
+                    client_package->channels[row].channel_title);
 
             }
     }
@@ -88,7 +88,7 @@ PGresult* generate_full_chat_content_query(PGconn *conn, Client_package *client_
         LEFT JOIN users AS u ON u.user_id = m.user_id\n\
         WHERE c.channel_id = %d\n\
         ORDER BY date_time",
-        client_package->login_info->current_channel) +1;
+        client_package->current_channel) +1;
     
     char *query = malloc(final_size_query);
     if (query == NULL) {
@@ -104,7 +104,7 @@ PGresult* generate_full_chat_content_query(PGconn *conn, Client_package *client_
         LEFT JOIN users AS u ON u.user_id = m.user_id\n\
         WHERE c.channel_id = %d\n\
         ORDER BY date_time",
-        client_package->login_info->current_channel);
+        client_package->current_channel);
 
     PGresult *res = PQexec(conn, query);
     free(query);
@@ -126,7 +126,9 @@ int check_channel_access(PGconn *conn, Client_package *client_package)
     int access_granted = 0;
     int final_size_query = snprintf(NULL, 0, "SELECT role_title\n\
         FROM channels_access\n\
-        WHERE user_id = %d AND channel_id = %d;", client_package->login_info->user_id, client_package->login_info->current_channel) +1;
+        WHERE user_id = %d AND channel_id = %d;",
+        client_package->login_info->user_id,
+        client_package->current_channel) +1;
     
     char *query = malloc(final_size_query);
     if (query == NULL) {
@@ -137,7 +139,8 @@ int check_channel_access(PGconn *conn, Client_package *client_package)
 
     snprintf(query, final_size_query, "SELECT role_title\n\
         FROM channels_access\n\
-        WHERE user_id = %d AND channel_id = %d;", client_package->login_info->user_id, client_package->login_info->current_channel);
+        WHERE user_id = %d AND channel_id = %d;", client_package->login_info->user_id,
+        client_package->current_channel);
 
     PGresult *res = PQexec(conn, query);
     free(query);
@@ -187,7 +190,10 @@ void get_full_chat_content(Client_package *client_package) {
         Message *messages_list = malloc(sizeof(Message)*rows);
         client_package->messages_list = messages_list;
 
-        printf("user_id %d, current_channel_id %d\n", client_package->login_info->user_id, client_package->login_info->current_channel);
+        printf("user_id %d, current_channel_id %d\n",
+            client_package->login_info->user_id,
+            client_package->current_channel);
+            
         if (rows > 0 && cols > 0)
         {
             printf("rows : %d, cols : %d\n", rows, cols);

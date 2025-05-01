@@ -7,7 +7,7 @@
 
 // === CALLBACK: When the "Confirmer" button is clicked ===
 static void on_confirm_clicked(GtkButton *button, gpointer user_data) {
-    Login_package_for_front *login_pack = (Login_package_for_front *)user_data;
+    Client_package_for_frontend *login_pack = (Client_package_for_frontend *)user_data;
     (void)button;
 
     GtkWidget **data = login_pack->data;
@@ -39,12 +39,12 @@ static void on_confirm_clicked(GtkButton *button, gpointer user_data) {
     // printf("A2 on_register_clicked1 : confirm Password: %s\n", password);
     // printf("B2 on_register_clicked1 : Hashed confirm password: %s\n", hashed_password);
 
-    strcpy(login_pack->login_info->username, username);
-    strcpy(login_pack->login_info->email, email);
-    printf("\n\n email from login_info strcpy : %s\n\n", login_pack->login_info->email);
-    strcpy(login_pack->login_info->password, hashed_password);
-    strcpy(login_pack->login_info->confirm_password, hashed_confirm_password);
-    login_pack->login_info->login_register = CREATE_ACCOUNT;
+    strcpy(login_pack->client_package->login_info->username, username);
+    strcpy(login_pack->client_package->login_info->email, email);
+    printf("\n\n email from login_info strcpy : %s\n\n", login_pack->client_package->login_info->email);
+    strcpy(login_pack->client_package->login_info->password, hashed_password);
+    strcpy(login_pack->client_package->login_info->confirm_password, hashed_confirm_password);
+    login_pack->client_package->send_type = CREATE_ACCOUNT;
 
     int register_status = register_attempts(login_pack);
     g_print("Registration with: %s / %s / %s\n", username, email, password);
@@ -61,7 +61,7 @@ static void on_confirm_clicked(GtkButton *button, gpointer user_data) {
 // === CALLBACK: When the "Retour" button is clicked ===
 static void on_return_clicked(GtkButton *button, gpointer user_data) {
     (void)button;
-    Login_package_for_front *login_pack = (Login_package_for_front *)user_data;
+    Client_package_for_frontend *login_pack = (Client_package_for_frontend *)user_data;
 
     GtkWidget **data = login_pack->data;
     GtkWidget *register_window = data[0];
@@ -72,7 +72,7 @@ static void on_return_clicked(GtkButton *button, gpointer user_data) {
 }
 
 // === MAIN FUNCTION: Creates the registration window ===
-void show_register_window(Login_package_for_front *login_pack) {
+void show_register_window(Client_package_for_frontend *login_pack) {
 
     GtkWidget *window = gtk_application_window_new(login_pack->app);
     gtk_window_set_title(GTK_WINDOW(window), "Create Account");

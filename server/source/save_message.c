@@ -9,7 +9,7 @@ PGresult * create_new_message_query(PGconn *conn, Client_package *client_package
         "INSERT INTO messages (user_id, channel_id, date_time, content)\n\
         VALUES (%d, %d, '%s', '%s');", 
         client_package->login_info->user_id,
-        client_package->login_info->current_channel,
+        client_package->current_channel,
         client_package->message_send.timestamp,
         client_package->message_send.message) +1;
 
@@ -23,7 +23,7 @@ PGresult * create_new_message_query(PGconn *conn, Client_package *client_package
         "INSERT INTO messages (user_id, channel_id, date_time, content)\n\
         VALUES (%d, %d, '%s', '%s');",
         client_package->login_info->user_id,
-        client_package->login_info->current_channel,
+        client_package->current_channel,
         client_package->message_send.timestamp,
         client_package->message_send.message);
 

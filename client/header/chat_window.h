@@ -4,6 +4,6 @@
 #include "../../controller/header/utils.h"
 
 // void show_chat_window(GtkApplication *app);
-void show_chat_window(Login_package_for_front *login_pack);
+void show_chat_window(Client_package_for_frontend *login_pack);
 
 #endif

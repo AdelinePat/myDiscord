@@ -21,24 +21,46 @@ int login_attempts(Client_package *client_package)
 {
     while (1)
     {
-        Login_infos *login_info = malloc(sizeof(Login_infos));
+        // Login_infos *login_info = malloc(sizeof(Login_infos));
         int login_status = 0;
-        int bytes = recv(client_package->client->sock_pointer, (char *)login_info, sizeof(Login_infos), 0);
-        client_package->login_info = login_info;
+        Client_package *client_package_copy = malloc(sizeof(Client_package));
+        Login_infos *login_info_copy = malloc(sizeof(Login_infos));
+        client_package_copy->login_info = login_info_copy;
+        // int bytes = recv(client_package->client->sock_pointer, (char *)login_info, sizeof(Login_infos), 0);
+        int bytes = recv(client_package->client->sock_pointer,
+            (char *)client_package_copy,
+            sizeof(Client_package),
+            0);
+
+        // client_package_copy = client_package;
+        printf("\n\n SEND_TYPE VALUE AFTER RECV : %d\n\n", client_package_copy->send_type);
+
+        client_package->login_info = client_package_copy->login_info;
+        client_package->send_type = client_package_copy->send_type;
+
+        printf("avant check dans copy : user << %s >> et password << %s >>",
+            client_package_copy->login_info->username,
+            client_package_copy->login_info->password);
+        
         if (bytes == SOCKET_ERROR)
         {
             printf("[ERROR] Erreur lors de la réception de Login_infos, code %d\n", WSAGetLastError());
             break;
         }
-        if (bytes != sizeof(Login_infos))
+        if (bytes != sizeof(Client_package))
         {
-            printf("[ERROR] Taille des données reçues incorrecte. Attendu %zu, reçu %d\n", sizeof(Login_infos), bytes);
+            printf("[ERROR] Taille des données reçues incorrecte. Attendu %zu, reçu %d\n", sizeof(Client_package), bytes);
             break;
         }
 
-        printf("Infos reçues : user : << %s >>, pass : << %s >>\n", client_package->login_info->username, client_package->login_info->password);
+        printf("Infos reçues : user : << %s >>, pass : << %s >>\n",
+            client_package->login_info->username,
+            client_package->login_info->password);
+
         printf("\navant le if : Valeur de login_status cote serveur : %d\n", login_status);
-        switch (client_package->login_info->login_register)
+        printf("\nvaleur du send_type dans client_package : %d\n", client_package->send_type);
+        
+        switch (client_package->send_type)
         {
             case CREATE_ACCOUNT:
                 create_new_user_db(client_package);
@@ -60,42 +82,55 @@ int login_attempts(Client_package *client_package)
                     send(client_package->client->sock_pointer, (char *)&login_status, sizeof(login_status), 0);
                 }
                 break;
+            default:
+                printf("oups, le send_type n'est pas reconnu");
+                return 0;
         }
 
         
         // bytes = "\0";
-        // fonction_nimporte(login_info);        
+        // fonction_nimporte(login_info);      *
+        free(client_package_copy);  
         
     }
+    
     return 1;
 }
 
-void recover_messages(Client_package *client_package)
+void recover_messages(Client_package_for_backend *package)
 {
-    get_full_chat_content(client_package);
-    printf("sock du client : %lld\n", client_package->client->sock_pointer);
+    get_full_chat_content(package->client_package);
+    printf("sock du client : %lld\n", package->client_package->client->sock_pointer);
 
-    int size_of_list = client_package->number_of_messages;
+    int size_of_list = package->client_package->number_of_messages;
     
     printf("message_list size (number of messages) : %d", size_of_list);
 
-    send(client_package->client->sock_pointer, (char *)&client_package->number_of_messages, sizeof(int), 0);
+    send(package->client_package->client->sock_pointer,
+        (char *)&package->client_package->number_of_messages,
+        sizeof(int),
+        0);
+
     int validation;
-    recv(client_package->client->sock_pointer, (char *)validation, sizeof(int), 0);
+    recv(package->client_package->client->sock_pointer, (char *)validation, sizeof(int), 0);
 
     printf("sending messages");
-    printf("messages number : %d\n", client_package->number_of_messages);
+    printf("messages number : %d\n", package->client_package->number_of_messages);
 
     for (int i = 0; i < size_of_list; i++) {
-        Message message_sent = client_package->messages_list[i];
+        Message message_sent = package->client_package->messages_list[i];
         printf("[DEBUG] Envoi message %s : %s\n", message_sent.username, message_sent.message);
 
-        int bytes = send(client_package->client->sock_pointer, (char *)&message_sent, sizeof(Message), 0);
+        int bytes = send(package->client_package->client->sock_pointer,
+            (char *)&message_sent,
+            sizeof(Message),
+            0);
+
         if (bytes <= 0) {
             perror("[ERROR] send message failed\n");
             break;
         }
-        recv(client_package->client->sock_pointer, (char *)validation, sizeof(int), 0);
+        recv(package->client_package->client->sock_pointer, (char *)validation, sizeof(int), 0);
     }
 
     printf("       messages sent\n");
@@ -114,57 +149,74 @@ void recover_messages(Client_package *client_package)
 void *handle_client(void *arg)
 {
     Client_package *client_package = (Client_package *)arg;
-
+    Login_infos *login_info = malloc(sizeof(Login_infos));
+    client_package->login_info = login_info;
+    // Client_package *client_package = malloc(sizeof(Client_package));
+    // client_pack->client_package = client_package;
 
     int login_status = login_attempts(client_package);
 
     if (login_status == 1)
     {
         printf("[INFO] Abandon de connexion");
+        // free(client_package);
+        // free(client_pack);
         free(arg);
         pthread_exit(NULL);
         return 0;
     }
 
-    Server_state *state = client_package->server;
-    Client_data *client = client_package->client;
+    Client_package_for_backend *client_pack = malloc(sizeof(Client_package_for_backend));
+    client_pack->client_package = client_package;
+    Server_state *state = client_pack->server;
+    Client_data *client = client_pack->client_package->client;
     SOCKET client_sock = client->sock_pointer;
 
-    first_update_client_package(client_package);
-    printf("de retour dans handle_client : valeur user_id %d et user_name : %s\n", client_package->login_info->user_id, client_package->login_info->username);
+    first_update_client_package(client_pack->client_package);
+    printf("de retour dans handle_client : valeur user_id %d et user_name : %s\n",
+        client_pack->client_package->login_info->user_id,
+        client_pack->client_package->login_info->username);
     // client->client_id = user_id;
     // strcpy(client->client_name, "user"); // Ajout des données client avant de les envoyer après connexion
 
-    Client_data *client_copy = malloc(sizeof(Client_data)); // On crée une copie de client pour ne pas créer de conflit dans la mémoire entre serveur et client
-    *client_copy = *client;
+    // Client_data *client_copy = malloc(sizeof(Client_data)); // On crée une copie de client pour ne pas créer de conflit dans la mémoire entre serveur et client
+    Client_package *client_copy = malloc(sizeof(Client_package));
+    *client_copy->client = *client;
     printf("sock du client : %lld\n", client_sock);
-    send(client_sock, (char *)client_copy, sizeof(Client_data), 0);
-    printf("[INFO] Client %d connecté.\n", client_package->client->client_id);
+    send(client_sock, (char *)client_copy->client, sizeof(Client_package), 0);
+    printf("[INFO] Client %d connecté.\n",
+        client_pack->client_package->login_info->user_id);
 
     pthread_mutex_lock(&state->lock);
     state->clients[state->client_count++] = client;
     pthread_mutex_unlock(&state->lock);
 
-    recover_messages(client_package);
+    recover_messages(client_pack);
 
     while (1)
     {
         Message *client_message = malloc(sizeof(Message));
-        int bytes = recv(client_sock, (char *)client_message, sizeof(Message), 0);
+        // Client_package_for_backend *client_pack = malloc(sizeof(Client_package_for_backend));
+        Client_package *client_package = malloc(sizeof(Client_package));
+        
+        // int bytes = recv(client_sock, (char *)client_message, sizeof(Message), 0);
+        int bytes = recv(client_sock, (char *)client_package, sizeof(Client_package), 0);
         if (bytes <= 0)
         {
             printf("haha, le client a disparu\n");
             break;
         }
-        strcpy(client_message->timestamp, get_str_timestamp());
+        client_pack->client_package = client_package;
+        // switch client_package-
+        strcpy(client_package->message_send.timestamp, get_str_timestamp());
 
         // Enregistrement du message dans la db
-        recover_messages(client_package);
+        recover_messages(client_pack);
         // broadcast_message(client_package); // Envoie d'une notification de nouveau message dans la db aux clients connectés
         free(client_message);
     }
 
-    printf("[INFO] Client %d déconnecté.\n", client->client_id);
+    printf("[INFO] Client %d déconnecté.\n", client->user_id);
     close(client_sock);
 
     pthread_mutex_lock(&state->lock);
@@ -185,8 +237,10 @@ void *handle_client(void *arg)
 
     free(state);
     free(client);
-    free(client_package);
+    free(client_pack->client_package);
     free(client_copy);
+    free(client_package);
+    free(client_pack);
     pthread_exit(NULL);
 }
 
@@ -240,9 +294,11 @@ void start_server()
         // Channel_info *channels = malloc(sizeof(Channel_info));
 
         // Login_infos *login_info = malloc(sizeof(Login_infos));
+        Client_package_for_backend *client_pack = malloc(sizeof(Client_package_for_backend));
         Client_package *client_package = malloc(sizeof(Client_package));
-        client_package->client = client_data;
-        client_package->server = state;
+        client_pack->client_package = client_package;
+        client_pack->client_package->client = client_data;
+        client_pack->server = state;
         // client_package->client->channels = &channels;
         // client_package->login_info = login_info;
 

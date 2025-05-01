@@ -7,13 +7,13 @@
 // void client_start();
 SOCKET client_start();
 // int login_attempts(SOCKET sock);
-int login_attempts(Login_package_for_front *login_pack);
-int register_attempts(Login_package_for_front *login_pack);
+int login_attempts(Client_package_for_frontend *login_pack);
+int register_attempts(Client_package_for_frontend *login_pack);
 void *receive_messages(void *arg);
 void recover_messages(SOCKET sock, GtkWidget *chat_display);
-void receive_client_data(Login_package_for_front *login_pack);
-void broadcast_notifications_receiver_start(Login_package_for_front *login_pack, GtkWidget *chat_entry);
-void send_message(Client_data *client, char text[1024]);
+void receive_client_data(Client_package_for_frontend *login_pack);
+void broadcast_notifications_receiver_start(Client_package_for_frontend *login_pack, GtkWidget *chat_entry);
+void send_message(Client_package *client_package, char text[1024]);
 // SendType register_attempts(Login_package_for_front *login_pack);
 
 #endif

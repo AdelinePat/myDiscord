@@ -71,7 +71,7 @@ int check_user_pass_match(Login_infos* login_info) {
 }
 
 void first_update_client_package(Client_package *client_package) {
-    client_package->login_info->current_channel = 1;
+    client_package->current_channel = 1;
     get_user_data(client_package);
     get_channel_list(client_package);
     get_full_chat_content(client_package);
@@ -138,7 +138,7 @@ void get_user_data(Client_package* client_package) {
         char *result_user_name = PQgetvalue(res, 0, 1);
         int user_id = atoi(result_user_id);  // Convert string to int
         client_package->login_info->user_id = user_id;
-        client_package->client->client_id = user_id;
+        client_package->client->user_id = user_id;
         
         strcpy(client_package->login_info->username, result_user_name);
         strcpy(client_package->client->client_name, result_user_name);

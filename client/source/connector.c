@@ -11,52 +11,68 @@
 
 #define PORT 8080
 
-int login_attempts(Login_package_for_front *login_pack) {
-    Login_infos *login_info_copy = malloc(sizeof(Login_infos));
-    *login_info_copy = *login_pack->login_info;
+int login_attempts(Client_package_for_frontend *login_pack) {
+    // Login_infos *login_info_copy = malloc(sizeof(Login_infos));
+    Client_package *client_package_copy = malloc(sizeof(Client_package));
+    // client_package_copy->login_info = login_info_copy;
+    
+    client_package_copy = login_pack->client_package;
+    client_package_copy->send_type = LOGIN;
+
     int login_status = 0;
 
-    // char username[64];
-    // printf("Entrez votre identifiant : ");
-    // scanf("%s", username);
+    printf("taille de client_package_copy %d\n", sizeof(client_package_copy));
 
-    // char password[64];
-    // printf("Entrez votre mot de passe : ");
-    // scanf("%s", password);
+    printf("\n\nAttempting login: \n\t%s password :\n\t %s\n\n",
+        client_package_copy->login_info->username,
+        client_package_copy->login_info->password);
 
-    // strncpy(login_info.username, username, sizeof(login_info.username));
-    // strncpy(login_info.password, password, sizeof(login_info.password));
+    send(login_pack->client_package->client->sock_pointer,
+        (char *)client_package_copy,
+        sizeof(Client_package),
+        0);
 
+    recv(login_pack->client_package->client->sock_pointer,
+        (char *)&login_status,
+        sizeof(int),
+        0);
 
-    // printf("[DEBUG] Envoi des informations de connexion - username: %s, password: %s\n", login_info.username, login_info.password);
-    // printf("Avant send : valeur de login_status : %d\n", login_status);
-    printf("Attempting login: %s password :\n %s\n", login_pack->login_info->username, login_pack->login_info->password);
-    send(login_pack->client->sock_pointer, (char *)login_info_copy, sizeof(Login_infos), 0);
-    recv(login_pack->client->sock_pointer, (char *)&login_status, sizeof(int), 0);
-    printf("Après receive : valeur de login_status : %d\n", login_status);
+    printf("\n\nLOGIN STATUS APRES RECV %d\n\n", login_status);
 
     if (login_status == 1) {
         printf("Connexion réussie\n");
         receive_client_data(login_pack);
+        // free(login_info_copy);
+        free(client_package_copy);
         return 0;
     } else {
         printf("Une erreur est survenue lors de la connexion\n");
+        // free(login_info_copy);
+        free(client_package_copy);
         return 1;
     }
+    
 }
 
-void receive_client_data(Login_package_for_front *login_pack) {
-    int socket_client = login_pack->client->sock_pointer;
+void receive_client_data(Client_package_for_frontend *login_pack) {
+    int socket_client = login_pack->client_package->client->sock_pointer;
 
-    recv(socket_client, (char *)login_pack->client, sizeof(Client_data), 0);
-    login_pack->client->sock_pointer = socket_client; // when receive, socket client is changed, this line is for change it back
+    recv(socket_client,
+        (char *)login_pack->client_package->client,
+        sizeof(Client_data),
+        0);
 
-    printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%lld\n", login_pack->client->client_id, login_pack->client->client_name, login_pack->client->sock_pointer);
+    login_pack->client_package->client->sock_pointer = socket_client; // when receive, socket client is changed, this line is for change it back
+
+    printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%lld\n",
+        login_pack->client_package->client->user_id,
+        login_pack->client_package->client->client_name,
+        login_pack->client_package->client->sock_pointer);
 }
 
-void broadcast_notifications_receiver_start(Login_package_for_front *login_pack, GtkWidget *chat_display) {
+void broadcast_notifications_receiver_start(Client_package_for_frontend *login_pack, GtkWidget *chat_display) {
     SOCKET *sock_copy = malloc(sizeof(SOCKET));
-    *sock_copy = login_pack->client->sock_pointer;
+    *sock_copy = login_pack->client_package->client->sock_pointer;
     Chat_display_package *chat_display_package = malloc(sizeof(Chat_display_package));
     chat_display_package->sock_copy = sock_copy;
     chat_display_package->chat_display = chat_display;
@@ -64,15 +80,19 @@ void broadcast_notifications_receiver_start(Login_package_for_front *login_pack,
     pthread_create(&recv_thread, NULL, receive_messages, (void *)chat_display_package);
 }
 
-int register_attempts(Login_package_for_front *login_pack) {
+int register_attempts(Client_package_for_frontend *login_pack) {
     Login_infos *login_info_copy = malloc(sizeof(Login_infos));
-    *login_info_copy = *login_pack->login_info;
+    *login_info_copy = *login_pack->client_package->login_info;
     int register_status = 1;
     // login_pack->login_info->login_register = CREATE_ACCOUNT;
-    send(login_pack->client->sock_pointer, (char *)login_pack->login_info, sizeof(Login_infos), 0);
-    recv(login_pack->client->sock_pointer, (char *)&register_status, sizeof(int), 0);
+    send(login_pack->client_package->client->sock_pointer,
+        (char *)login_pack->client_package->login_info,
+        sizeof(Login_infos),
+        0);
 
-    if (login_pack->login_info->login_register == CREATE_ACCOUNT) {
+    recv(login_pack->client_package->client->sock_pointer, (char *)&register_status, sizeof(int), 0);
+
+    if (login_pack->client_package->send_type == CREATE_ACCOUNT) {
         printf("Création de compte réussie\n");
         return 0;
     } else {
@@ -81,13 +101,14 @@ int register_attempts(Login_package_for_front *login_pack) {
     }
 }
 
-void send_message(Client_data *client, char text[1024]) {
+void send_message(Client_package *client_package, char text[1024]) {
     Message message;
-    message.client_id = client->client_id;
+    message.client_id = client_package->client->user_id;
+    message.channel_id = client_package->current_channel;
     strncpy(message.message, text, sizeof(message.message));
     message.message[sizeof(message.message) - 1] = '\0';
-    printf("Infos envoyées : %s de %d à %lld\n", message.message, message.client_id, client->sock_pointer);
-    send(client->sock_pointer, (char *)&message, sizeof(Message), 0);
+    printf("Infos envoyées : %s de %d à %lld\n", message.message, message.client_id, client_package->client->sock_pointer);
+    send(client_package->client->sock_pointer, (char *)&message, sizeof(Message), 0);
 }
 
 void fill_in_chat(GtkWidget *chat_display, Message *message_list, int message_length) {
@@ -170,43 +191,3 @@ SOCKET client_start() {
     printf("la sock serveur : %lld", server_sock);
     return server_sock;
 }
-
-// void after_login()
-//     {
-//     if (login_attempts(server_sock) == 1) {
-//         closesocket(server_sock);
-//         WSACleanup();
-//         return;
-//     }
-
-//     Client_data *client = malloc(sizeof(Client_data)) free();
-
-//     recv(server_sock, (char *)client, sizeof(Client_data), 0);
-//     client->sock_pointer = server_sock;
-
-//     printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%d\n", client->client_id, client->client_name, client->sock_pointer);
-
-//     SOCKET *sock_copy = malloc(sizeof(SOCKET)) free();
-//     *sock_copy = server_sock;
-//     printf("%d", *sock_copy);
-//     pthread_t recv_thread;
-//     pthread_create(&recv_thread, NULL, receive_messages, (void *)sock_copy);
-
-//     printf("Tu peux envoyer un message :\n");
-
-//     char message[1024];
-//     while (fgets(message, sizeof(message), stdin)) {
-//         size_t len = strlen(message);
-//         if (len == 1) {
-//             printf("[DEBUG] Message vide, on continue sans envoyer\n");
-//         } else {
-//             message[len - 1] = '\0';
-//             send_message(client, message);
-//         }
-//     }
-
-//     closesocket(server_sock);
-//     free(sock_copy);
-//     free(client);
-//     WSACleanup();
-// }

@@ -16,14 +16,14 @@ typedef struct
 // === Called when the "Disconnect" button is clicked ===
 static void on_disconnect_clicked(GtkButton *button, gpointer user_data) {
     // GtkApplication *app = GTK_APPLICATION(user_data);
-    Login_package_for_front *login_pack = (Login_package_for_front *)user_data;
+    Client_package_for_frontend *login_pack = (Client_package_for_frontend *)user_data;
     // GtkWidget **data = login_pack->data;
     GtkApplication *app = login_pack->app;
     // login_pack->data = NULL;
     GtkWidget **data = NULL;
     // gpointer data = NULL;
     // GtkApplication *app = GTK_APPLICATION(data);
-    Login_infos *login_info = login_pack->login_info;
+    Login_infos *login_info = login_pack->client_package->login_info;
 
     GtkWidget *window = gtk_widget_get_toplevel(GTK_WIDGET(button));
     if (GTK_IS_WINDOW(window))
@@ -53,13 +53,13 @@ static void on_emoji_clicked(GtkButton *button, gpointer user_data)
 // === Called when the user presses Enter in the chat entry ===
 static void on_chat_entry_activate(GtkEntry *entry, gpointer user_data)
 {
-    Login_package_for_front *login_pack = (Login_package_for_front *)user_data;
+    Client_package_for_frontend *login_pack = (Client_package_for_frontend *)user_data;
     // ChatWidgets *widgets = (ChatWidgets *)user_data;
 
     const gchar *text = gtk_entry_get_text(entry);
     if (g_strcmp0(text, "") != 0)
     {
-        send_message(login_pack->client, text);
+        send_message(login_pack->client_package, text);
         gtk_entry_set_text(entry, "");
     }
 }
@@ -85,22 +85,27 @@ static void on_connect_clicked(GtkButton *button, gpointer user_data)
     const gchar *password = gtk_entry_get_text(entry_pass);
 
     // Allouer la structure de connexion
-    Login_package_for_front *login_pack = malloc(sizeof(Login_package_for_front));
-    login_pack->login_info = malloc(sizeof(Login_infos));
-    login_pack->client = malloc(sizeof(Client_data));
+    Client_package_for_frontend *login_pack = malloc(sizeof(Client_package_for_frontend));
+    login_pack->client_package->login_info = malloc(sizeof(Login_infos));
+    login_pack->client_package->client = malloc(sizeof(Client_data));
     login_pack->app = app;
 
-    strncpy(login_pack->login_info->username, username, sizeof(login_pack->login_info->username) - 1);
-    strncpy(login_pack->login_info->password, password, sizeof(login_pack->login_info->password) - 1);
+    strncpy(login_pack->client_package->login_info->username,
+        username,
+        sizeof(login_pack->client_package->login_info->username) - 1);
+
+    strncpy(login_pack->client_package->login_info->password,
+        password,
+        sizeof(login_pack->client_package->login_info->password) - 1);
 
     SOCKET sock = client_start();
-    login_pack->client->sock_pointer = sock;
+    login_pack->client_package->client->sock_pointer = sock;
 
     // Tente la connexion
     if (login_attempts(login_pack) == 0)
     {
         // Authentification réussie
-        recv(sock, (char *)login_pack->client, sizeof(Client_data), 0);
+        recv(sock, (char *)login_pack->client_package->client, sizeof(Client_data), 0);
 
         // Lancer le thread de réception
         SOCKET *sock_ptr = malloc(sizeof(SOCKET));
@@ -123,15 +128,15 @@ static void on_connect_clicked(GtkButton *button, gpointer user_data)
         gtk_widget_destroy(dialog);
         closesocket(sock);
 
-        free(login_pack->login_info);
-        free(login_pack->client);
+        free(login_pack->client_package->login_info);
+        free(login_pack->client_package->client);
         free(login_pack);
     }
 }
 
 // === Displays the main chat window ===
-void show_chat_window(Login_package_for_front *login_pack) {
-    // Login_package_for_front *login_pack = login_pack;
+void show_chat_window(Client_package_for_frontend *login_pack) {
+    // Client_package_for_frontend *login_pack = login_pack;
     // GtkApplication **app = login_pack->app;
 
     GtkWidget *window, *outer_box, *chat_box, *chat_display, *chat_entry;
@@ -158,7 +163,7 @@ void show_chat_window(Login_package_for_front *login_pack) {
     gtk_widget_set_vexpand(spacer, TRUE);
     gtk_box_pack_start(GTK_BOX(channels_box), spacer, TRUE, TRUE, 0);
 
-    gchar *user_display_text = g_strdup_printf("User: %s", login_pack->client->client_name);
+    gchar *user_display_text = g_strdup_printf("User: %s", login_pack->client_package->client->client_name);
     user_label = gtk_label_new(user_display_text);
     g_free(user_display_text);                                              // Libérer la mémoire après utilisation
     gtk_widget_set_name(user_label, "user_label");                          // Définir un nom pour le widget
@@ -213,12 +218,12 @@ void show_chat_window(Login_package_for_front *login_pack) {
     gtk_widget_set_name(bottom_box, "bottom_box");
     gtk_box_pack_start(GTK_BOX(channels_box), bottom_box, FALSE, FALSE, 0);
 
-    // Login_package_for_front *login_pack;
+    // Client_package_for_frontend *login_pack;
     // // login_pack->data = g_new(GtkWidget *, 1);
     // // login_pack->data[0] = GTK_WIDGET(app);
     // login_pack->login_info = login_info;
 
-    // Login_package_for_front *login_pack = malloc(sizeof(Login_package_for_front));
+    // Client_package_for_frontend *login_pack = malloc(sizeof(Client_package_for_frontend));
     // if (login_pack == NULL) {
     //     g_warning("Failed to allocate memory for login_pack.");
     //     printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
@@ -263,7 +268,7 @@ void show_chat_window(Login_package_for_front *login_pack) {
         GtkStyleContext *context = gtk_widget_get_style_context(widgets_to_style[i]);
         gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
     }
-    recover_messages(login_pack->client->sock_pointer, chat_display);
+    recover_messages(login_pack->client_package->client->sock_pointer, chat_display);
     gtk_widget_show_all(window);
     broadcast_notifications_receiver_start(login_pack, chat_display);
 }

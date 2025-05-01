@@ -46,14 +46,10 @@ typedef struct
 
 typedef struct
 {   
-    SendType send_type;
     SOCKET sock_pointer;
     char client_name[19];
-    int client_id; // client_id = user_id in database
-    Channel_info *channels;
-    int channel_list_size;
+    int user_id; // client_id = user_id in database
 } Client_data;
-
 
 typedef struct
 {
@@ -67,9 +63,7 @@ typedef struct {
     char password[65];
     char confirm_password[65];
     char email[100];
-    SendType login_register;
     int user_id;
-    int current_channel;
 } Login_infos;
 
 typedef struct {
@@ -77,26 +71,35 @@ typedef struct {
     GtkWidget *chat_display;
 } Chat_display_package;
 
-typedef struct
-{
-    SendType send_type;
-    Client_data *client;
-    Server_state *server;
-    Message *messages_list;// create to a message_list struct
-    int number_of_messages;
-    Message message_send; 
-    Login_infos *login_info;
-} Client_package;
-
 typedef struct {
     SendType send_type;
     Client_data *client;
     Message *messages_list;// create to a message_list struct
     Message message_send;
     int number_of_messages;
+    Channel_info *channels;
+    int channel_list_size;
+    int current_channel;
     Login_infos *login_info;
+} Client_package;
+
+typedef struct {
+    Client_package *client_package;
+    Server_state *server;
+
+} Client_package_for_backend;
+
+typedef struct {
+    Client_package *client_package;
     GtkWidget **data;
     GtkApplication *app;  
-} Login_package_for_front;
+} Client_package_for_frontend;
+
+    // SendType send_type;
+    // Client_data *client;
+    // Message *messages_list;// create to a message_list struct
+    // Message message_send;
+    // int number_of_messages;
+    // Login_infos *login_info;
 
 #endif
