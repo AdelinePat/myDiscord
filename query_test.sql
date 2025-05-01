@@ -25,3 +25,11 @@ JOIN channels AS c ON c.channel_id = m.channel_id
 LEFT JOIN users AS u ON u.user_id = m.user_id
 WHERE c.channel_status = 'public' AND c.channel_id = 1
 ORDER BY date_time;
+
+SELECT * FROM messages;
+
+SELECT COUNT(user_name) FROM users
+    WHERE (user_name = 'jolyne' OR email = 'jolyne');
+
+-- INSERT INTO messages (user_id, channel_id, date_time, content)
+-- VALUES (user_id, channel_id, date_time, content);

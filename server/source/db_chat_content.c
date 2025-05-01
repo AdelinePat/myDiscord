@@ -27,7 +27,7 @@ PGresult* generate_channel_list_query(PGconn *conn, Client_package *client_packa
     ExecStatusType resStatus = PQresultStatus(res);
     if (resStatus != PGRES_TUPLES_OK)
     {
-        printf("il y a eu une erreur dans la requête");
+        printf("il y a eu une erreur dans la requête de SELECT des channels");
         PQclear(res);
         PQfinish(conn);
         exit(1);
@@ -102,7 +102,7 @@ PGresult* generate_full_chat_content_query(PGconn *conn, Client_package *client_
     ExecStatusType resStatus = PQresultStatus(res);
     if (resStatus != PGRES_TUPLES_OK)
     {
-        printf("il y a eu une erreur dans la requête");
+        printf("il y a eu une erreur dans la requête pour récupérer le contenu du chat");
         PQclear(res);
         PQfinish(conn);
         exit(1);
@@ -135,7 +135,7 @@ int check_channel_access(PGconn *conn, Client_package *client_package)
     ExecStatusType resStatus = PQresultStatus(res);
     if (resStatus != PGRES_TUPLES_OK)
     {
-        printf("il y a eu une erreur dans la requête");
+        printf("il y a eu une erreur dans la requête qui vérifie l'autorisation d'acces au channel");
         PQclear(res);
         PQfinish(conn);
         exit(1);

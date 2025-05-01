@@ -13,7 +13,7 @@ void load_variable(FILE* file, char* database_password, char* database_user_name
     else
     {
         // On affiche un message d'erreur si on veut
-        printf("Impossible d'ouvrir le fichier test.txt");
+        printf("Impossible d'ouvrir le fichier .env");
     }
 }
 
