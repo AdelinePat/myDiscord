@@ -51,17 +51,17 @@ void receive_client_data(Login_package_for_front *login_pack) {
     recv(socket_client, (char *)login_pack->client, sizeof(Client_data), 0);
     login_pack->client->sock_pointer = socket_client; // when receive, socket client is changed, this line is for change it back
 
-    printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%d\n", login_pack->client->client_id, login_pack->client->client_name, login_pack->client->sock_pointer);
-
-    broadcast_notifications_receiver_start(login_pack);
+    printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%lld\n", login_pack->client->client_id, login_pack->client->client_name, login_pack->client->sock_pointer);
 }
 
-void broadcast_notifications_receiver_start(Login_package_for_front *login_pack) {
+void broadcast_notifications_receiver_start(Login_package_for_front *login_pack, GtkWidget *chat_display) {
     SOCKET *sock_copy = malloc(sizeof(SOCKET));
     *sock_copy = login_pack->client->sock_pointer;
-    // printf("%lld", *sock_copy);
+    Chat_display_package *chat_display_package = malloc(sizeof(Chat_display_package));
+    chat_display_package->sock_copy = sock_copy;
+    chat_display_package->chat_display = chat_display;
     pthread_t recv_thread;
-    pthread_create(&recv_thread, NULL, receive_messages, (void *)sock_copy);
+    pthread_create(&recv_thread, NULL, receive_messages, (void *)chat_display_package);
 }
 
 int register_attempts(Login_package_for_front *login_pack) {
@@ -90,21 +90,68 @@ void send_message(Client_data *client, char text[1024]) {
     send(client->sock_pointer, (char *)&message, sizeof(Message), 0);
 }
 
-void *receive_messages(void *arg) { // permet de recevoir une notification lorsqu'un message est broadcasté par le serveur
-    SOCKET sock = *(SOCKET *)arg;
-    printf("socket :%d\n", sock);
-    char buffer[1200];
-    while (1) {
-        int bytes = recv(sock, buffer, sizeof(buffer) - 1, 0);
-        if (bytes > 0) {
-            printf("%s", buffer);
-        } else {
-            printf("haha\n");
-            break;
+void fill_in_chat(GtkWidget *chat_display, Message *message_list, int message_length) {
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(chat_display));
+        GtkTextIter end_iter;
+        gtk_text_buffer_get_end_iter(buffer, &end_iter);
+        for (int i = 0; i < message_length; i++) {
+            gchar text[150];
+            snprintf(text, sizeof(text), "[%s] : %s", message_list[i].username, message_list[i].message);
+            // printf("Valeur row num%d : message_id %d, user_id %d, username %s, content %s\n", i, message_list[i].message_id, message_list[i].client_id, message_list[i].username, message_list[i].message);
+            gtk_text_buffer_insert(buffer, &end_iter, text, -1);
+            gtk_text_buffer_insert(buffer, &end_iter, "\n", -1);
         }
+}
+
+void *receive_messages(void *arg) { // permet de recevoir une notification lorsqu'un message est broadcasté par le serveur
+    Chat_display_package *chat_display_package = (Chat_display_package *)arg;
+    GtkWidget *chat_display = chat_display_package->chat_display;
+    while (1) {
+        recover_messages(*chat_display_package->sock_copy, chat_display);
     }
     free(arg);
     return NULL;
+}
+
+void recover_messages(SOCKET sock, GtkWidget *chat_display) {
+    printf("socket :%lld\n", sock);
+    int size_of_list;
+    int bytes = recv(sock, (char *)&size_of_list, sizeof(int), 0);
+    if (bytes > 0) {
+        printf("received size : %lld\n", size_of_list);
+    }
+    if (bytes == SOCKET_ERROR)
+    {
+        printf("[ERROR] Erreur lors de la réception de la taille d'array, code %d\n", WSAGetLastError());
+    }
+    if (bytes != sizeof(int))
+    {
+        printf("[ERROR] Taille des données size_of_list reçues incorrecte. Attendu %zu, reçu %d\n", sizeof(size_t), bytes);
+    }
+    int validation = 1;
+    send(sock, (char *)validation, sizeof(int), 0);
+    Message *message_list = malloc(sizeof(Message) * size_of_list);
+    for (long long unsigned int i = 0; i < size_of_list; i++) {
+        Message new_message;
+        bytes = recv(sock, (char *)&new_message, sizeof(Message), 0);
+        if (bytes > 0) {
+            printf("hihi");
+        }
+        if (bytes == SOCKET_ERROR)
+        {
+            printf("[ERROR] Erreur lors de la réception du message : %lld, code %d\n", i, WSAGetLastError());
+        }
+        if (bytes != sizeof(Message))
+        {
+            printf("[ERROR] Taille des données reçues incorrecte. Attendu %zu, reçu %d\n", sizeof(Message), bytes);
+        }
+        message_list[i] = new_message;
+        printf("Message ajouté à la liste\n");
+        send(sock, (char *)validation, sizeof(int), 0);
+        printf("Validation envoyée\n");
+    }
+    fill_in_chat(chat_display, message_list, size_of_list);
+    free(message_list);
 }
 
 SOCKET client_start() {
@@ -122,7 +169,7 @@ SOCKET client_start() {
     connect(server_sock, (struct sockaddr *)&server, sizeof(server));
     printf("la sock serveur : %lld", server_sock);
     return server_sock;
-    }
+}
 
 // void after_login()
 //     {

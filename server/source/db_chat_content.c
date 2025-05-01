@@ -231,5 +231,5 @@ void get_full_chat_content(Client_package *client_package) {
         PQclear(res);
         PQfinish(conn);
     }
-    printf("\n\nBye bye\n\n");
+    printf("\n\nFinie de requeter\n\n");
 }

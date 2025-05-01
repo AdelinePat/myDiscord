@@ -6,6 +6,6 @@
 void start_server();
 void *handle_client(void *arg);
 int login_attempts(Client_package *client_package);
-void broadcast_message(Server_state *state, Message *client_message);
+void broadcast_message(Client_package *client_package);
 
 #endif

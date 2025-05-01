@@ -51,7 +51,6 @@ typedef struct
     char client_name[19];
     int client_id; // client_id = user_id in database
     Channel_info *channels;
-
 } Client_data;
 
 
@@ -72,12 +71,18 @@ typedef struct {
     int current_channel;
 } Login_infos;
 
+typedef struct {
+    SOCKET *sock_copy;
+    GtkWidget *chat_display;
+} Chat_display_package;
+
 typedef struct
 {
     SendType send_type;
     Client_data *client;
     Server_state *server;
     Message *messages_list;// create to a message_list struct
+    int number_of_messages;
     Message message_send; 
     Login_infos *login_info;
 } Client_package;
@@ -87,6 +92,7 @@ typedef struct {
     Client_data *client;
     Message *messages_list;// create to a message_list struct
     Message message_send;
+    int number_of_messages;
     Login_infos *login_info;
     GtkWidget **data;
     GtkApplication *app;  
