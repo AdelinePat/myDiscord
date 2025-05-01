@@ -118,7 +118,7 @@ void recover_messages(SOCKET sock, GtkWidget *chat_display) {
     int size_of_list;
     int bytes = recv(sock, (char *)&size_of_list, sizeof(int), 0);
     if (bytes > 0) {
-        printf("received size : %lld\n", size_of_list);
+        printf("BLBLBL received size : %lld\n", size_of_list);
     }
     if (bytes == SOCKET_ERROR)
     {

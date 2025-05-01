@@ -76,6 +76,8 @@ void recover_messages(Client_package *client_package)
     printf("sock du client : %lld\n", client_package->client->sock_pointer);
 
     int size_of_list = client_package->number_of_messages;
+    
+    printf("message_list size (number of messages) : %d", size_of_list);
 
     send(client_package->client->sock_pointer, (char *)&client_package->number_of_messages, sizeof(int), 0);
     int validation;
@@ -154,7 +156,7 @@ void *handle_client(void *arg)
             printf("haha, le client a disparu\n");
             break;
         }
-        client_message->timestamp = get_timestamp();
+        strcpy(client_message->timestamp, get_str_timestamp());
 
         // Enregistrement du message dans la db
         recover_messages(client_package);

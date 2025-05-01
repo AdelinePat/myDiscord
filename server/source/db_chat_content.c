@@ -180,6 +180,7 @@ void get_full_chat_content(Client_package *client_package) {
         PGresult *res = generate_full_chat_content_query(conn, client_package);
         int rows = PQntuples(res);
         int cols = PQnfields(res);
+        client_package->number_of_messages = rows;
 
         printf("\n");
 
@@ -200,9 +201,10 @@ void get_full_chat_content(Client_package *client_package) {
                     char *time_db = PQgetvalue(res, row, 3);
                     // printf("%s\n", time_db);
                     struct tm time_db_parsed = parse_db_query_time(time_db);
-                    client_package->messages_list[row].timestamp = time_db_parsed;
+                    // client_package->messages_list[row].timestamp = time_db_parsed;
                     // strftime("year : %Y", time_db_parsed.tm_year);
-                    char * time_test_print = timestamp_to_char(time_db_parsed);
+                    char * formated_timestamp = timestamp_to_char(time_db_parsed);
+                    strcpy(client_package->messages_list[row].timestamp, formated_timestamp);
                     // if (time_test_print != NULL) {
                     //     printf("Formatted time: %s\n", time_test_print);
                     //      // Don't forget to free it!
@@ -217,10 +219,10 @@ void get_full_chat_content(Client_package *client_package) {
                         client_package->messages_list[row].message_id,
                         client_package->messages_list[row].client_id,
                         client_package->messages_list[row].username,
-                        time_test_print,
+                        client_package->messages_list[row].timestamp,
                         client_package->messages_list[row].message);
                         
-                    free(time_test_print);
+                    free(formated_timestamp);
                 }
                 
         }

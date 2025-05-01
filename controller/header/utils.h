@@ -12,7 +12,7 @@
 
 #define MAX_CLIENTS 20
 
-struct tm get_timestamp();
+char * get_str_timestamp();
 struct tm parse_db_query_time(char *time_str);
 char * timestamp_to_char(struct tm time);
 
@@ -34,7 +34,7 @@ typedef struct {
     int message_id;
     int client_id;
     char username[19];
-    struct tm timestamp;
+    char timestamp[30];
     char message[999];
 } Message;
 
@@ -51,6 +51,7 @@ typedef struct
     char client_name[19];
     int client_id; // client_id = user_id in database
     Channel_info *channels;
+    int channel_list_size;
 } Client_data;
 
 
