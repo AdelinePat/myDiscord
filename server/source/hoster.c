@@ -13,6 +13,7 @@
 #include "../header/db_connection.h"
 #include "../header/db_chat_content.h"
 
+
 #define PORT 8080
 
 int login_attempts(Client_package *client_package)
@@ -42,7 +43,7 @@ int login_attempts(Client_package *client_package)
         { // condition de vérification des identifiants
             // query ici pour l'id unique et le pseudo du client
             login_status = 1;
-
+            
             send(client_package->client->sock_pointer, (char *)&login_status, sizeof(login_status), 0);
             printf("Après send : Valeur de login_status cote serveur : %d\n", login_status);
             printf("Connexion réussie\n");
@@ -76,6 +77,7 @@ void broadcast_message(Server_state *state, Message *client_message)
 void *handle_client(void *arg)
 {
     Client_package *client_package = (Client_package *)arg;
+
 
     int user_id = login_attempts(client_package);
 
