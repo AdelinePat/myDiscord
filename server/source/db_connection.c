@@ -10,7 +10,10 @@ int check_user_pass_match(Login_infos* login_info) {
 
     int final_size_query = snprintf(NULL, 0,
         "SELECT COUNT(user_name) FROM users\n\
-    WHERE (user_name = '%s' OR email = '%s') AND password = '%s'", login_info->username, login_info->email, login_info->password) +1;
+    WHERE (user_name = '%s' OR email = '%s') AND password = '%s'",
+    login_info->username,
+    login_info->email,
+    login_info->password) +1;
 
     char *query = malloc(final_size_query);
     if (query == NULL) {
@@ -25,6 +28,7 @@ int check_user_pass_match(Login_infos* login_info) {
     login_info->username,
     login_info->email,
     login_info->password);
+    printf("Voici la query de connexion : \n\n%s\n\n", query);
     // multiple line query add \n\ at the end of every line OR quote at the begging of every line
 
     res = PQexec(conn, query);
@@ -46,7 +50,7 @@ int check_user_pass_match(Login_infos* login_info) {
     printf("\n");
 
     int query_result = 0;
-    printf("value du result de la query mdr : %d", query_result);
+    printf("value du result de la query de connexion mdr : %d", query_result);
 
     if (rows > 0 && cols > 0)
     {
@@ -85,7 +89,10 @@ void get_user_data(Client_package* client_package) {
 
     int final_size_query = snprintf(NULL, 0,
         "SELECT * FROM users\n\
-    WHERE user_name = '%s' AND password = '%s'", client_package->login_info->username, client_package->login_info->password) +1;
+    WHERE (user_name = '%s' OR email = '%s') AND password = '%s'",
+    client_package->login_info->username,
+    client_package->login_info->email,
+    client_package->login_info->password) +1;
 
     char *query = malloc(final_size_query);
     if (query == NULL) {
@@ -99,7 +106,10 @@ void get_user_data(Client_package* client_package) {
 
     snprintf(query, final_size_query,
         "SELECT * FROM users\n\
-    WHERE user_name = '%s' AND password = '%s'", client_package->login_info->username, client_package->login_info->password);
+    WHERE (user_name = '%s' OR email = '%s') AND password = '%s'",
+    client_package->login_info->username,
+    client_package->login_info->email,
+    client_package->login_info->password);
     
     res = PQexec(conn, query);
     free(query);

@@ -46,7 +46,7 @@ typedef struct
 {   
     SendType send_type;
     SOCKET sock_pointer;
-    char client_name[64];
+    char client_name[19];
     int client_id; // client_id = user_id in database
     Channel_info *channels;
 
@@ -61,9 +61,9 @@ typedef struct
 } Server_state;
 
 typedef struct {
-    char username[64];
-    char password[64];
-    char confirm_password[64];
+    char username[19];
+    char password[65];
+    char confirm_password[65];
     char email[100];
     SendType login_register;
     int user_id;

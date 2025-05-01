@@ -1,6 +1,10 @@
 -- Active: 1745348025971@@127.0.0.1@5432@whispr
 SELECT COUNT(user_name) FROM users
-WHERE (user_name = 'jolyne' OR email = 'jolyne') AND password = '789012';
+WHERE (user_name = '' OR email = 'jolyne@gmail.com') AND password = '789012';
+SELECT password FROM users WHERE user_name = 'adeline';
+SELECT COUNT(user_name) FROM users
+WHERE (user_name = 'adeline' OR email = '') AND password = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'
+
 
 SELECT channel_id, channel_title
 FROM channels
@@ -33,3 +37,5 @@ SELECT COUNT(user_name) FROM users
 
 -- INSERT INTO messages (user_id, channel_id, date_time, content)
 -- VALUES (user_id, channel_id, date_time, content);
+
+ALTER TABLE users

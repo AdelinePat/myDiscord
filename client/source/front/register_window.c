@@ -3,6 +3,7 @@
 #include "../../header/register_window.h"
 #include "../../header/login_window.h"
 #include "../../header/connector.h"
+#include "../../header/hash_login.h"
 
 // === CALLBACK: When the "Confirmer" button is clicked ===
 static void on_confirm_clicked(GtkButton *button, gpointer user_data) {
@@ -16,22 +17,34 @@ static void on_confirm_clicked(GtkButton *button, gpointer user_data) {
     GtkWidget *entry_pass = data[3];
     GtkWidget *entry_confirm_pass = data[4];
     // GtkApplication *app = GTK_APPLICATION(data[5]);
-
+    
     const gchar *username = gtk_entry_get_text(GTK_ENTRY(entry_user));
     const gchar *email = gtk_entry_get_text(GTK_ENTRY(entry_email));
     const gchar *password = gtk_entry_get_text(GTK_ENTRY(entry_pass));
     const gchar *confirm_password = gtk_entry_get_text(GTK_ENTRY(entry_confirm_pass));
-
-    strcpy(login_pack->login_info->username, username);
-    strcpy(login_pack->login_info->email, email);
-    strcpy(login_pack->login_info->password, password);
-    strcpy(login_pack->login_info->confirm_password, confirm_password);
-    login_pack->login_info->login_register = 1;
+    printf("email from entry %s", email);
 
     if (g_strcmp0(password, confirm_password) != 0) {
         g_print("Passwords do not match!\n");
         return;
     }
+
+    char hashed_password[65];
+    hash_password_sha256(password, hashed_password);
+    char hashed_confirm_password[65];
+    hash_password_sha256(confirm_password, hashed_confirm_password);
+
+    // printf("\n\nA1 : on_register_clicked : Password: %s\n", password);
+    // printf("B1 on_register_clicked1 : Hashed password: %s\n", hashed_password);
+    // printf("A2 on_register_clicked1 : confirm Password: %s\n", password);
+    // printf("B2 on_register_clicked1 : Hashed confirm password: %s\n", hashed_password);
+
+    strcpy(login_pack->login_info->username, username);
+    strcpy(login_pack->login_info->email, email);
+    printf("\n\n email from login_info strcpy : %s\n\n", login_pack->login_info->email);
+    strcpy(login_pack->login_info->password, hashed_password);
+    strcpy(login_pack->login_info->confirm_password, hashed_confirm_password);
+    login_pack->login_info->login_register = CREATE_ACCOUNT;
 
     int register_status = register_attempts(login_pack);
     g_print("Registration with: %s / %s / %s\n", username, email, password);

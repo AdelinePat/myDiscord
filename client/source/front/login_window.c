@@ -56,15 +56,17 @@ static void on_login_clicked(GtkButton *button, gpointer user_data)
     const gchar *password = gtk_entry_get_text(GTK_ENTRY(entry_pass));
 
     strcpy(login_pack->login_info->username, username);
+    strcpy(login_pack->login_info->email, username);
 
     char hashed_password[65];
     hash_password_sha256(password, hashed_password);
     printf(" on_login_clicked1 : Password: %s\n", password);
     printf(" on_login_clicked1 : Hashed password: %s\n", hashed_password);
 
-    strcpy(login_pack->login_info->password, password);
+    // strcpy(login_pack->login_info->password, password);
+    strcpy(login_pack->login_info->password, hashed_password);
 
-    login_pack->login_info->login_register = 0;
+    login_pack->login_info->login_register = LOGIN;
 
     g_print("Attempting login: %s / %s\n", login_pack->login_info->username, login_pack->login_info->password);
 
