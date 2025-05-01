@@ -52,7 +52,7 @@ int login_attempts(Client_package *client_package)
                     send(client_package->client->sock_pointer, (char *)&login_status, sizeof(login_status), 0);
                     printf("Après send : Valeur de login_status cote serveur : %d\n", login_status);
                     printf("Connexion réussie\n");
-                    return client_package->server->client_count; // remplacer le return avec l'id du client dans la db
+                    return 0; // remplacer le return avec l'id du client dans la db
                 }
                 else
                 {
@@ -67,33 +67,56 @@ int login_attempts(Client_package *client_package)
         // fonction_nimporte(login_info);        
         
     }
-    return -1;
+    return 1;
 }
 
-void broadcast_message(Server_state *state, Message *client_message)
+void recover_messages(Client_package *client_package)
 {
-    char formatted[1200];
-    char time_str[16];
+    get_full_chat_content(client_package);
+    printf("sock du client : %lld\n", client_package->client->sock_pointer);
 
-    strftime(time_str, sizeof(time_str), "[%H:%M:%S]", &client_message->timestamp);
-    snprintf(formatted, sizeof(formatted), "%s [Client %d] %s", time_str, client_message->client_id, client_message->message);
+    int size_of_list = client_package->number_of_messages;
 
-    pthread_mutex_lock(&state->lock);
-    for (int i = 0; i < state->client_count; i++)
-    {
-        send(state->clients[i]->sock_pointer, formatted, strlen(formatted), 0);
+    send(client_package->client->sock_pointer, (char *)&client_package->number_of_messages, sizeof(int), 0);
+    int validation;
+    recv(client_package->client->sock_pointer, (char *)validation, sizeof(int), 0);
+
+    printf("sending messages");
+    printf("messages number : %d\n", client_package->number_of_messages);
+
+    for (int i = 0; i < size_of_list; i++) {
+        Message message_sent = client_package->messages_list[i];
+        printf("[DEBUG] Envoi message %s : %s\n", message_sent.username, message_sent.message);
+
+        int bytes = send(client_package->client->sock_pointer, (char *)&message_sent, sizeof(Message), 0);
+        if (bytes <= 0) {
+            perror("[ERROR] send message failed\n");
+            break;
+        }
+        recv(client_package->client->sock_pointer, (char *)validation, sizeof(int), 0);
     }
-    pthread_mutex_unlock(&state->lock);
+
+    printf("       messages sent\n");
 }
+
+// void broadcast_message(Client_package *client_package)
+// {
+//     get_full_chat_content(client_package);
+//     pthread_mutex_lock(&client_package->server->lock);
+//     for (int i = 0; i < client_package->server->client_count; i++) {
+//         recover_messages(client_package->server->clients[i]);
+//     }
+//     pthread_mutex_unlock(&client_package->server->lock);
+// }
 
 void *handle_client(void *arg)
 {
     Client_package *client_package = (Client_package *)arg;
 
 
-    int user_id = login_attempts(client_package);
+    int login_status = login_attempts(client_package);
 
-    if (user_id < 0)
+    if (login_status == 1)
     {
         printf("[INFO] Abandon de connexion");
         free(arg);
@@ -111,14 +134,16 @@ void *handle_client(void *arg)
     // strcpy(client->client_name, "user"); // Ajout des données client avant de les envoyer après connexion
 
     Client_data *client_copy = malloc(sizeof(Client_data)); // On crée une copie de client pour ne pas créer de conflit dans la mémoire entre serveur et client
-
     *client_copy = *client;
+    printf("sock du client : %lld\n", client_sock);
     send(client_sock, (char *)client_copy, sizeof(Client_data), 0);
     printf("[INFO] Client %d connecté.\n", client_package->client->client_id);
 
     pthread_mutex_lock(&state->lock);
     state->clients[state->client_count++] = client;
     pthread_mutex_unlock(&state->lock);
+
+    recover_messages(client_package);
 
     while (1)
     {
@@ -132,7 +157,8 @@ void *handle_client(void *arg)
         client_message->timestamp = get_timestamp();
 
         // Enregistrement du message dans la db
-        broadcast_message(state, client_message); // Envoie d'une notification de nouveau message dans la db aux clients connectés
+        recover_messages(client_package);
+        // broadcast_message(client_package); // Envoie d'une notification de nouveau message dans la db aux clients connectés
         free(client_message);
     }
 
@@ -155,7 +181,10 @@ void *handle_client(void *arg)
     }
     pthread_mutex_unlock(&state->lock);
 
-    free(arg);
+    free(state);
+    free(client);
+    free(client_package);
+    free(client_copy);
     pthread_exit(NULL);
 }
 

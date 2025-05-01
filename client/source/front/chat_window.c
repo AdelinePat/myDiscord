@@ -60,12 +60,7 @@ static void on_chat_entry_activate(GtkEntry *entry, gpointer user_data)
     if (g_strcmp0(text, "") != 0)
     {
         send_message(login_pack->client, text);
-        // GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widgets->chat_display));
-        // GtkTextIter end_iter;
-        // gtk_text_buffer_get_end_iter(buffer, &end_iter);
-        // gtk_text_buffer_insert(buffer, &end_iter, text, -1);
-        // gtk_text_buffer_insert(buffer, &end_iter, "\n", -1);
-        // gtk_entry_set_text(entry, "");
+        gtk_entry_set_text(entry, "");
     }
 }
 
@@ -268,6 +263,7 @@ void show_chat_window(Login_package_for_front *login_pack) {
         GtkStyleContext *context = gtk_widget_get_style_context(widgets_to_style[i]);
         gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
     }
-
+    recover_messages(login_pack->client->sock_pointer, chat_display);
     gtk_widget_show_all(window);
+    broadcast_notifications_receiver_start(login_pack, chat_display);
 }

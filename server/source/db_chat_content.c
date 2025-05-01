@@ -188,9 +188,10 @@ void get_full_chat_content(Client_package *client_package) {
                     // client_package->messages_list[row].timestamp = PQgetvalue(res, row, 3);
                     strcpy(client_package->messages_list[row].message, PQgetvalue(res, row, 4));
 
-                    printf("Valeur row n°%d : message_id %d, user_id %d, username %s, content %s\n", row, client_package->messages_list[row].message_id, client_package->messages_list[row].client_id, client_package->messages_list[row].username, client_package->messages_list[row].message);
+                    printf("Valeur row num%d : message_id %d, user_id %d, username %s, content %s\n", row, client_package->messages_list[row].message_id, client_package->messages_list[row].client_id, client_package->messages_list[row].username, client_package->messages_list[row].message);
 
                 }
+            client_package->number_of_messages = rows;
         }
         else {
             printf("erreur dans la requête, aucune colonne ou ligne trouvée ?\n");
@@ -199,5 +200,5 @@ void get_full_chat_content(Client_package *client_package) {
         PQclear(res);
         PQfinish(conn);
     }
-    printf("\n\nBye bye\n\n");
+    printf("\n\nFinie de requeter\n\n");
 }
