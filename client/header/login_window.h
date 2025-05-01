@@ -5,7 +5,7 @@
 // #include <gtk/gtk.h>
 // #define STYLE_PATH "../view/style.css"
 
-void show_login_window(Login_package_for_front *login_pack);
+void show_login_window(Client_package_for_frontend *login_pack);
 // TODO: Declare the validate_credentials function here once created
 // bool validate_credentials(const gchar *username, const gchar *password);
 
