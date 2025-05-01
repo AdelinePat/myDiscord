@@ -5,7 +5,7 @@
 #include <string.h>
 #include <libpq-fe.h>
 #include "../../controller/header/utils.h"
-#define ENV_PATH "C:\\Users\\Adeline\\Documents\\Projetdev\\myDiscord\\.env"
+#define ENV_PATH ".env"
 #define MAX_STRING_SIZE 100
 
 // void load_variable(FILE* file, char* password, char* user_name);

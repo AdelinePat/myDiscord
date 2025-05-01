@@ -91,9 +91,10 @@ void *handle_client(void *arg)
     Client_data *client = client_package->client;
     SOCKET client_sock = client->sock_pointer;
 
-    // update_login_info(client_package);
-    client->client_id = user_id;
-    strcpy(client->client_name, "user"); // Ajout des données client avant de les envoyer après connexion
+    first_update_client_package(client_package);
+    printf("de retour dans handle_client : valeur user_id %d et user_name : %s\n", client_package->login_info->user_id, client_package->login_info->username);
+    // client->client_id = user_id;
+    // strcpy(client->client_name, "user"); // Ajout des données client avant de les envoyer après connexion
 
     Client_data *client_copy = malloc(sizeof(Client_data)); // On crée une copie de client pour ne pas créer de conflit dans la mémoire entre serveur et client
 
