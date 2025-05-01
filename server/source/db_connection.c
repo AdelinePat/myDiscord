@@ -1,7 +1,9 @@
 #include "../header/database_communication.h"
 #include "../header/db_connection.h"
+#include "../header/database_communication.h"
+#include "../header/db_chat_content.h"
 
-int connection_query(Login_infos* login_info) {
+int check_user_pass_match(Login_infos* login_info) {
     PGconn *conn = database_connexion();
     PGresult *res = NULL;
     int nFields;
@@ -19,7 +21,7 @@ int connection_query(Login_infos* login_info) {
 
     snprintf(query, final_size_query,
         "SELECT COUNT(user_name) FROM users\n\
-    WHERE user_name = '%s' AND password = '%s'", login_info->username, login_info->password);
+    WHERE (user_name = '%s' OR email = '%s') AND password = '%s'", login_info->username, login_info->username, login_info->password);
 
     // multiple line query add \n\ at the end of every line OR quote at the begging of every line
 
@@ -30,7 +32,7 @@ int connection_query(Login_infos* login_info) {
     
     if (resStatus != PGRES_TUPLES_OK)
     {
-        printf("il y a eu une erreur dans la requête");
+        printf("il y a eu une erreur dans la requête qui compte le nombre d'utilisateur qui corresponde au username et password transmis par Gtk");
         PQclear(res);
         PQfinish(conn);
         exit(1);
@@ -65,6 +67,8 @@ int connection_query(Login_infos* login_info) {
 void first_update_client_package(Client_package *client_package) {
     client_package->login_info->current_channel = 1;
     get_user_data(client_package);
+    get_channel_list(client_package);
+    get_full_chat_content(client_package);
     // client_package->login_info->user_id = un int; // => resultat requête  
     // strcpy(client_package->login_info->username, resultatrequete);
     // strcpy(client_package->login_info->password, "");
@@ -102,7 +106,7 @@ void get_user_data(Client_package* client_package) {
     
     if (resStatus != PGRES_TUPLES_OK)
     {
-        printf("il y a eu une erreur dans la requête");
+        printf("il y a eu une erreur dans la requête de récupération des données de l'utilisateur qui s'est connecté");
         PQclear(res);
         PQfinish(conn);
         exit(1);

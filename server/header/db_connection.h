@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int connection_query(Login_infos* login_info);
+int check_user_pass_match(Login_infos* login_info);
 void first_update_client_package(Client_package *client_package);
 void get_user_data(Client_package* client_package);
 

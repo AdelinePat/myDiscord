@@ -14,6 +14,18 @@
 
 struct tm get_timestamp();
 
+typedef enum
+{
+    LOGIN = 0,
+    SWITCH_CHANNEL = 1,
+    SEND_MESSAGE = 2,
+    CREATE_CHANNEL = 3,
+    SEND_REACTION = 4,
+    LOGOUT = 5,
+    CHANGE_ACCESS = 6,
+    DELETE_ACCOUNT = 7
+} SendType;
+
 typedef struct {
     int channel_id;
     int message_id;
@@ -30,7 +42,8 @@ typedef struct
 } Channel_info;
 
 typedef struct
-{
+{   
+    SendType send_type;
     SOCKET sock_pointer;
     char client_name[64];
     int client_id;
@@ -58,6 +71,7 @@ typedef struct {
 
 typedef struct
 {
+    SendType send_type;
     Client_data *client;
     Server_state *server;
     Message *messages_list;// create to a message_list struct
@@ -66,7 +80,9 @@ typedef struct
 } Client_package;
 
 typedef struct {
+    SendType send_type;
     Client_data *client;
+    Message *messages_list;// create to a message_list struct
     Message message_send;
     Login_infos *login_info;
     GtkWidget **data;

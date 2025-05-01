@@ -2,6 +2,7 @@
 #include "../../header/client_front.h"
 #include "../../header/register_window.h"
 #include "../../header/login_window.h"
+#include "../../header/connector.h"
 
 // === CALLBACK: When the "Confirmer" button is clicked ===
 static void on_confirm_clicked(GtkButton *button, gpointer user_data) {
@@ -31,6 +32,8 @@ static void on_confirm_clicked(GtkButton *button, gpointer user_data) {
         g_print("Passwords do not match!\n");
         return;
     }
+
+    register_attempts(login_pack);
 
     g_print("Registration with: %s / %s / %s\n", username, email, password);
     gtk_widget_destroy(register_window);

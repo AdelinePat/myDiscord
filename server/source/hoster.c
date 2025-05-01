@@ -39,7 +39,7 @@ int login_attempts(Client_package *client_package)
         // fonction_nimporte(login_info);
         printf("Infos reçues : user : << %s >>, pass : << %s >>\n", client_package->login_info->username, client_package->login_info->password);
         printf("\navant le if : Valeur de login_status cote serveur : %d\n", login_status);
-        if (connection_query(client_package->login_info) == 1)
+        if (check_user_pass_match(client_package->login_info) == 1)
         { // condition de vérification des identifiants
             // query ici pour l'id unique et le pseudo du client
             login_status = 1;
@@ -94,8 +94,6 @@ void *handle_client(void *arg)
     SOCKET client_sock = client->sock_pointer;
 
     first_update_client_package(client_package);
-    get_channel_list(client_package);
-    get_full_chat_content(client_package);
     printf("de retour dans handle_client : valeur user_id %d et user_name : %s\n", client_package->login_info->user_id, client_package->login_info->username);
     // client->client_id = user_id;
     // strcpy(client->client_name, "user"); // Ajout des données client avant de les envoyer après connexion
