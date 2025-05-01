@@ -11,7 +11,7 @@
 // void load_variable(FILE* file, char* password, char* user_name);
 // int database_connexion_info(char* password, char* user_name);
 
-PGconn * database_connexion();
-void load_variable(FILE* file, char* database_password, char* database_user_name);
+PGconn *database_connexion();
+void load_variable(FILE *file, char *database_password, char *database_user_name);
 
 #endif

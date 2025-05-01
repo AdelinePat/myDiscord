@@ -3,35 +3,45 @@ CC = gcc
 
 # Options de compilation de base
 CFLAGS = -Wall -Wextra -std=c11
-LDFLAGS = -lws2_32
+LDFLAGS = -lws2_32  # pour les plateformes Windows
+
+# CFLAGS pour l'inclusion des headers
+CFLAGS += -I/mingw64/include
+
+
+# LDFLAGS pour la liaison des bibliothèques
+LDFLAGS += -L/mingw64/lib -lssl -lcrypto  # Nous n'ajoutons plus `-lcrypt`
 
 # Récupère les options GTK via pkg-config
 GTK_CFLAGS := $(shell pkg-config --cflags gtk+-3.0)
 GTK_LIBS   := $(shell pkg-config --libs gtk+-3.0)
 
+# Options de PostgreSQL
 PQ_CFLAGS := -I $(shell pg_config --includedir)
 PQ_LIBS := $(shell pkg-config --libs libpq)
 
+# Options de JSON
 JSON_CFLAGS := -I $(shell pkg-config --cflags libcjson)
 JSON_LIBS := $(shell pkg-config --libs libcjson)
+
+# On ajoute les bibliothèques JSON
 LDFLAGS += $(JSON_LIBS)
 
 # Combine les options de compilation
 CFLAGS += $(GTK_CFLAGS)
 CFLAGS += $(PQ_CFLAGS)
 
-SERVER_SRC = ./server/source/server.c ./server/source/hoster.c ./controller/source/utils.c ./server/source/database_communication.c ./server/source/db_connection.c ./server/source/db_chat_content.c ./server/source/register_user.c ./server/source/save_message.c
-CLIENT_SRC = ./client/source/client.c ./client/source/connector.c ./controller/source/utils.c ./client/source/front/client_front.c ./client/source/front/login_window.c ./client/source/front/register_window.c ./client/source/front/chat_window.c 
+# Définir les sources
+SERVER_SRC = ./server/source/server.c ./server/source/hoster.c ./controller/source/utils.c ./server/source/database_communication.c ./server/source/db_connection.c ./server/source/db_chat_content.c
+CLIENT_SRC = ./client/source/client.c ./client/source/connector.c ./controller/source/utils.c ./client/source/front/client_front.c ./client/source/front/hash_login.c ./client/source/front/login_window.c ./client/source/front/register_window.c ./client/source/front/chat_window.c
 
 # Fichiers objets générés
 SERVER_OBJ = $(SERVER_SRC:.c=.o)
 CLIENT_OBJ = $(CLIENT_SRC:.c=.o)
 
-# Nom de l'exécutable
+# Nom des exécutables
 SERVER_EXEC = server.exe
 CLIENT_EXEC = client.exe
-
-CSS = ./client/source/front/style.css
 
 # Cible par défaut
 all: $(SERVER_EXEC) $(CLIENT_EXEC)

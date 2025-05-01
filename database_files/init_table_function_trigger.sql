@@ -1,4 +1,4 @@
--- Active: 1745348025971@@127.0.0.1@5432@whispr
+-- Active: 1746033929458@@127.0.0.1@5432@whispr
 CREATE TABLE IF NOT EXISTS users
 (
     user_id SERIAL NOT NULL,
