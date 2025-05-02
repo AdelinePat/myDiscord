@@ -1,4 +1,4 @@
--- Active: 1745348025971@@127.0.0.1@5432@whispr
+-- Active: 1746033929458@@127.0.0.1@5432@whispr@public
 SELECT COUNT(user_name) FROM users
 WHERE (user_name = '' OR email = 'jolyne@gmail.com') AND password = '789012';
 SELECT password FROM users WHERE user_name = 'adeline';
