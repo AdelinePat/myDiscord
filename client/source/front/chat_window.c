@@ -14,7 +14,8 @@ typedef struct
 } ChatWidgets;
 
 // === Called when the "Disconnect" button is clicked ===
-static void on_disconnect_clicked(GtkButton *button, gpointer user_data) {
+static void on_disconnect_clicked(GtkButton *button, gpointer user_data)
+{
     // GtkApplication *app = GTK_APPLICATION(user_data);
     Login_package_for_front *login_pack = (Login_package_for_front *)user_data;
     // GtkWidget **data = login_pack->data;
@@ -122,8 +123,8 @@ static void on_connect_clicked(GtkButton *button, gpointer user_data)
     {
         // Échec
         GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(window),
-            GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
-            "Échec de la connexion. Vérifiez vos identifiants.");
+                                                   GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
+                                                   "Échec de la connexion. Vérifiez vos identifiants.");
         gtk_dialog_run(GTK_DIALOG(dialog));
         gtk_widget_destroy(dialog);
         closesocket(sock);
@@ -135,7 +136,8 @@ static void on_connect_clicked(GtkButton *button, gpointer user_data)
 }
 
 // === Displays the main chat window ===
-void show_chat_window(Login_package_for_front *login_pack) {
+void show_chat_window(Login_package_for_front *login_pack)
+{
     // Login_package_for_front *login_pack = login_pack;
     // GtkApplication **app = login_pack->app;
 
@@ -143,6 +145,16 @@ void show_chat_window(Login_package_for_front *login_pack) {
     GtkWidget *scrolled_window, *channels_box, *user_label, *bottom_box;
     GtkWidget *connect_button, *disconnect_button;
 
+    /*todo
+    tester si on peut print la variable golable session_id_user remplis dans login_window.c fonction on_login_clicked
+    Si on y a accès (le resultat est l'id de ma user_id de la base de donnée)
+    on cherche la liste des channel de cette user_id
+    char* liste_channel = select channel_id, channel_title from channels where user_id = session_id_user
+    for mes channel_title de la la liste_channel
+    {
+    faire affichage est bouton pour chaque channel_title
+    }
+    */
     window = gtk_application_window_new(login_pack->app);
     gtk_window_set_title(GTK_WINDOW(window), "Whisper");
     gtk_window_set_default_size(GTK_WINDOW(window), 1280, 720);
