@@ -20,22 +20,27 @@
 int connect_to_client(Client_package *client_package) {
     
     recv(client_package->client->sock_pointer,
-        (char *)&client_package->send_type,
-        sizeof(int),
+        (char *)client_package->send_type,
+        sizeof(client_package->send_type),
         0);
     
-    printf("valeur de send_type %d et valeur de la sock_pointer serveur %lld\n", client_package->send_type, client_package->client->sock_pointer);
+    printf("valeur de send_type %d et valeur de la sock_pointer serveur %lld\n",
+        client_package->send_type,
+        client_package->client->sock_pointer);
+
     if (client_package->send_type == SOCKET_OK) {
+        printf("je renvoie socket_ok\n");
         send(client_package->client->sock_pointer,
-            (char *)&client_package->send_type,
-            sizeof(int),
+            (char *)client_package->send_type,
+            sizeof(client_package->send_type),
             0);
         return 0;
     } else {
+        printf("je renvoie socket_fail\n");
         client_package->send_type = SOCKET_FAIL;
             send(client_package->client->sock_pointer,
-            (char *)&client_package->send_type,
-            sizeof(int),
+            (char *)client_package->send_type,
+            sizeof(client_package->send_type),
             0);
         return 1;
     }
@@ -200,14 +205,18 @@ void recover_messages(Client_package_for_backend *package)
 
 void *handle_client(void *arg)
 {
-    Client_package *client_package = (Client_package *)arg;
+    // Client_package *client_package = (Client_package *)arg;
+    Client_package_for_backend *client_pack = (Client_package_for_backend *)arg;
     // Login_infos *login_info = malloc(sizeof(Login_infos));
     // client_package->login_info = login_info;
     // Client_package *client_package = malloc(sizeof(Client_package));
     // client_pack->client_package = client_package;
 
     // int login_status = login_attempts(client_package);
-    int login_status = connect_to_client(client_package);
+    printf("\n\nvaleur de la socket server avant connect_to_client : %lld\n\n",
+    client_pack->client_package->client->sock_pointer);
+
+    int login_status = connect_to_client(client_pack->client_package);
 
     if (login_status == 1)
     {
@@ -219,8 +228,8 @@ void *handle_client(void *arg)
         return 0;
     }
 
-    Client_package_for_backend *client_pack = malloc(sizeof(Client_package_for_backend));
-    client_pack->client_package = client_package;
+    // Client_package_for_backend *client_pack = malloc(sizeof(Client_package_for_backend));
+    // client_pack->client_package = client_package;
     Server_state *state = client_pack->server;
     Client_data *client = client_pack->client_package->client;
     SOCKET client_sock = client->sock_pointer;
@@ -298,7 +307,7 @@ void *handle_client(void *arg)
     free(client);
     free(client_pack->client_package);
     free(client_copy);
-    free(client_package);
+    // free(client_package);
     free(client_pack);
     pthread_exit(NULL);
 }
@@ -344,12 +353,13 @@ void start_server()
     printf("Serveur en écoute sur le port %d\n", PORT);
 
     SOCKET new_sock;
-
+    printf("\nserver_sock avant accept() %lld\n", server_sock);
     while ((new_sock = accept(server_sock, (struct sockaddr *)&client, &client_size)))
     {
-
+        printf("valeur de sock après accept() %lld", new_sock);
         Client_data *client_data = malloc(sizeof(Client_data));
         client_data->sock_pointer = new_sock;
+        printf("\nvaleur de sock dans sock_pointer de client_data %lld\n", client_data->sock_pointer);
         // Channel_info *channels = malloc(sizeof(Channel_info));
 
         // Login_infos *login_info = malloc(sizeof(Login_infos));
@@ -357,6 +367,8 @@ void start_server()
         Client_package *client_package = malloc(sizeof(Client_package));
         client_pack->client_package = client_package;
         client_pack->client_package->client = client_data;
+        printf("\nvaleur de sock dans sock_pointer de client_pack->client_package->client %lld\n",
+            client_pack->client_package->client->sock_pointer);
         client_pack->server = state;
         // client_package->client->channels = &channels;
         // client_package->login_info = login_info;
