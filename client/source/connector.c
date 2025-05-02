@@ -16,12 +16,12 @@ int connect_to_server(Client_package_for_frontend *login_pack) {
     printf("valeur de send_type %d et valeur de la sock_pointer %lld\n", login_pack->client_package->send_type, login_pack->client_package->client->sock_pointer);
 
     send(login_pack->client_package->client->sock_pointer,
-        (char *)login_pack->client_package->send_type,
+        (char *)&login_pack->client_package->send_type,
         sizeof(int),
         0);
 
     recv(login_pack->client_package->client->sock_pointer,
-        (char *)login_pack->client_package->send_type,
+        (char *)&login_pack->client_package->send_type,
         sizeof(int),
         0);
 

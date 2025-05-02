@@ -20,7 +20,7 @@
 int connect_to_client(Client_package *client_package) {
     
     recv(client_package->client->sock_pointer,
-        (char *)client_package->send_type,
+        (char *)&client_package->send_type,
         sizeof(client_package->send_type),
         0);
     
@@ -31,7 +31,7 @@ int connect_to_client(Client_package *client_package) {
     if (client_package->send_type == SOCKET_OK) {
         printf("je renvoie socket_ok\n");
         send(client_package->client->sock_pointer,
-            (char *)client_package->send_type,
+            (char *)&client_package->send_type,
             sizeof(client_package->send_type),
             0);
         return 0;
@@ -39,7 +39,7 @@ int connect_to_client(Client_package *client_package) {
         printf("je renvoie socket_fail\n");
         client_package->send_type = SOCKET_FAIL;
             send(client_package->client->sock_pointer,
-            (char *)client_package->send_type,
+            (char *)&client_package->send_type,
             sizeof(client_package->send_type),
             0);
         return 1;
