@@ -9,12 +9,14 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <gtk/gtk.h>
+#include <cjson/cJSON.h>
 
 #define MAX_CLIENTS 20
 
 char * get_str_timestamp();
 struct tm parse_db_query_time(char *time_str);
 char * timestamp_to_char(struct tm time);
+
 
 typedef enum
 {
@@ -26,7 +28,9 @@ typedef enum
     SEND_REACTION = 5,
     LOGOUT = 6,
     CHANGE_ACCESS = 7,
-    DELETE_ACCOUNT = 8
+    DELETE_ACCOUNT = 8,
+    SOCKET_OK = 9,
+    SOCKET_FAIL = 10
 } SendType;
 
 typedef struct {
@@ -72,21 +76,20 @@ typedef struct {
 } Chat_display_package;
 
 typedef struct {
-    SendType send_type;
-    Client_data *client;
+    int send_type; // value of SendType Struct
+    Client_data *client; //
     Message *messages_list;// create to a message_list struct
-    Message message_send;
-    int number_of_messages;
+    Message message_send; 
+    int number_of_messages; //
     Channel_info *channels;
-    int channel_list_size;
-    int current_channel;
+    int channel_list_size; //
+    int current_channel; //
     Login_infos *login_info;
 } Client_package;
 
 typedef struct {
     Client_package *client_package;
     Server_state *server;
-
 } Client_package_for_backend;
 
 typedef struct {
@@ -97,9 +100,11 @@ typedef struct {
 
     // SendType send_type;
     // Client_data *client;
-    // Message *messages_list;// create to a message_list struct
+    // Message *messages_list;// create to a message_list struct;
     // Message message_send;
     // int number_of_messages;
     // Login_infos *login_info;
+char * serialize_client_package(Client_package *client_package);
+void serialize_login_info(cJSON *login, Login_infos *login_info);
 
 #endif

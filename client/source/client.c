@@ -3,6 +3,5 @@
 
 int main() {
     launch_front();
-    // client_start();
     return 0;
 }

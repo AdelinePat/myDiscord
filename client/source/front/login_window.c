@@ -109,8 +109,8 @@ static void on_register_clicked(GtkButton *button, gpointer user_data)
 void show_login_window(Client_package_for_frontend *login_pack)
 {
     // Client_package_for_frontend *login_pack = login_pack;
-    login_pack->client_package->client->sock_pointer = client_start();
-    printf("on a reçu la socket client après connexion ??? %d", login_pack->client_package->client->sock_pointer);
+    // login_pack->client_package->client->sock_pointer = client_start();
+    // printf("on a reçu la socket client après connexion ??? %d", login_pack->client_package->client->sock_pointer);
 
     load_css(login_pack->app); // Load and apply the CSS
 

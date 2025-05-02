@@ -8,6 +8,7 @@
 SOCKET client_start();
 // int login_attempts(SOCKET sock);
 int login_attempts(Client_package_for_frontend *login_pack);
+int connect_to_server(Client_package_for_frontend *login_pack);
 int register_attempts(Client_package_for_frontend *login_pack);
 void *receive_messages(void *arg);
 void recover_messages(SOCKET sock, GtkWidget *chat_display);

@@ -17,37 +17,89 @@
 
 #define PORT 8080
 
+int connect_to_client(Client_package *client_package) {
+    
+    recv(client_package->client->sock_pointer,
+        (char *)&client_package->send_type,
+        sizeof(int),
+        0);
+    
+    printf("valeur de send_type %d et valeur de la sock_pointer serveur %lld\n", client_package->send_type, client_package->client->sock_pointer);
+    if (client_package->send_type == SOCKET_OK) {
+        send(client_package->client->sock_pointer,
+            (char *)&client_package->send_type,
+            sizeof(int),
+            0);
+        return 0;
+    } else {
+        client_package->send_type = SOCKET_FAIL;
+            send(client_package->client->sock_pointer,
+            (char *)&client_package->send_type,
+            sizeof(int),
+            0);
+        return 1;
+    }
+}
+
 int login_attempts(Client_package *client_package)
 {
     while (1)
     {
+        client_package->login_info = malloc(sizeof(Login_infos));
         // Login_infos *login_info = malloc(sizeof(Login_infos));
         int login_status = 0;
-        Client_package *client_package_copy = malloc(sizeof(Client_package));
-        Login_infos *login_info_copy = malloc(sizeof(Login_infos));
-        client_package_copy->login_info = login_info_copy;
+        // Client_package *client_package_copy = malloc(sizeof(Client_package));
+        // Login_infos *login_info_copy = malloc(sizeof(Login_infos));
+        // client_package_copy->login_info = login_info_copy;
         // int bytes = recv(client_package->client->sock_pointer, (char *)login_info, sizeof(Login_infos), 0);
+        size_t len = 0;
+        int check_len = recv(client_package->client->sock_pointer, (char *)&len, sizeof(size_t), 0);
+        if (check_len == SOCKET_ERROR) {
+            printf("[ERROR] Failed socket connexion from client to server\n");
+        }
+
+        if (check_len != sizeof(size_t))
+        {
+            printf("[ERROR] Failed to receive message length. Received %d bytes\n", check_len);
+            break;
+        }
+
+        char * client_package_str = malloc(len + 1);
+
+        printf("la longueur du json est de %d", len);
+
         int bytes = recv(client_package->client->sock_pointer,
-            (char *)client_package_copy,
-            sizeof(Client_package),
+            client_package_str,
+            len,
             0);
+        
+        
+        client_package_str[len] = '\0';
+        printf("valeur du json %s", client_package_str);
+        cJSON *root = cJSON_Parse(client_package_str);
+        free(client_package_str);
 
+        client_package->send_type = cJSON_GetObjectItem(root, "send_type")->valueint;
+
+        cJSON *login = cJSON_GetObjectItem(root, "login_info");
+        strcpy(client_package->login_info->username, cJSON_GetObjectItem(login, "username")->valuestring);
+        strcpy(client_package->login_info->password, cJSON_GetObjectItem(login, "password")->valuestring);
         // client_package_copy = client_package;
-        printf("\n\n SEND_TYPE VALUE AFTER RECV : %d\n\n", client_package_copy->send_type);
+        // printf("\n\n SEND_TYPE VALUE AFTER RECV : %d\n\n", client_package_copy->send_type);
 
-        client_package->login_info = client_package_copy->login_info;
-        client_package->send_type = client_package_copy->send_type;
+        // client_package->login_info = client_package_copy->login_info;
+        // client_package->send_type = client_package_copy->send_type;
 
-        printf("avant check dans copy : user << %s >> et password << %s >>",
-            client_package_copy->login_info->username,
-            client_package_copy->login_info->password);
+        // printf("avant check dans copy : user << %s >> et password << %s >>",
+        //     client_package_copy->login_info->username,
+        //     client_package_copy->login_info->password);
         
         if (bytes == SOCKET_ERROR)
         {
             printf("[ERROR] Erreur lors de la réception de Login_infos, code %d\n", WSAGetLastError());
             break;
         }
-        if (bytes != sizeof(Client_package))
+        if (bytes != sizeof(client_package_str))
         {
             printf("[ERROR] Taille des données reçues incorrecte. Attendu %zu, reçu %d\n", sizeof(Client_package), bytes);
             break;
@@ -84,13 +136,13 @@ int login_attempts(Client_package *client_package)
                 break;
             default:
                 printf("oups, le send_type n'est pas reconnu");
-                return 0;
+                login_status = login_attempts(client_package);
         }
 
         
         // bytes = "\0";
         // fonction_nimporte(login_info);      *
-        free(client_package_copy);  
+        // free(client_package_copy);  
         
     }
     
@@ -149,16 +201,17 @@ void recover_messages(Client_package_for_backend *package)
 void *handle_client(void *arg)
 {
     Client_package *client_package = (Client_package *)arg;
-    Login_infos *login_info = malloc(sizeof(Login_infos));
-    client_package->login_info = login_info;
+    // Login_infos *login_info = malloc(sizeof(Login_infos));
+    // client_package->login_info = login_info;
     // Client_package *client_package = malloc(sizeof(Client_package));
     // client_pack->client_package = client_package;
 
-    int login_status = login_attempts(client_package);
+    // int login_status = login_attempts(client_package);
+    int login_status = connect_to_client(client_package);
 
     if (login_status == 1)
     {
-        printf("[INFO] Abandon de connexion");
+        printf("[INFO] dans handle client : Abandon de connexion");
         // free(client_package);
         // free(client_pack);
         free(arg);
@@ -171,6 +224,12 @@ void *handle_client(void *arg)
     Server_state *state = client_pack->server;
     Client_data *client = client_pack->client_package->client;
     SOCKET client_sock = client->sock_pointer;
+
+    login_status = login_attempts(client_pack->client_package);
+    if (login_status == 1)
+    {
+        printf("[INFO] Abandon de connexion");
+    }
 
     first_update_client_package(client_pack->client_package);
     printf("de retour dans handle_client : valeur user_id %d et user_name : %s\n",
@@ -303,7 +362,7 @@ void start_server()
         // client_package->login_info = login_info;
 
         pthread_t thread;
-        pthread_create(&thread, NULL, handle_client, (void *)client_package);
+        pthread_create(&thread, NULL, handle_client, (void *)client_pack);
         pthread_detach(thread);
     }
 
