@@ -10,26 +10,53 @@
 #include "../header/client_front.h"
 
 #define PORT 8080
+int connect_to_server(Client_package_for_frontend *login_pack) {
+    login_pack->client_package->send_type = SOCKET_OK;
+
+    printf("valeur de send_type %d et valeur de la sock_pointer %lld\n", login_pack->client_package->send_type, login_pack->client_package->client->sock_pointer);
+
+    send(login_pack->client_package->client->sock_pointer,
+        (char *)&login_pack->client_package->send_type,
+        sizeof(int),
+        0);
+
+    recv(login_pack->client_package->client->sock_pointer,
+        (char *)&login_pack->client_package->send_type,
+        sizeof(int),
+        0);
+
+    if (login_pack->client_package->send_type == SOCKET_FAIL) {
+        printf("[ERROR] Le serveur renvoie une error\n");
+    }
+
+
+}
 
 int login_attempts(Client_package_for_frontend *login_pack) {
     // Login_infos *login_info_copy = malloc(sizeof(Login_infos));
-    Client_package *client_package_copy = malloc(sizeof(Client_package));
+    // Client_package *client_package_copy = malloc(sizeof(Client_package));
     // client_package_copy->login_info = login_info_copy;
     
-    client_package_copy = login_pack->client_package;
-    client_package_copy->send_type = LOGIN;
+    // client_package_copy = login_pack->client_package;
+    // client_package_copy->send_type = LOGIN;
 
+    char * client_pack_str = serialize_client_package(login_pack->client_package);
     int login_status = 0;
 
-    printf("taille de client_package_copy %d\n", sizeof(client_package_copy));
-
-    printf("\n\nAttempting login: \n\t%s password :\n\t %s\n\n",
-        client_package_copy->login_info->username,
-        client_package_copy->login_info->password);
+    // printf("taille de client_package_copy %d\n", sizeof(client_package_copy));
+    printf("contenu de l'envoie : %s", client_pack_str);
+    // printf("\n\nAttempting login: \n\t%s password :\n\t %s\n\n",
+    //     client_package_copy->login_info->username,
+    //     client_package_copy->login_info->password);
+    size_t len = strlen(client_pack_str);
+    send(login_pack->client_package->client->sock_pointer,
+        (char *)len,
+        sizeof(size_t),
+        0);
 
     send(login_pack->client_package->client->sock_pointer,
-        (char *)client_package_copy,
-        sizeof(Client_package),
+        client_pack_str,
+        len,
         0);
 
     recv(login_pack->client_package->client->sock_pointer,
@@ -43,12 +70,12 @@ int login_attempts(Client_package_for_frontend *login_pack) {
         printf("Connexion réussie\n");
         receive_client_data(login_pack);
         // free(login_info_copy);
-        free(client_package_copy);
+        // free(client_package_copy);
         return 0;
     } else {
         printf("Une erreur est survenue lors de la connexion\n");
         // free(login_info_copy);
-        free(client_package_copy);
+        // free(client_package_copy);
         return 1;
     }
     
@@ -188,6 +215,6 @@ SOCKET client_start() {
     server.sin_port = htons(PORT);
 
     connect(server_sock, (struct sockaddr *)&server, sizeof(server));
-    printf("la sock serveur : %lld", server_sock);
+    printf("\nla sock client : %lld\n", server_sock);
     return server_sock;
 }

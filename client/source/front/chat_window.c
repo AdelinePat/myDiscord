@@ -98,18 +98,21 @@ static void on_connect_clicked(GtkButton *button, gpointer user_data)
         password,
         sizeof(login_pack->client_package->login_info->password) - 1);
 
-    SOCKET sock = client_start();
-    login_pack->client_package->client->sock_pointer = sock;
+    // SOCKET sock = client_start();
+    // login_pack->client_package->client->sock_pointer = sock;
 
     // Tente la connexion
     if (login_attempts(login_pack) == 0)
     {
         // Authentification réussie
-        recv(sock, (char *)login_pack->client_package->client, sizeof(Client_data), 0);
+        recv(login_pack->client_package->client->sock_pointer,
+            (char *)login_pack->client_package->client,
+            sizeof(Client_data),
+            0);
 
         // Lancer le thread de réception
         SOCKET *sock_ptr = malloc(sizeof(SOCKET));
-        *sock_ptr = sock;
+        *sock_ptr = login_pack->client_package->client->sock_pointer;
         pthread_t recv_thread;
         pthread_create(&recv_thread, NULL, receive_messages, sock_ptr);
         pthread_detach(recv_thread);
@@ -126,7 +129,7 @@ static void on_connect_clicked(GtkButton *button, gpointer user_data)
             "Échec de la connexion. Vérifiez vos identifiants.");
         gtk_dialog_run(GTK_DIALOG(dialog));
         gtk_widget_destroy(dialog);
-        closesocket(sock);
+        closesocket(login_pack->client_package->client->sock_pointer);
 
         free(login_pack->client_package->login_info);
         free(login_pack->client_package->client);

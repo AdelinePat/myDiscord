@@ -4,6 +4,11 @@
 
 static void on_activate(GtkApplication *app, gpointer user_data) {
     Client_package_for_frontend *login_pack = (Client_package_for_frontend *)user_data;
+    // Client_package_for_frontend *login_pack = login_pack;
+    login_pack->client_package->client->sock_pointer = client_start(); // OK
+    printf("\non a reçu la socket client après connexion ??? %d\n", login_pack->client_package->client->sock_pointer);
+    
+    connect_to_server(login_pack);
     // (void)user_data;
     show_login_window(login_pack);  // Start with the login screen
 }
@@ -12,6 +17,7 @@ int launch_front() {
     GtkApplication *app = gtk_application_new("org.my.discord", G_APPLICATION_DEFAULT_FLAGS);
 
     Client_package_for_frontend *login_pack = malloc(sizeof(Client_package_for_frontend));
+
     if (login_pack == NULL) {
         g_warning("Login package is NULL.");
         printf("login_pack est vide ? malloc failed");
@@ -40,5 +46,6 @@ int launch_front() {
     g_signal_connect(app, "activate", G_CALLBACK(on_activate), (void *)login_pack);
     int status = g_application_run(G_APPLICATION(app), 0, NULL);
     g_object_unref(app);
+
     return status;
 }
