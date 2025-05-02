@@ -57,13 +57,13 @@ int login_attempts(Client_package *client_package)
         // Login_infos *login_info_copy = malloc(sizeof(Login_infos));
         // client_package_copy->login_info = login_info_copy;
         // int bytes = recv(client_package->client->sock_pointer, (char *)login_info, sizeof(Login_infos), 0);
-        size_t len = 0;
-        int check_len = recv(client_package->client->sock_pointer, (char *)&len, sizeof(size_t), 0);
+        int len = 0;
+        int check_len = recv(client_package->client->sock_pointer, (char *)&len, sizeof(int), 0);
         if (check_len == SOCKET_ERROR) {
             printf("[ERROR] Failed socket connexion from client to server\n");
         }
 
-        if (check_len != sizeof(size_t))
+        if (check_len != sizeof(int))
         {
             printf("[ERROR] Failed to receive message length. Received %d bytes\n", check_len);
             break;
@@ -71,7 +71,7 @@ int login_attempts(Client_package *client_package)
 
         char * client_package_str = malloc(len + 1);
 
-        printf("la longueur du json est de %d", len);
+        printf("la longueur du json est de %d", (int)len);
 
         int bytes = recv(client_package->client->sock_pointer,
             client_package_str,
@@ -80,7 +80,8 @@ int login_attempts(Client_package *client_package)
         
         
         client_package_str[len] = '\0';
-        printf("valeur du json %s", client_package_str);
+        printf("\n\nvaleur du json \t%s\n\n", client_package_str);
+
         cJSON *root = cJSON_Parse(client_package_str);
         free(client_package_str);
 
@@ -104,7 +105,7 @@ int login_attempts(Client_package *client_package)
             printf("[ERROR] Erreur lors de la réception de Login_infos, code %d\n", WSAGetLastError());
             break;
         }
-        if (bytes != sizeof(client_package_str))
+        if (bytes != sizeof(len)+1)
         {
             printf("[ERROR] Taille des données reçues incorrecte. Attendu %zu, reçu %d\n", sizeof(Client_package), bytes);
             break;
@@ -303,11 +304,10 @@ void *handle_client(void *arg)
     }
     pthread_mutex_unlock(&state->lock);
 
-    free(state);
+    // free(state);
     free(client);
     free(client_pack->client_package);
     free(client_copy);
-    // free(client_package);
     free(client_pack);
     pthread_exit(NULL);
 }

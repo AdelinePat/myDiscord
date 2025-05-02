@@ -50,10 +50,10 @@ int login_attempts(Client_package_for_frontend *login_pack) {
     // printf("\n\nAttempting login: \n\t%s password :\n\t %s\n\n",
     //     client_package_copy->login_info->username,
     //     client_package_copy->login_info->password);
-    size_t len = strlen(client_pack_str);
+    int len = strlen(client_pack_str);
     send(login_pack->client_package->client->sock_pointer,
-        (char *)len,
-        sizeof(size_t),
+        (char *)&len,
+        sizeof(int),
         0);
 
     send(login_pack->client_package->client->sock_pointer,

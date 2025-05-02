@@ -13,12 +13,12 @@ char * get_str_timestamp() {
 }
 
 char * timestamp_to_char(struct tm time) {
-    char *time_str = malloc(100); 
+    char *time_str = malloc(20); 
     if (time_str == NULL) {
         fprintf(stderr, "Memory allocation failed in timestamp_to_char\n");
         return NULL;
     }
-    strftime(time_str, 100, "%H:%M - %d/%m/%Y", &time);
+    strftime(time_str, 20, "%H:%M - %d/%m/%Y", &time);
     return time_str;
 }
 
