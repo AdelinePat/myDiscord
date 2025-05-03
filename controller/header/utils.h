@@ -9,6 +9,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <gtk/gtk.h>
+#include "../../controller/header/utils.h"
 
 #define MAX_CLIENTS 20
 
@@ -27,7 +28,8 @@ typedef enum
     DELETE_ACCOUNT = 8
 } SendType;
 
-typedef struct {
+typedef struct
+{
     int channel_id;
     int message_id;
     int client_id;
@@ -43,7 +45,7 @@ typedef struct
 } Channel_info;
 
 typedef struct
-{   
+{
     SendType send_type;
     SOCKET sock_pointer;
     char client_name[19];
@@ -52,7 +54,6 @@ typedef struct
 
 } Client_data;
 
-
 typedef struct
 {
     Client_data *clients[MAX_CLIENTS];
@@ -60,7 +61,8 @@ typedef struct
     int client_count;
 } Server_state;
 
-typedef struct {
+typedef struct
+{
     char username[19];
     char password[65];
     char confirm_password[65];
@@ -75,19 +77,20 @@ typedef struct
     SendType send_type;
     Client_data *client;
     Server_state *server;
-    Message *messages_list;// create to a message_list struct
-    Message message_send; 
+    Message *messages_list; // create to a message_list struct
+    Message message_send;
     Login_infos *login_info;
 } Client_package;
 
-typedef struct {
+typedef struct
+{
     SendType send_type;
     Client_data *client;
-    Message *messages_list;// create to a message_list struct
+    Message *messages_list; // create to a message_list struct
     Message message_send;
     Login_infos *login_info;
     GtkWidget **data;
-    GtkApplication *app;  
+    GtkApplication *app;
 } Login_package_for_front;
 
 #endif

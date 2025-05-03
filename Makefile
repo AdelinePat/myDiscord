@@ -26,6 +26,7 @@ JSON_LIBS := $(shell pkg-config --libs libcjson)
 
 # On ajoute les bibliothèques JSON
 LDFLAGS += $(JSON_LIBS)
+LDFLAGS += $(PQ_LIBS) 
 
 # Combine les options de compilation
 CFLAGS += $(GTK_CFLAGS)
@@ -48,6 +49,7 @@ CLIENT_SRC = ./client/source/client.c \
 ./client/source/front/hash_login.c \
 ./client/source/front/login_window.c \
 ./client/source/front/register_window.c \
+./client/source/front/session.c \
 ./client/source/front/chat_window.c
 
 # Fichiers objets générés

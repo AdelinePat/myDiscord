@@ -8,10 +8,12 @@
 #include "../../controller/header/utils.h"
 #include "../header/connector.h"
 #include "../header/client_front.h"
+#include "../header/login_window.h"
 
 #define PORT 8080
 
-int login_attempts(Login_package_for_front *login_pack) {
+int login_attempts(Login_package_for_front *login_pack)
+{
     Login_infos *login_info_copy = malloc(sizeof(Login_infos));
     *login_info_copy = *login_pack->login_info;
     int login_status = 0;
@@ -27,7 +29,6 @@ int login_attempts(Login_package_for_front *login_pack) {
     // strncpy(login_info.username, username, sizeof(login_info.username));
     // strncpy(login_info.password, password, sizeof(login_info.password));
 
-
     // printf("[DEBUG] Envoi des informations de connexion - username: %s, password: %s\n", login_info.username, login_info.password);
     // printf("Avant send : valeur de login_status : %d\n", login_status);
     printf("Attempting login: %s password :\n %s\n", login_pack->login_info->username, login_pack->login_info->password);
@@ -35,17 +36,21 @@ int login_attempts(Login_package_for_front *login_pack) {
     recv(login_pack->client->sock_pointer, (char *)&login_status, sizeof(int), 0);
     printf("Après receive : valeur de login_status : %d\n", login_status);
 
-    if (login_status == 1) {
+    if (login_status == 1)
+    {
         printf("Connexion réussie\n");
         receive_client_data(login_pack);
         return 0;
-    } else {
+    }
+    else
+    {
         printf("Une erreur est survenue lors de la connexion\n");
         return 1;
     }
 }
 
-void receive_client_data(Login_package_for_front *login_pack) {
+void receive_client_data(Login_package_for_front *login_pack)
+{
     int socket_client = login_pack->client->sock_pointer;
 
     recv(socket_client, (char *)login_pack->client, sizeof(Client_data), 0);
@@ -56,7 +61,8 @@ void receive_client_data(Login_package_for_front *login_pack) {
     broadcast_notifications_receiver_start(login_pack);
 }
 
-void broadcast_notifications_receiver_start(Login_package_for_front *login_pack) {
+void broadcast_notifications_receiver_start(Login_package_for_front *login_pack)
+{
     SOCKET *sock_copy = malloc(sizeof(SOCKET));
     *sock_copy = login_pack->client->sock_pointer;
     // printf("%lld", *sock_copy);
@@ -64,7 +70,8 @@ void broadcast_notifications_receiver_start(Login_package_for_front *login_pack)
     pthread_create(&recv_thread, NULL, receive_messages, (void *)sock_copy);
 }
 
-int register_attempts(Login_package_for_front *login_pack) {
+int register_attempts(Login_package_for_front *login_pack)
+{
     Login_infos *login_info_copy = malloc(sizeof(Login_infos));
     *login_info_copy = *login_pack->login_info;
     int register_status = 1;
@@ -72,16 +79,20 @@ int register_attempts(Login_package_for_front *login_pack) {
     send(login_pack->client->sock_pointer, (char *)login_pack->login_info, sizeof(Login_infos), 0);
     recv(login_pack->client->sock_pointer, (char *)&register_status, sizeof(int), 0);
 
-    if (login_pack->login_info->login_register == CREATE_ACCOUNT) {
+    if (login_pack->login_info->login_register == CREATE_ACCOUNT)
+    {
         printf("Création de compte réussie\n");
         return 0;
-    } else {
+    }
+    else
+    {
         printf("Une erreur est survenue lors de l'inscription'\n");
         return 1; // in front : go back to login
     }
 }
 
-void send_message(Client_data *client, char text[1024]) {
+void send_message(Client_data *client, char text[1024])
+{
     Message message;
     message.client_id = client->client_id;
     strncpy(message.message, text, sizeof(message.message));
@@ -90,15 +101,20 @@ void send_message(Client_data *client, char text[1024]) {
     send(client->sock_pointer, (char *)&message, sizeof(Message), 0);
 }
 
-void *receive_messages(void *arg) { // permet de recevoir une notification lorsqu'un message est broadcasté par le serveur
+void *receive_messages(void *arg)
+{ // permet de recevoir une notification lorsqu'un message est broadcasté par le serveur
     SOCKET sock = *(SOCKET *)arg;
     printf("socket :%d\n", sock);
     char buffer[1200];
-    while (1) {
+    while (1)
+    {
         int bytes = recv(sock, buffer, sizeof(buffer) - 1, 0);
-        if (bytes > 0) {
+        if (bytes > 0)
+        {
             printf("%s", buffer);
-        } else {
+        }
+        else
+        {
             printf("haha\n");
             break;
         }
@@ -107,7 +123,8 @@ void *receive_messages(void *arg) { // permet de recevoir une notification lorsq
     return NULL;
 }
 
-SOCKET client_start() {
+SOCKET client_start()
+{
     WSADATA wsa;
     WSAStartup(MAKEWORD(2, 2), &wsa);
 
@@ -122,7 +139,7 @@ SOCKET client_start() {
     connect(server_sock, (struct sockaddr *)&server, sizeof(server));
     printf("la sock serveur : %lld", server_sock);
     return server_sock;
-    }
+}
 
 // void after_login()
 //     {
