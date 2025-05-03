@@ -1,6 +1,8 @@
 #ifndef CONNECTOR_H
 #define CONNECTOR_H
 #include "./client_front.h"
+#include "../header/login_window.h"
+
 // #include <winsock2.h>
 // #include "../../controller/header/utils.h"
 

@@ -4,6 +4,7 @@
 #include "./client_front.h"
 #include "./login_window.h"
 #include "../../controller/header/utils.h"
+#include "../header/login_window.h"
 
 // === FUNCTION DECLARATION: Display the Registration Window ===
 // This function creates and shows the registration window.
