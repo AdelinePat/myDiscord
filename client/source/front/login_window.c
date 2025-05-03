@@ -58,20 +58,25 @@ static void on_login_clicked(GtkButton *button, gpointer user_data)
     const gchar *username = gtk_entry_get_text(GTK_ENTRY(entry_user));
     const gchar *password = gtk_entry_get_text(GTK_ENTRY(entry_pass));
 
-    strcpy(login_pack->login_info->username, username);
-    strcpy(login_pack->login_info->email, username);
+    // Utiliser le mot de passe en clair pour la connexion à la base de données
+    printf("Mot de passe en clair : %s\n", password);
 
+    // hachage mot de passe pour verif utilisateur(pas pour conexion postgresql)
     char hashed_password[65];
     hash_password_sha256(password, hashed_password);
-    printf(" on_login_clicked1 : Password: %s\n", password);
-    printf(" on_login_clicked1 : Hashed password: %s\n", hashed_password);
+    printf("Mot de passe haché pour verification: %s\n", hashed_password);
+    // stocker infos connexion pour verif utilisateur
 
+    strcpy(login_pack->login_info->username, username);
+    strcpy(login_pack->login_info->email, username);
     strcpy(login_pack->login_info->password, hashed_password);
     login_pack->login_info->login_register = LOGIN;
 
-    g_print("Attempting login: %s / %s\n", login_pack->login_info->username, login_pack->login_info->password);
+    g_print("Tentative de conneion avec : %s / %s\n", login_pack->login_info->username, login_pack->login_info->password);
 
     int login_status = login_attempts(login_pack);
+
+    printf("Statut de connexion : %d\n", login_status);
 
     if (login_status == 0)
     {
@@ -80,14 +85,20 @@ static void on_login_clicked(GtkButton *button, gpointer user_data)
 
         printf("Connexion réussie. Tentative de récupération de l'ID utilisateur...\n");
 
-        PGconn *conn = PQconnectdb("dbname=whispr_db user=my_user password=my_password host=localhost port=5432");
+        char conninfo[256]; // Assure-toi d'avoir une taille suffisante pour ta chaîne de connexion
+        // Chaîne de connexion avec mot de passe en clair
+        snprintf(conninfo, sizeof(conninfo), "dbname=whispr user=%s password=%s host=localhost port=5432", username, password);
+
+        PGconn *conn = PQconnectdb(conninfo);
 
         if (PQstatus(conn) != CONNECTION_OK)
+
         {
             fprintf(stderr, "Erreur de connexion à la base PostgreSQL : %s\n", PQerrorMessage(conn));
             PQfinish(conn);
             return;
         }
+        printf("Connexion réussie à la base de données\n");
 
         const char *paramValues[1] = {username};
         printf("Nom d'utilisateur fourni pour la requête : %s\n", username);
@@ -112,14 +123,16 @@ static void on_login_clicked(GtkButton *button, gpointer user_data)
 
         int n = PQntuples(res);
         printf("Nombre de lignes retournées : %d\n", n);
+        printf("Avant l'exécution de la requête SQL\n");
 
         if (n > 0)
         {
             const char *id_str = PQgetvalue(res, 0, 0);
-            printf("ID utilisateur récupéré : %s\n", id_str);
+            printf("ID utilisateur connecté récupéré : %s\n", id_str);
 
             // Correction de strtol : ajouter un pointeur 'endptr' et spécifier la base (par exemple, 10 pour décimal)
             char *endptr;
+            printf("id_str avant conversion : %s\n", id_str);
             session_user_id = strtol(id_str, &endptr, 10);
             if (*endptr != '\0')
             {
@@ -129,6 +142,7 @@ static void on_login_clicked(GtkButton *button, gpointer user_data)
                 return;
             }
             printf("session_user_id mis à jour : %d\n", session_user_id);
+            printf("ID utilisateur final stocké dans session_user_id : %d\n", session_user_id);
         }
         else
         {
