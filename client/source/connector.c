@@ -9,6 +9,7 @@
 #include "../header/connector.h"
 #include "../header/client_front.h"
 #include "../header/login_window.h"
+#include <libpq-fe.h>
 
 #define PORT 8080
 
@@ -180,3 +181,89 @@ SOCKET client_start()
 //     free(client);
 //     WSACleanup();
 // }
+
+int is_valid_utf8(const char *str)
+{
+    while (*str)
+    {
+        if (*str & 0x80)
+        { // Si le bit le plus significatif est défini, vérifier la validité UTF-8
+            if ((*str & 0xE0) == 0xC0)
+            { // 2 octets
+                if ((*(str + 1) & 0xC0) != 0x80)
+                    return 0;
+                str++;
+            }
+            else if ((*str & 0xF0) == 0xE0)
+            { // 3 octets
+                if ((*(str + 1) & 0xC0) != 0x80 || (*(str + 2) & 0xC0) != 0x80)
+                    return 0;
+                str += 2;
+            }
+            else if ((*str & 0xF8) == 0xF0)
+            { // 4 octets
+                if ((*(str + 1) & 0xC0) != 0x80 || (*(str + 2) & 0xC0) != 0x80 || (*(str + 3) & 0xC0) != 0x80)
+                    return 0;
+                str += 3;
+            }
+            else
+                return 0;
+        }
+        str++;
+    }
+    return 1;
+}
+
+int fetch_user_id_from_db(const char *username, const char *password)
+{
+    const char *pg_user = "postgres";
+    const char *pg_password = "123456";
+
+    if (!pg_user || !pg_password)
+    {
+        fprintf(stderr, "Les variables d'environnement PGUSER ou PGPASSWORD ne sont pas définies.\n");
+        return -1;
+    }
+
+    char conninfo[256];
+    snprintf(conninfo, sizeof(conninfo), "dbname=whispr user=%s password=%s host=localhost port=5432", pg_user, pg_password);
+
+    PGconn *conn = PQconnectdb(conninfo);
+    if (PQstatus(conn) != CONNECTION_OK)
+    {
+        fprintf(stderr, "Erreur de connexion à PostgreSQL : %s\n", PQerrorMessage(conn));
+        PQfinish(conn);
+        return -1;
+    }
+
+    const char *paramValues[2] = {username, password};
+    PGresult *res = PQexecParams(conn,
+                                 "SELECT user_id FROM users WHERE (user_name = $1 OR email = $1) AND password = $2",
+                                 2, NULL, paramValues, NULL, NULL, 0);
+
+    if (!res || PQresultStatus(res) != PGRES_TUPLES_OK)
+    {
+        fprintf(stderr, "La requête SQL a échoué : %s\n", PQerrorMessage(conn));
+        if (res)
+            PQclear(res);
+        PQfinish(conn);
+        return -1;
+    }
+
+    int user_id = -1;
+    if (PQntuples(res) > 0)
+    {
+        const char *id_str = PQgetvalue(res, 0, 0);
+        char *endptr;
+        user_id = strtol(id_str, &endptr, 10);
+        if (*endptr != '\0')
+        {
+            fprintf(stderr, "Erreur de conversion de l'ID utilisateur.\n");
+            user_id = -1;
+        }
+    }
+
+    PQclear(res);
+    PQfinish(conn);
+    return user_id;
+}
