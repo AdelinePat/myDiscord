@@ -5,6 +5,7 @@
         "*.dbclient-js": "javascript",
         "register_window.h": "c",
         "sha.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "hoster.h": "c"
     }
 }
