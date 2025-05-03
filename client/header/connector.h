@@ -16,5 +16,6 @@ void receive_client_data(Login_package_for_front *login_pack);
 void broadcast_notifications_receiver_start(Login_package_for_front *login_pack);
 void send_message(Client_data *client, char text[1024]);
 // SendType register_attempts(Login_package_for_front *login_pack);
+int fetch_user_id_from_db(const char *username, const char *password);
 
 #endif
