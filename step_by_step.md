@@ -141,3 +141,10 @@ GCC : `gcc -v`
 Make : `make --version`
 
 postgresql : `psql --version`
+
+
+# installation cjson
+
+```bash
+sudo apt-get install libcjson-dev
+```
