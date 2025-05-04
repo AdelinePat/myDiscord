@@ -32,6 +32,7 @@ int login_attempts(Login_package_for_front *login_pack)
 
     // printf("[DEBUG] Envoi des informations de connexion - username: %s, password: %s\n", login_info.username, login_info.password);
     // printf("Avant send : valeur de login_status : %d\n", login_status);
+
     printf("Attempting login: %s password :\n %s\n", login_pack->login_info->username, login_pack->login_info->password);
     send(login_pack->client->sock_pointer, (char *)login_info_copy, sizeof(Login_infos), 0);
     recv(login_pack->client->sock_pointer, (char *)&login_status, sizeof(int), 0);
@@ -40,7 +41,23 @@ int login_attempts(Login_package_for_front *login_pack)
     if (login_status == 1)
     {
         printf("Connexion réussie\n");
+
+        // Récupération des infos client (nom, socket, etc.)
         receive_client_data(login_pack);
+
+        // Récupération de l'ID utilisateur depuis la base PostgreSQL
+        int user_id = fetch_user_id_from_db(login_pack->login_info->username, login_pack->login_info->password);
+        if (user_id != -1)
+        {
+            login_pack->client->client_id = user_id;
+            printf("[DEBUG] ID utilisateur récupéré depuis la base : %d\n", user_id);
+        }
+        else
+        {
+            fprintf(stderr, "Échec lors de la récupération de l'ID utilisateur depuis la base.\n");
+            return 1;
+        }
+
         return 0;
     }
     else
@@ -60,6 +77,7 @@ void receive_client_data(Login_package_for_front *login_pack)
     printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%d\n", login_pack->client->client_id, login_pack->client->client_name, login_pack->client->sock_pointer);
 
     broadcast_notifications_receiver_start(login_pack);
+    printf("[DEBUG] Après login, username = %s\n", login_pack->login_info->username);
 }
 
 void broadcast_notifications_receiver_start(Login_package_for_front *login_pack)
@@ -216,6 +234,9 @@ int is_valid_utf8(const char *str)
 
 int fetch_user_id_from_db(const char *username, const char *password)
 {
+    // Débogage : afficher les valeurs de username et password avant de procéder à la connexion à la base de données
+    printf("[DEBUG] fetch_user_id_from_db() appelé avec : username = %s | password = %s\n", username, password);
+
     const char *pg_user = "postgres";
     const char *pg_password = "123456";
 
@@ -254,6 +275,10 @@ int fetch_user_id_from_db(const char *username, const char *password)
     if (PQntuples(res) > 0)
     {
         const char *id_str = PQgetvalue(res, 0, 0);
+
+        // Débogage : afficher la valeur de l'ID avant la conversion
+        printf("[DEBUG] ID récupéré depuis la base : %s\n", id_str);
+
         char *endptr;
         user_id = strtol(id_str, &endptr, 10);
         if (*endptr != '\0')
