@@ -54,8 +54,17 @@ static void on_login_clicked(GtkButton *button, gpointer user_data)
     GtkWidget *entry_user = login_pack->data[1];
     GtkWidget *entry_pass = login_pack->data[2];
 
+    printf("[DEBUG] entry_user = %p | entry_pass = %p\n", entry_user, entry_pass);
+    printf("[DEBUG] texte saisi dans username : '%s'\n", gtk_entry_get_text(GTK_ENTRY(entry_user)));
+
     const gchar *username = gtk_entry_get_text(GTK_ENTRY(entry_user));
     const gchar *password = gtk_entry_get_text(GTK_ENTRY(entry_pass));
+
+    if (strlen(username) == 0 || strlen(password) == 0)
+    {
+        fprintf(stderr, "Champs vides : username ou password manquant.\n");
+        return;
+    }
 
     char hashed_password[65];
     hash_password_sha256(password, hashed_password);
@@ -72,7 +81,10 @@ static void on_login_clicked(GtkButton *button, gpointer user_data)
     gtk_widget_destroy(login_window);
     show_chat_window(login_pack);
 
+    printf("[DEBUG] Avant fetch : username = %s | hashed_password = %s\n", username, hashed_password);
     int id = fetch_user_id_from_db(username, password);
+    printf("[DEBUG] fetch_user_id_from_db() a retourné : %d\n", id);
+
     if (id == -1)
     {
         fprintf(stderr, "Échec de récupération de l'ID utilisateur.\n");
