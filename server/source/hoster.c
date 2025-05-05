@@ -77,8 +77,17 @@ int login_attempts(Client_package *client_package)
             client_package_str,
             len,
             0);
-        
-        
+        if (bytes == SOCKET_ERROR)
+        {
+            printf("[ERROR] Erreur lors de la réception de Login_infos, code %d\n", WSAGetLastError());
+            break;
+        }
+        if (bytes != len)
+        {
+            printf("[ERROR] Taille des données reçues incorrecte. Attendu %zu, reçu %d\n", len, bytes);
+            break;
+        }
+
         client_package_str[len] = '\0';
         printf("\n\nvaleur du json \t%s\n\n", client_package_str);
 
@@ -99,17 +108,6 @@ int login_attempts(Client_package *client_package)
         // printf("avant check dans copy : user << %s >> et password << %s >>",
         //     client_package_copy->login_info->username,
         //     client_package_copy->login_info->password);
-        
-        if (bytes == SOCKET_ERROR)
-        {
-            printf("[ERROR] Erreur lors de la réception de Login_infos, code %d\n", WSAGetLastError());
-            break;
-        }
-        if (bytes != sizeof(len)+1)
-        {
-            printf("[ERROR] Taille des données reçues incorrecte. Attendu %zu, reçu %d\n", sizeof(Client_package), bytes);
-            break;
-        }
 
         printf("Infos reçues : user : << %s >>, pass : << %s >>\n",
             client_package->login_info->username,
@@ -136,13 +134,16 @@ int login_attempts(Client_package *client_package)
                 }
                 else
                 {
+                    login_status = 0;
                     printf("Informations de connexion erronées.\n");
                     send(client_package->client->sock_pointer, (char *)&login_status, sizeof(login_status), 0);
                 }
                 break;
             default:
+                login_status = 0;
                 printf("oups, le send_type n'est pas reconnu");
-                login_status = login_attempts(client_package);
+                send(client_package->client->sock_pointer, (char *)&login_status, sizeof(login_status), 0);
+
         }
 
         
@@ -217,14 +218,13 @@ void *handle_client(void *arg)
     printf("\n\nvaleur de la socket server avant connect_to_client : %lld\n\n",
     client_pack->client_package->client->sock_pointer);
 
-    int login_status = connect_to_client(client_pack->client_package);
-
-    if (login_status == 1)
+    int connect_status = connect_to_client(client_pack->client_package);
+    if (connect_status == 1)
     {
-        printf("[INFO] dans handle client : Abandon de connexion");
-        // free(client_package);
-        // free(client_pack);
-        free(arg);
+        printf("[INFO] dans handle client : Echec du hand-shake");
+        free(client_pack->client_package->client);
+        free(client_pack->client_package);
+        free(client_pack);
         pthread_exit(NULL);
         return 0;
     }
@@ -235,10 +235,15 @@ void *handle_client(void *arg)
     Client_data *client = client_pack->client_package->client;
     SOCKET client_sock = client->sock_pointer;
 
-    login_status = login_attempts(client_pack->client_package);
+    int login_status = login_attempts(client_pack->client_package);
     if (login_status == 1)
     {
-        printf("[INFO] Abandon de connexion");
+        printf("[INFO] dans handle client : Abandon de connexion");
+        free(client_pack->client_package->client);
+        free(client_pack->client_package);
+        free(client_pack);
+        pthread_exit(NULL);
+        return 0;
     }
 
     first_update_client_package(client_pack->client_package);
@@ -304,7 +309,6 @@ void *handle_client(void *arg)
     }
     pthread_mutex_unlock(&state->lock);
 
-    // free(state);
     free(client);
     free(client_pack->client_package);
     free(client_copy);

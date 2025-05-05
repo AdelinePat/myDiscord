@@ -6,7 +6,7 @@ static void on_activate(GtkApplication *app, gpointer user_data) {
     Client_package_for_frontend *login_pack = (Client_package_for_frontend *)user_data;
     // Client_package_for_frontend *login_pack = login_pack;
     login_pack->client_package->client->sock_pointer = client_start(); // OK
-    printf("\non a reçu la socket client après connexion ??? %d\n", login_pack->client_package->client->sock_pointer);
+    printf("\non a reçu la socket client après connexion ??? %lld\n", login_pack->client_package->client->sock_pointer);
     
     connect_to_server(login_pack);
     // (void)user_data;
