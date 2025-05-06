@@ -44,17 +44,52 @@ struct tm parse_db_query_time(char *time_str) {
 }
 
 void serialize_login_info(cJSON * login, Login_infos *login_info) {
-    
     cJSON_AddStringToObject(login, "username", login_info->username);
     cJSON_AddStringToObject(login, "password", login_info->password);
     cJSON_AddStringToObject(login, "email", login_info->email);
     cJSON_AddNumberToObject(login, "user_id", login_info->user_id);
 }
 
-// void serialize_message_list(cJSON * message_list_json, Message *messages[]) {
-    
+void serialize_client_data(cJSON * clientData, Client_data *client)
+{
+    cJSON_AddNumberToObject(clientData, "sock_pointer", (int)client->sock_pointer);
+    cJSON_AddStringToObject(clientData, "username", client->client_name);
+    cJSON_AddNumberToObject(clientData, "user_id", client->user_id);
+}
 
-// }
+cJSON * serialize_channel_info(Channel_info channel_info)
+{
+    cJSON *channelInfo = cJSON_CreateObject();
+    cJSON_AddNumberToObject(channelInfo, "channel_id", channel_info.channel_id);
+    cJSON_AddStringToObject(channelInfo, "username", channel_info.channel_title);
+    return channelInfo;
+}
+void serialize_channel_info_list(cJSON * channel_list, Client_package * client_package) {
+    for (int i = 0; i < client_package->channel_list_size; i++)
+    {
+        cJSON *a_channel_info = serialize_channel_info(client_package->channels[i]);
+        cJSON_AddItemToArray(channel_list, a_channel_info);
+    }
+}
+
+cJSON * serialize_message(Message a_message)
+{
+    cJSON *message_json = cJSON_CreateObject();
+    cJSON_AddNumberToObject(message_json, "channel_id", a_message.channel_id);
+    cJSON_AddNumberToObject(message_json, "message_id", a_message.message_id);
+    cJSON_AddNumberToObject(message_json, "user_id", a_message.user_id);
+    cJSON_AddStringToObject(message_json, "username", a_message.username);
+    cJSON_AddStringToObject(message_json, "timestamp", a_message.timestamp);
+    cJSON_AddStringToObject(message_json, "message", a_message.message);
+    return message_json;
+}
+void serialize_message_list(cJSON * message_list_json, Client_package * client_package) {
+    for (int i = 0; i < client_package->number_of_messages; i++)
+    {
+        cJSON *a_message = serialize_message(client_package->messages_list[i]);
+        cJSON_AddItemToArray(message_list_json, a_message);
+    }
+}
 
 char * serialize_client_package(Client_package *client_package) {
     cJSON *root = cJSON_CreateObject();
@@ -66,12 +101,23 @@ char * serialize_client_package(Client_package *client_package) {
     cJSON_AddNumberToObject(root, "current_channel", client_package->current_channel);
 
     // Call for serialize every nested json object
+    
+    cJSON *clientdata = cJSON_CreateObject();
+    serialize_client_data(clientdata, client_package->client);
+    cJSON_AddItemToObject(root, "client_data", clientdata);
+
+    cJSON *message_list = cJSON_CreateArray();
+    serialize_message_list(message_list, client_package);
+    cJSON_AddItemToObject(root, "message_list", message_list);
+
     cJSON *login = cJSON_CreateObject();
     serialize_login_info(login, client_package->login_info);
     cJSON_AddItemToObject(root, "login_info", login);
-
-    // cJSON *message_list = cJSON_CreateArray();
-    // serialize_message_list(message_list, client_package->messages_list);
+    
+    cJSON *channels_info_list = cJSON_CreateArray();
+    serialize_channels_info(channels_info_list, client_package);
+    cJSON_AddItemToObject(root, "channels", channels_info_list);
+    
     char *json_string = cJSON_PrintUnformatted(root);
     cJSON_Delete(root);
     return json_string; // Don't forget to free this after sending!

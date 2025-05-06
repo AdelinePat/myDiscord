@@ -132,11 +132,11 @@ int register_attempts(Client_package_for_frontend *login_pack) {
 
 void send_message(Client_package *client_package, char text[1024]) {
     Message message;
-    message.client_id = client_package->client->user_id;
+    message.user_id = client_package->client->user_id;
     message.channel_id = client_package->current_channel;
     strncpy(message.message, text, sizeof(message.message));
     message.message[sizeof(message.message) - 1] = '\0';
-    printf("Infos envoyées : %s de %d à %lld\n", message.message, message.client_id, client_package->client->sock_pointer);
+    printf("Infos envoyées : %s de %d à %lld\n", message.message, message.user_id, client_package->client->sock_pointer);
     send(client_package->client->sock_pointer, (char *)&message, sizeof(Message), 0);
 }
 
@@ -165,8 +165,10 @@ void *receive_messages(void *arg) { // permet de recevoir une notification lorsq
 
 void recover_messages(SOCKET sock, GtkWidget *chat_display) {
     printf("socket :%lld\n", sock);
+
     int size_of_list;
     int bytes = recv(sock, (char *)&size_of_list, sizeof(int), 0);
+
     if (bytes > 0) {
         printf("BLBLBL received size : %lld\n", size_of_list);
     }
