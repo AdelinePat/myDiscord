@@ -95,7 +95,8 @@ typedef struct {
 typedef struct {
     Client_package *client_package;
     GtkWidget **data;
-    GtkApplication *app;  
+    GtkApplication *app;
+    GtkWidget *chat_display;
 } Client_package_for_frontend;
 
     // SendType send_type;
@@ -111,5 +112,9 @@ void serialize_channel_info_list(cJSON * channel_list, Client_package * client_p
 cJSON * serialize_channel_info(Channel_info channel_info);
 void serialize_client_data(cJSON * clientData, Client_data *client);
 void serialize_login_info(cJSON * login, Login_infos *login_info);
+
+cJSON * parse_login_info(cJSON *root, Client_package * client_package); 
+void parse_message_list(cJSON *root, Client_package * client_package);
+void parse_channels_info_list(cJSON *root, Client_package * client_package);
 
 #endif

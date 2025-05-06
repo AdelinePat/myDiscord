@@ -221,21 +221,8 @@ void show_chat_window(Client_package_for_frontend *login_pack) {
     gtk_widget_set_name(bottom_box, "bottom_box");
     gtk_box_pack_start(GTK_BOX(channels_box), bottom_box, FALSE, FALSE, 0);
 
-    // Client_package_for_frontend *login_pack;
-    // // login_pack->data = g_new(GtkWidget *, 1);
-    // // login_pack->data[0] = GTK_WIDGET(app);
-    // login_pack->login_info = login_info;
-
-    // Client_package_for_frontend *login_pack = malloc(sizeof(Client_package_for_frontend));
-    // if (login_pack == NULL) {
-    //     g_warning("Failed to allocate memory for login_pack.");
-    //     printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
-    // }
-    // GtkApplication *app = login_pack->app;
-    // login_pack->data = g_new(GtkWidget *, 1);  // Optional: since you're not using it here
-    // login_pack->data[0] = window;
-    // login_pack->login_info = login_info;
-    // Login_infos *login_info = login_pack->login_info;
+    // CHAT DISPLAY DANS LOGIN_PACK
+    login_pack->chat_display = chat_display;
 
     disconnect_button = gtk_button_new_with_label("Déconnexion");
     gtk_widget_set_name(disconnect_button, "disconnect_button");
@@ -274,5 +261,5 @@ void show_chat_window(Client_package_for_frontend *login_pack) {
     printf("dans chat_window juste avant recover_message");
     recover_messages(login_pack->client_package->client->sock_pointer, chat_display);
     gtk_widget_show_all(window);
-    broadcast_notifications_receiver_start(login_pack, chat_display);
+    broadcast_notifications_receiver_start(login_pack);
 }

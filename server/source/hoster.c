@@ -94,12 +94,14 @@ int login_attempts(Client_package *client_package)
         cJSON *root = cJSON_Parse(client_package_str);
         free(client_package_str);
 
-        client_package->send_type = cJSON_GetObjectItem(root, "send_type")->valueint;
+        // client_package->send_type = cJSON_GetObjectItem(root, "send_type")->valueint;
 
-        cJSON *login = cJSON_GetObjectItem(root, "login_info");
-        strcpy(client_package->login_info->username, cJSON_GetObjectItem(login, "username")->valuestring);
-        strcpy(client_package->login_info->email, cJSON_GetObjectItem(login, "email")->valuestring);
-        strcpy(client_package->login_info->password, cJSON_GetObjectItem(login, "password")->valuestring);
+        // cJSON *login = cJSON_GetObjectItem(root, "login_info");
+        // strcpy(client_package->login_info->username, cJSON_GetObjectItem(login, "username")->valuestring);
+        // strcpy(client_package->login_info->email, cJSON_GetObjectItem(login, "email")->valuestring);
+        // strcpy(client_package->login_info->password, cJSON_GetObjectItem(login, "password")->valuestring);
+        
+        // cJSON *login = parse_login_info(root, client_package);
         // client_package_copy = client_package;
         // printf("\n\n SEND_TYPE VALUE AFTER RECV : %d\n\n", client_package_copy->send_type);
 
@@ -166,12 +168,27 @@ void recover_messages(Client_package_for_backend *package)
     int size_of_list = package->client_package->number_of_messages;
     
     printf("message_list size (number of messages) : %d", size_of_list);
-    
+
     // CHANGE TYPE TO SEND !!
+    char * client_pack_str = serialize_client_package(package->client_package);
+    printf("Voici la string du json a envoyé dans recover_message : \n\n%s\n\n\n",
+        client_pack_str);
+
+    int len = strlen(client_pack_str);
+
     send(package->client_package->client->sock_pointer,
-        (char *)&package->client_package->number_of_messages,
-        sizeof(int),
-        0);
+    (char *)&len,
+    sizeof(int),
+    0);
+
+    send(package->client_package->client->sock_pointer,
+    client_pack_str,
+    len,
+    0);
+    // send(package->client_package->client->sock_pointer,
+    //     (char *)&package->client_package->number_of_messages,
+    //     sizeof(int),
+    //     0);
 
     int validation;
     recv(package->client_package->client->sock_pointer, (char *)validation, sizeof(int), 0);
@@ -179,21 +196,21 @@ void recover_messages(Client_package_for_backend *package)
     printf("sending messages");
     printf("messages number : %d\n", package->client_package->number_of_messages);
 
-    for (int i = 0; i < size_of_list; i++) {
-        Message message_sent = package->client_package->messages_list[i];
-        printf("[DEBUG] Envoi message %s : %s\n", message_sent.username, message_sent.message);
+    // for (int i = 0; i < size_of_list; i++) {
+    //     Message message_sent = package->client_package->messages_list[i];
+    //     printf("[DEBUG] Envoi message %s : %s\n", message_sent.username, message_sent.message);
 
-        int bytes = send(package->client_package->client->sock_pointer,
-            (char *)&message_sent,
-            sizeof(Message),
-            0);
+    //     int bytes = send(package->client_package->client->sock_pointer,
+    //         (char *)&message_sent,
+    //         sizeof(Message),
+    //         0);
 
-        if (bytes <= 0) {
-            perror("[ERROR] send message failed\n");
-            break;
-        }
-        recv(package->client_package->client->sock_pointer, (char *)validation, sizeof(int), 0);
-    }
+    //     if (bytes <= 0) {
+    //         perror("[ERROR] send message failed\n");
+    //         break;
+    //     }
+    //     recv(package->client_package->client->sock_pointer, (char *)validation, sizeof(int), 0);
+    // }
 
     printf("       messages sent\n");
 }

@@ -99,14 +99,24 @@ void receive_client_data(Client_package_for_frontend *login_pack) {
         login_pack->client_package->client->sock_pointer);
 }
 
-void broadcast_notifications_receiver_start(Client_package_for_frontend *login_pack, GtkWidget *chat_display) {
-    SOCKET *sock_copy = malloc(sizeof(SOCKET));
-    *sock_copy = login_pack->client_package->client->sock_pointer;
-    Chat_display_package *chat_display_package = malloc(sizeof(Chat_display_package));
-    chat_display_package->sock_copy = sock_copy;
-    chat_display_package->chat_display = chat_display;
+// void broadcast_notifications_receiver_start(Client_package_for_frontend *login_pack, GtkWidget *chat_display) {
+//     SOCKET *sock_copy = malloc(sizeof(SOCKET));
+//     *sock_copy = login_pack->client_package->client->sock_pointer;
+//     Chat_display_package *chat_display_package = malloc(sizeof(Chat_display_package));
+//     chat_display_package->sock_copy = sock_copy;
+//     chat_display_package->chat_display = chat_display;
+//     pthread_t recv_thread;
+//     pthread_create(&recv_thread, NULL, receive_messages, (void *)chat_display_package);
+// }
+
+void broadcast_notifications_receiver_start(Client_package_for_frontend *login_pack) {
+    // SOCKET *sock_copy = malloc(sizeof(SOCKET));
+    // *sock_copy = login_pack->client_package->client->sock_pointer;
+    // Chat_display_package *chat_display_package = malloc(sizeof(Chat_display_package));
+    // chat_display_package->sock_copy = sock_copy;
+    // chat_display_package->chat_display = chat_display;
     pthread_t recv_thread;
-    pthread_create(&recv_thread, NULL, receive_messages, (void *)chat_display_package);
+    pthread_create(&recv_thread, NULL, receive_messages, (void *)login_pack);
 }
 
 int register_attempts(Client_package_for_frontend *login_pack) {
@@ -154,23 +164,28 @@ void fill_in_chat(GtkWidget *chat_display, Message *message_list, int message_le
 }
 
 void *receive_messages(void *arg) { // permet de recevoir une notification lorsqu'un message est broadcasté par le serveur
-    Chat_display_package *chat_display_package = (Chat_display_package *)arg;
-    GtkWidget *chat_display = chat_display_package->chat_display;
+    // Chat_display_package *chat_display_package = (Chat_display_package *)arg;
+    Client_package_for_frontend *client_pack = (Client_package_for_frontend *)arg;
+    GtkWidget *chat_display = client_pack->chat_display;
     while (1) {
-        recover_messages(*chat_display_package->sock_copy, chat_display);
+        // recover_messages(*chat_display_package->sock_copy, chat_display);
+        recover_messages(client_pack);
     }
     free(arg);
     return NULL;
 }
 
-void recover_messages(SOCKET sock, GtkWidget *chat_display) {
-    printf("socket :%lld\n", sock);
+void recover_messages(Client_package_for_frontend *login_pack) {
+    printf("socket :%lld\n", login_pack->client_package->client->sock_pointer);
 
-    int size_of_list;
-    int bytes = recv(sock, (char *)&size_of_list, sizeof(int), 0);
+    int str_len;
+    int bytes = recv(login_pack->client_package->client->sock_pointer,
+        (char *)&str_len,
+        sizeof(int),
+        0);
 
     if (bytes > 0) {
-        printf("BLBLBL received size : %lld\n", size_of_list);
+        printf("BLBLBL received size : %lld\n", str_len);
     }
     if (bytes == SOCKET_ERROR)
     {
@@ -180,29 +195,54 @@ void recover_messages(SOCKET sock, GtkWidget *chat_display) {
     {
         printf("[ERROR] Taille des données size_of_list reçues incorrecte. Attendu %zu, reçu %d\n", sizeof(size_t), bytes);
     }
+
     int validation = 1;
-    send(sock, (char *)validation, sizeof(int), 0);
-    Message *message_list = malloc(sizeof(Message) * size_of_list);
-    for (long long unsigned int i = 0; i < size_of_list; i++) {
-        Message new_message;
-        bytes = recv(sock, (char *)&new_message, sizeof(Message), 0);
-        if (bytes > 0) {
-            printf("hihi");
-        }
-        if (bytes == SOCKET_ERROR)
-        {
-            printf("[ERROR] Erreur lors de la réception du message : %lld, code %d\n", i, WSAGetLastError());
-        }
-        if (bytes != sizeof(Message))
-        {
-            printf("[ERROR] Taille des données reçues incorrecte. Attendu %zu, reçu %d\n", sizeof(Message), bytes);
-        }
-        message_list[i] = new_message;
-        printf("Message ajouté à la liste\n");
-        send(sock, (char *)validation, sizeof(int), 0);
-        printf("Validation envoyée\n");
-    }
-    fill_in_chat(chat_display, message_list, size_of_list);
+    char * client_package_str = malloc(str_len + 1);
+
+    int json_bytes = recv(login_pack->client_package->client->sock_pointer,
+        client_package_str,
+        str_len,
+        0);
+    
+    client_package_str[str_len] = "\0";
+    
+    printf("\n\n\nréception de client_package dans recover_messages : %s\n\n\n", client_package_str);
+    
+    send(login_pack->client_package->client->sock_pointer,
+        (char *)validation,
+        sizeof(int),
+        0);
+    
+    // Message *message_list = malloc(sizeof(Message) * size_of_list);
+    // for (long long unsigned int i = 0; i < size_of_list; i++) {
+    //     Message new_message;
+    //     bytes = recv(login_pack->client_package->client->sock_pointer,
+    //         (char *)&new_message,
+    //         sizeof(Message),
+    //         0);
+
+    //     if (bytes > 0) {
+    //         printf("hihi");
+    //     }
+    //     if (bytes == SOCKET_ERROR)
+    //     {
+    //         printf("[ERROR] Erreur lors de la réception du message : %lld, code %d\n", i, WSAGetLastError());
+    //     }
+    //     if (bytes != sizeof(Message))
+    //     {
+    //         printf("[ERROR] Taille des données reçues incorrecte. Attendu %zu, reçu %d\n", sizeof(Message), bytes);
+    //     }
+    //     message_list[i] = new_message;
+    //     printf("Message ajouté à la liste\n");
+    //     send(login_pack->client_package->client->sock_pointer,
+    //         (char *)validation,
+    //         sizeof(int),
+    //         0);
+
+    //     printf("Validation envoyée\n");
+    // }
+
+    fill_in_chat(login_pack->chat_display, message_list, size_of_list);
     free(message_list);
 }
 
