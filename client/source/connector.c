@@ -35,18 +35,19 @@ int connect_to_server(Client_package_for_frontend *login_pack) {
 }
 
 int login_attempts(Client_package_for_frontend *login_pack) {
+    printf("dans login_info\n");
     // Login_infos *login_info_copy = malloc(sizeof(Login_infos));
     // Client_package *client_package_copy = malloc(sizeof(Client_package));
     // client_package_copy->login_info = login_info_copy;
     
     // client_package_copy = login_pack->client_package;
     // client_package_copy->send_type = LOGIN;
-
+    login_pack->client_package->current_channel = 1;
     char * client_pack_str = serialize_client_package(login_pack->client_package);
     int login_status = 0;
-
+    printf("client_pack_str = \n%s\n", client_pack_str);
     // printf("taille de client_package_copy %d\n", sizeof(client_package_copy));
-    printf("contenu de l'envoie : %s", client_pack_str);
+    // printf("contenu de l'envoie : %s", client_pack_str);
     // printf("\n\nAttempting login: \n\t%s password :\n\t %s\n\n",
     //     client_package_copy->login_info->username,
     //     client_package_copy->login_info->password);
@@ -95,7 +96,7 @@ void receive_client_data(Client_package_for_frontend *login_pack) {
 
     printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%lld\n",
         login_pack->client_package->client->user_id,
-        login_pack->client_package->client->client_name,
+        login_pack->client_package->client->username,
         login_pack->client_package->client->sock_pointer);
 }
 
@@ -204,7 +205,9 @@ void recover_messages(Client_package_for_frontend *login_pack) {
         str_len,
         0);
     
-    client_package_str[str_len] = "\0";
+    client_package_str[str_len] = '\0';
+    parse_client_package_str(login_pack->client_package, client_package_str);
+    free(client_package_str);
     
     printf("\n\n\nréception de client_package dans recover_messages : %s\n\n\n", client_package_str);
     
@@ -242,8 +245,11 @@ void recover_messages(Client_package_for_frontend *login_pack) {
     //     printf("Validation envoyée\n");
     // }
 
-    fill_in_chat(login_pack->chat_display, message_list, size_of_list);
-    free(message_list);
+    // fill_in_chat(login_pack->chat_display, message_list, size_of_list);
+    fill_in_chat(login_pack->chat_display,
+        login_pack->client_package->messages_list,
+        login_pack->client_package->number_of_messages);
+    // free(message_list);
 }
 
 SOCKET client_start() {

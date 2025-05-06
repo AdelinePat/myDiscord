@@ -91,7 +91,9 @@ int login_attempts(Client_package *client_package)
         client_package_str[len] = '\0';
         printf("\n\nvaleur du json \t%s\n\n", client_package_str);
 
-        cJSON *root = cJSON_Parse(client_package_str);
+        // cJSON *root = cJSON_Parse(client_package_str);
+        parse_client_package_str(client_package, client_package_str);
+        printf("j'ai fini de récupéré les infos du json\n");
         free(client_package_str);
 
         // client_package->send_type = cJSON_GetObjectItem(root, "send_type")->valueint;
@@ -161,16 +163,20 @@ int login_attempts(Client_package *client_package)
 
 void recover_messages(Client_package_for_backend *package)
 {
-    printf("dans recover_message\n");
-    get_full_chat_content(package->client_package);
-    printf("sock du client : %lld\n", package->client_package->client->sock_pointer);
+    printf("dans recover_message cote serveur :p juste avant get_full_chat_content\n");
+    if (package->client_package->send_type != LOGIN && package->client_package->send_type != CREATE_ACCOUNT)
+    {
+        get_full_chat_content(package->client_package);
+    }
+    // printf("DANS recover_message : sock du client : %lld\n", package->client_package->client->sock_pointer);
 
     int size_of_list = package->client_package->number_of_messages;
     
-    printf("message_list size (number of messages) : %d", size_of_list);
+    printf("message_list size (number of messages) : %d\n", size_of_list);
 
     // CHANGE TYPE TO SEND !!
     char * client_pack_str = serialize_client_package(package->client_package);
+
     printf("Voici la string du json a envoyé dans recover_message : \n\n%s\n\n\n",
         client_pack_str);
 
@@ -227,14 +233,8 @@ void recover_messages(Client_package_for_backend *package)
 
 void *handle_client(void *arg)
 {
-    // Client_package *client_package = (Client_package *)arg;
     Client_package_for_backend *client_pack = (Client_package_for_backend *)arg;
-    // Login_infos *login_info = malloc(sizeof(Login_infos));
-    // client_package->login_info = login_info;
-    // Client_package *client_package = malloc(sizeof(Client_package));
-    // client_pack->client_package = client_package;
 
-    // int login_status = login_attempts(client_package);
     printf("\n\nvaleur de la socket server avant connect_to_client : %lld\n\n",
     client_pack->client_package->client->sock_pointer);
 
@@ -249,8 +249,6 @@ void *handle_client(void *arg)
         return 0;
     }
 
-    // Client_package_for_backend *client_pack = malloc(sizeof(Client_package_for_backend));
-    // client_pack->client_package = client_package;
     Server_state *state = client_pack->server;
     Client_data *client = client_pack->client_package->client;
     SOCKET client_sock = client->sock_pointer;
@@ -270,31 +268,24 @@ void *handle_client(void *arg)
     printf("de retour dans handle_client : valeur user_id %d et user_name : %s\n",
         client_pack->client_package->login_info->user_id,
         client_pack->client_package->login_info->username);
-    // client->client_id = user_id;
-    // strcpy(client->client_name, "user"); // Ajout des données client avant de les envoyer après connexion
-
-    // Client_data *client_copy = malloc(sizeof(Client_data)); // On crée une copie de client pour ne pas créer de conflit dans la mémoire entre serveur et client
+  
     Client_package *client_copy = malloc(sizeof(Client_package));
     *client_copy->client = *client;
     printf("sock du client : %lld\n", client_sock);
-    // TOUT DOIT ETRE ENVOYE EN MEME TEMPS DANS CLIENT_PACKAGE !
-    // send(client_sock, (char *)client_copy->client, sizeof(Client_package), 0);
-    // printf("[INFO] Client %d connecté.\n",
-    //     client_pack->client_package->login_info->user_id);
 
     pthread_mutex_lock(&state->lock);
     state->clients[state->client_count++] = client;
     pthread_mutex_unlock(&state->lock);
 
+    printf("dans handle_client avant recover_messages\n");
     recover_messages(client_pack);
 
     while (1)
     {
         Message *client_message = malloc(sizeof(Message));
-        // Client_package_for_backend *client_pack = malloc(sizeof(Client_package_for_backend));
+     
         Client_package *client_package = malloc(sizeof(Client_package));
         
-        // int bytes = recv(client_sock, (char *)client_message, sizeof(Message), 0);
         int bytes = recv(client_sock, (char *)client_package, sizeof(Client_package), 0);
         if (bytes <= 0)
         {
@@ -302,10 +293,8 @@ void *handle_client(void *arg)
             break;
         }
         client_pack->client_package = client_package;
-        // switch client_package-
         strcpy(client_package->message_send.timestamp, get_str_timestamp());
 
-        // Enregistrement du message dans la db
         recover_messages(client_pack);
         // broadcast_message(client_package); // Envoie d'une notification de nouveau message dans la db aux clients connectés
         free(client_message);

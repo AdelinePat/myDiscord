@@ -10,13 +10,16 @@
 #include <ws2tcpip.h>
 #include <gtk/gtk.h>
 #include <cjson/cJSON.h>
-
+#define SMALL_STRING 20
+#define MEDIUM_STRING 32
+#define LARGE_STRING 65
+#define LARGE_PLUS_STRING 100
+#define VERY_LARGE_STRING 1000
 #define MAX_CLIENTS 20
 
 char * get_str_timestamp();
 struct tm parse_db_query_time(char *time_str);
 char * timestamp_to_char(struct tm time);
-
 
 typedef enum
 {
@@ -37,21 +40,21 @@ typedef struct {
     int channel_id;
     int message_id;
     int user_id;
-    char username[20];
-    char timestamp[30];
-    char message[999];
+    char username[SMALL_STRING];
+    char timestamp[MEDIUM_STRING];
+    char message[VERY_LARGE_STRING];
 } Message;
 
 typedef struct
 {
     int channel_id;
-    char channel_title[20];
+    char channel_title[SMALL_STRING];
 } Channel_info;
 
 typedef struct
 {   
     SOCKET sock_pointer;
-    char client_name[20];
+    char username[SMALL_STRING];
     int user_id; // client_id = user_id in database
 } Client_data;
 
@@ -63,10 +66,10 @@ typedef struct
 } Server_state;
 
 typedef struct {
-    char username[20];
-    char password[65];
-    char confirm_password[65];
-    char email[100];
+    char username[SMALL_STRING];
+    char password[LARGE_STRING];
+    char confirm_password[LARGE_STRING];
+    char email[LARGE_PLUS_STRING];
     int user_id;
 } Login_infos;
 
@@ -106,15 +109,18 @@ typedef struct {
     // int number_of_messages;
     // Login_infos *login_info;
 char * serialize_client_package(Client_package *client_package);
-void serialize_message_list(cJSON * message_list_json, Client_package * client_package);
-cJSON * serialize_message(Message a_message);
-void serialize_channel_info_list(cJSON * channel_list, Client_package * client_package);
-cJSON * serialize_channel_info(Channel_info channel_info);
-void serialize_client_data(cJSON * clientData, Client_data *client);
+void serialize_message_list(cJSON * message_list_json, Client_package * client_package, int * size_string);
+cJSON * serialize_message(Message * a_message, int * size_string);
+void serialize_channel_info_list(cJSON * channel_list, Client_package * client_package, int * size_string);
+cJSON * serialize_channel_info(Channel_info channel_info, int * size_string);
+void serialize_client_data(cJSON * clientData, Client_data *client, int * size_string);
 void serialize_login_info(cJSON * login, Login_infos *login_info);
 
 cJSON * parse_login_info(cJSON *root, Client_package * client_package); 
+cJSON * parse_client_data(cJSON *root, Client_package * client_package);
 void parse_message_list(cJSON *root, Client_package * client_package);
+void parse_a_message(cJSON * a_message, Client_package * client_package, int index);
 void parse_channels_info_list(cJSON *root, Client_package * client_package);
+void parse_client_package_str(Client_package * client_package, char * client_package_str);
 
 #endif

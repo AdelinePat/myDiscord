@@ -55,10 +55,10 @@ static void on_login_clicked(GtkButton *button, gpointer user_data)
     const gchar *username = gtk_entry_get_text(GTK_ENTRY(entry_user));
     const gchar *password = gtk_entry_get_text(GTK_ENTRY(entry_pass));
 
-    strcpy(login_pack->client_package->login_info->username, username);
-    strcpy(login_pack->client_package->login_info->email, username);
+    strncpy(login_pack->client_package->login_info->username, username, SMALL_STRING);
+    strncpy(login_pack->client_package->login_info->email, username, SMALL_STRING);
 
-    char hashed_password[65];
+    char hashed_password[LARGE_STRING];
     hash_password_sha256(password, hashed_password);
     printf(" on_login_clicked1 : Password: %s\n", password);
     printf(" on_login_clicked1 : Hashed password: %s\n", hashed_password);
@@ -67,6 +67,9 @@ static void on_login_clicked(GtkButton *button, gpointer user_data)
     strcpy(login_pack->client_package->login_info->password, hashed_password);
 
     login_pack->client_package->send_type = LOGIN;
+    login_pack->client_package->client->user_id = 0;
+    login_pack->client_package->number_of_messages = 0;
+    login_pack->client_package->channel_list_size = 0;
 
     g_print("Attempting login: %s / %s\n",
         login_pack->client_package->login_info->username,
