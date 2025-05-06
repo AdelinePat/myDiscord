@@ -1,4 +1,4 @@
--- Active: 1745348025971@@127.0.0.1@5432@whispr
+-- Active: 1744914038452@@127.0.0.1@5432@whispr
 SELECT COUNT(user_name) FROM users
 WHERE (user_name = '' OR email = 'jolyne@gmail.com') AND password = '789012';
 SELECT password FROM users WHERE user_name = 'adeline';
@@ -43,3 +43,7 @@ ALTER TABLE users
 ALTER TABLE messages
   ALTER COLUMN date_time TYPE timestamp WITHOUT time zone
   USING CURRENT_DATE + date_time;
+
+UPDATE users
+SET password = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'
+WHERE user_name = 'florence' or user_name = 'Toto';
