@@ -52,7 +52,7 @@ void serialize_login_info(cJSON * login, Login_infos *login_info) {
 
 void serialize_client_data(cJSON * clientData, Client_data *client)
 {
-    cJSON_AddNumberToObject(clientData, "sock_pointer", (int)client->sock_pointer);
+    // cJSON_AddNumberToObject(clientData, "sock_pointer", (int)client->sock_pointer);
     cJSON_AddStringToObject(clientData, "username", client->client_name);
     cJSON_AddNumberToObject(clientData, "user_id", client->user_id);
 }
@@ -121,4 +121,61 @@ char * serialize_client_package(Client_package *client_package) {
     char *json_string = cJSON_PrintUnformatted(root);
     cJSON_Delete(root);
     return json_string; // Don't forget to free this after sending!
+}
+
+cJSON * parse_login_info(cJSON *root, Client_package * client_package) {
+    cJSON *login = cJSON_GetObjectItem(root, "login_info");
+    strcpy(client_package->login_info->username, cJSON_GetObjectItem(login, "username")->valuestring);
+    strcpy(client_package->login_info->email, cJSON_GetObjectItem(login, "email")->valuestring);
+    strcpy(client_package->login_info->password, cJSON_GetObjectItem(login, "password")->valuestring);
+    return login;
+}
+
+cJSON * parse_client_data(cJSON *root, Client_package * client_package) {
+    cJSON *client_data = cJSON_GetObjectItem(root, "client_data");
+    strcpy(client_package->client->client_name, cJSON_GetObjectItem(client_data, "client_name")->valuestring);
+    client_package->client->user_id = cJSON_GetObjectItem(client_data, "channel_id")->valueint;
+    return client_data;
+}
+
+void parse_message_list(cJSON *root, Client_package * client_package) {
+    cJSON *messages_list = cJSON_GetObjectItem(root, "messages_list");
+    client_package->number_of_messages = cJSON_GetObjectItem(root, "number_of_messages")->valueint;
+
+    for (int i = 0; i < client_package->number_of_messages; i++) {
+        cJSON * a_message = cJSON_GetArrayItem(messages_list, i);
+        parse_a_message(a_message, client_package);
+    }
+}
+
+void parse_a_message(cJSON * a_message, Client_package * client_package) {
+    client_package->messages_list[i].channel_id = cJSON_GetObjectItem(a_message, "channel_id")->valueint;
+    client_package->messages_list[i].message_id = cJSON_GetObjectItem(a_message, "message_id")->valueint;
+    client_package->messages_list[i].user_id = cJSON_GetObjectItem(a_message, "user_id")->valueint;
+
+    strcpy(client_package->messages_list[i].username, cJSON_GetObjectItem(a_message, "username")->valuestring);
+    strcpy(client_package->messages_list[i].timestamp, cJSON_GetObjectItem(a_message, "timestamp")->valuestring);
+    strcpy(client_package->messages_list[i].message, cJSON_GetObjectItem(a_message, "message")->valuestring);
+
+}
+
+void parse_channels_info_list(cJSON *root, Client_package * client_package) {
+    cJSON *channels_info_list = cJSON_GetObjectItem(root, "messages_list");
+    client_package->channel_list_size = cJSON_GetObjectItem(root, "channel_list_size")->valueint;
+
+    for (int i = 0; i < client_package->channel_list_size; i++) {
+        cJSON * a_message = cJSON_GetArrayItem(channels_info_list, i);
+        client_package->channels[i].channel_id = cJSON_GetObjectItem(a_message, "channel_id")->valueint;
+        strcpy(client_package->channels[i].channel_title, cJSON_GetObjectItem(a_message, "channel_title")->valuestring);
+    }
+}
+
+cJSON * parse_client_package_str(Client_package * client_package, char * client_package_str) {
+    cJSON *root = cJSON_PARSE(client_package_str);
+    client_package->send_type = cJSON_GetObjectItem(root, "send_type")->valueint;
+    client_package->current_channel = cJSON_GetObjectItem(root, "current_channel")->valueint;
+    cJSON *login = parse_login_info(root, client_package);
+    parse_message_list(root, client_package);
+    parse_channels_info_list(root, client_package);
+    cJSON *client_data = parse_client_data(root, client_package);
 }
