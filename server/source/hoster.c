@@ -98,6 +98,7 @@ int login_attempts(Client_package *client_package)
 
         cJSON *login = cJSON_GetObjectItem(root, "login_info");
         strcpy(client_package->login_info->username, cJSON_GetObjectItem(login, "username")->valuestring);
+        strcpy(client_package->login_info->email, cJSON_GetObjectItem(login, "email")->valuestring);
         strcpy(client_package->login_info->password, cJSON_GetObjectItem(login, "password")->valuestring);
         // client_package_copy = client_package;
         // printf("\n\n SEND_TYPE VALUE AFTER RECV : %d\n\n", client_package_copy->send_type);
@@ -109,7 +110,7 @@ int login_attempts(Client_package *client_package)
         //     client_package_copy->login_info->username,
         //     client_package_copy->login_info->password);
 
-        printf("Infos reçues : user : << %s >>, pass : << %s >>\n",
+        printf("Infos reçues du json: user : << %s >>, pass : << %s >>\n",
             client_package->login_info->username,
             client_package->login_info->password);
 
@@ -158,13 +159,15 @@ int login_attempts(Client_package *client_package)
 
 void recover_messages(Client_package_for_backend *package)
 {
+    printf("dans recover_message\n");
     get_full_chat_content(package->client_package);
     printf("sock du client : %lld\n", package->client_package->client->sock_pointer);
 
     int size_of_list = package->client_package->number_of_messages;
     
     printf("message_list size (number of messages) : %d", size_of_list);
-
+    
+    // CHANGE TYPE TO SEND !!
     send(package->client_package->client->sock_pointer,
         (char *)&package->client_package->number_of_messages,
         sizeof(int),
@@ -257,9 +260,10 @@ void *handle_client(void *arg)
     Client_package *client_copy = malloc(sizeof(Client_package));
     *client_copy->client = *client;
     printf("sock du client : %lld\n", client_sock);
-    send(client_sock, (char *)client_copy->client, sizeof(Client_package), 0);
-    printf("[INFO] Client %d connecté.\n",
-        client_pack->client_package->login_info->user_id);
+    // TOUT DOIT ETRE ENVOYE EN MEME TEMPS DANS CLIENT_PACKAGE !
+    // send(client_sock, (char *)client_copy->client, sizeof(Client_package), 0);
+    // printf("[INFO] Client %d connecté.\n",
+    //     client_pack->client_package->login_info->user_id);
 
     pthread_mutex_lock(&state->lock);
     state->clients[state->client_count++] = client;

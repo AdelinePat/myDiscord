@@ -1,11 +1,12 @@
 {
     "files.associations": {
+        "*.dbclient-js": "javascript",
         "*.sqlbook": "sql",
         "*.ndjson": "jsonl",
-        "*.dbclient-js": "javascript",
         "register_window.h": "c",
         "sha.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "system_error": "c"
     },
     "C_Cpp.default.compilerPath": "C:/msys64/mingw64/bin/gcc.exe"
 }

@@ -200,35 +200,24 @@ void get_full_chat_content(Client_package *client_package) {
             for (int row = 0; row < rows; row++)
                 {
                     client_package->messages_list[row].message_id = atoi(PQgetvalue(res, row, 0));
-                    client_package->messages_list[row].client_id = atoi(PQgetvalue(res, row, 1)); // user_id = client_id ??
+                    client_package->messages_list[row].user_id = atoi(PQgetvalue(res, row, 1)); // user_id = client_id ??
                     strcpy(client_package->messages_list[row].username, PQgetvalue(res, row, 2));
-                    // client_package->messages_list[row].timestamp = PQgetvalue(res, row, 3);
                     
                     char *time_db = PQgetvalue(res, row, 3);
-                    // printf("%s\n", time_db);
                     struct tm time_db_parsed = parse_db_query_time(time_db);
-                    // client_package->messages_list[row].timestamp = time_db_parsed;
-                    // strftime("year : %Y", time_db_parsed.tm_year);
                     char * formated_timestamp = timestamp_to_char(time_db_parsed);
                     strcpy(client_package->messages_list[row].timestamp, formated_timestamp);
-                    // if (time_test_print != NULL) {
-                    //     printf("Formatted time: %s\n", time_test_print);
-                    //      // Don't forget to free it!
-                    // }
-                    // char * time_test_print = "heuretest\n";
-                    // printf("Heure récupéré dans la db : %s",)
+                    free(formated_timestamp);
 
                     strcpy(client_package->messages_list[row].message, PQgetvalue(res, row, 4));
 
                     printf("Valeur row n°%d : message_id %d, user_id %d:\tusername %s\t%s\n, content : %s\n",
                         row,
                         client_package->messages_list[row].message_id,
-                        client_package->messages_list[row].client_id,
+                        client_package->messages_list[row].user_id,
                         client_package->messages_list[row].username,
                         client_package->messages_list[row].timestamp,
                         client_package->messages_list[row].message);
-                        
-                    free(formated_timestamp);
                 }
                 
         }

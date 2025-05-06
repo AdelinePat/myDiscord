@@ -271,6 +271,7 @@ void show_chat_window(Client_package_for_frontend *login_pack) {
         GtkStyleContext *context = gtk_widget_get_style_context(widgets_to_style[i]);
         gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
     }
+    printf("dans chat_window juste avant recover_message");
     recover_messages(login_pack->client_package->client->sock_pointer, chat_display);
     gtk_widget_show_all(window);
     broadcast_notifications_receiver_start(login_pack, chat_display);

@@ -50,18 +50,19 @@ int check_user_pass_match(Login_infos* login_info) {
     printf("\n");
 
     int query_result = 0;
-    printf("value du result de la query de connexion mdr : %d", query_result);
+    
 
     if (rows > 0 && cols > 0)
     {
         char *result_str = PQgetvalue(res, 0, 0);
         query_result = atoi(result_str);  // Convert string to int
+        
     }
     else {
         printf("erreur dans la requête, aucune colonne ou ligne trouvée ?");
     }
     
-
+    printf("Query connexion : COUNT de username/email + password = %d", query_result);
     PQclear(res);
 
     PQfinish(conn);

@@ -36,8 +36,8 @@ typedef enum
 typedef struct {
     int channel_id;
     int message_id;
-    int client_id;
-    char username[19];
+    int user_id;
+    char username[20];
     char timestamp[30];
     char message[999];
 } Message;
@@ -45,13 +45,13 @@ typedef struct {
 typedef struct
 {
     int channel_id;
-    char channel_title[19];
+    char channel_title[20];
 } Channel_info;
 
 typedef struct
 {   
     SOCKET sock_pointer;
-    char client_name[19];
+    char client_name[20];
     int user_id; // client_id = user_id in database
 } Client_data;
 
@@ -63,7 +63,7 @@ typedef struct
 } Server_state;
 
 typedef struct {
-    char username[19];
+    char username[20];
     char password[65];
     char confirm_password[65];
     char email[100];
@@ -105,6 +105,11 @@ typedef struct {
     // int number_of_messages;
     // Login_infos *login_info;
 char * serialize_client_package(Client_package *client_package);
-void serialize_login_info(cJSON *login, Login_infos *login_info);
+void serialize_message_list(cJSON * message_list_json, Client_package * client_package);
+cJSON * serialize_message(Message a_message);
+void serialize_channel_info_list(cJSON * channel_list, Client_package * client_package);
+cJSON * serialize_channel_info(Channel_info channel_info);
+void serialize_client_data(cJSON * clientData, Client_data *client);
+void serialize_login_info(cJSON * login, Login_infos *login_info);
 
 #endif
