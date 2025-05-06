@@ -29,9 +29,9 @@ static void on_confirm_clicked(GtkButton *button, gpointer user_data) {
         return;
     }
 
-    char hashed_password[65];
+    char hashed_password[LARGE_STRING];
     hash_password_sha256(password, hashed_password);
-    char hashed_confirm_password[65];
+    char hashed_confirm_password[LARGE_STRING];
     hash_password_sha256(confirm_password, hashed_confirm_password);
 
     // printf("\n\nA1 : on_register_clicked : Password: %s\n", password);

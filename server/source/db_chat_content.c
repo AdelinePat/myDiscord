@@ -45,6 +45,7 @@ void get_channel_list(Client_package *client_package) {
 
     int rows = PQntuples(res);
     int cols = PQnfields(res);
+    client_package->channel_list_size = rows;
 
     printf("\n");
 
@@ -62,6 +63,7 @@ void get_channel_list(Client_package *client_package) {
             {
                 client_package->channels[row].channel_id = atoi(PQgetvalue(res, row, 0));
                 strcpy(client_package->channels[row].channel_title, PQgetvalue(res, row, 1));
+                client_package->channels[row].channel_title[SMALL_STRING -1] = '\0';
 
                 printf("Valeur row n°%d : %d %s\n",
                     row,
@@ -199,17 +201,24 @@ void get_full_chat_content(Client_package *client_package) {
             printf("rows : %d, cols : %d\n", rows, cols);
             for (int row = 0; row < rows; row++)
                 {
+                    client_package->messages_list[row].channel_id = client_package->current_channel;
                     client_package->messages_list[row].message_id = atoi(PQgetvalue(res, row, 0));
                     client_package->messages_list[row].user_id = atoi(PQgetvalue(res, row, 1)); // user_id = client_id ??
-                    strcpy(client_package->messages_list[row].username, PQgetvalue(res, row, 2));
+                    
+                    strncpy(client_package->messages_list[row].username, PQgetvalue(res, row, 2), SMALL_STRING);
+                    client_package->messages_list[row].username[SMALL_STRING -1] = '\0';
                     
                     char *time_db = PQgetvalue(res, row, 3);
                     struct tm time_db_parsed = parse_db_query_time(time_db);
                     char * formated_timestamp = timestamp_to_char(time_db_parsed);
-                    strcpy(client_package->messages_list[row].timestamp, formated_timestamp);
+                    
+                    strncpy(client_package->messages_list[row].timestamp, formated_timestamp, MEDIUM_STRING);
+                    client_package->messages_list[row].timestamp[MEDIUM_STRING -1] = '\0';
+
                     free(formated_timestamp);
 
-                    strcpy(client_package->messages_list[row].message, PQgetvalue(res, row, 4));
+                    strncpy(client_package->messages_list[row].message, PQgetvalue(res, row, 4), VERY_LARGE_STRING);
+                    client_package->messages_list[row].message[VERY_LARGE_STRING -1] = '\0';
 
                     printf("Valeur row n°%d : message_id %d, user_id %d:\tusername %s\t%s\n, content : %s\n",
                         row,
@@ -219,14 +228,14 @@ void get_full_chat_content(Client_package *client_package) {
                         client_package->messages_list[row].timestamp,
                         client_package->messages_list[row].message);
                 }
-                
         }
         else {
+
             printf("erreur dans la requête, aucune colonne ou ligne trouvée ?\n");
         }   
 
         PQclear(res);
         PQfinish(conn);
     }
-    printf("\n\nFinie de requeter\n\n");
+    printf("\n\nRequete get_full_chat_content terminee\n\n");
 }

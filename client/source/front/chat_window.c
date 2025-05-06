@@ -166,7 +166,7 @@ void show_chat_window(Client_package_for_frontend *login_pack) {
     gtk_widget_set_vexpand(spacer, TRUE);
     gtk_box_pack_start(GTK_BOX(channels_box), spacer, TRUE, TRUE, 0);
 
-    gchar *user_display_text = g_strdup_printf("User: %s", login_pack->client_package->client->client_name);
+    gchar *user_display_text = g_strdup_printf("User: %s", login_pack->client_package->client->username);
     user_label = gtk_label_new(user_display_text);
     g_free(user_display_text);                                              // Libérer la mémoire après utilisation
     gtk_widget_set_name(user_label, "user_label");                          // Définir un nom pour le widget
@@ -259,7 +259,7 @@ void show_chat_window(Client_package_for_frontend *login_pack) {
         gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
     }
     printf("dans chat_window juste avant recover_message");
-    recover_messages(login_pack->client_package->client->sock_pointer, chat_display);
+    recover_messages(login_pack);
     gtk_widget_show_all(window);
     broadcast_notifications_receiver_start(login_pack);
 }
