@@ -38,6 +38,7 @@ PGresult* generate_channel_list_query(PGconn *conn, Client_package *client_packa
 }
 
 void get_channel_list(Client_package *client_package) {
+    printf("[get_channel_list debut] CHECKPOINT: channels %p\n", client_package->channels);
     PGconn *conn = database_connexion();
     int nFields;
 
@@ -46,10 +47,18 @@ void get_channel_list(Client_package *client_package) {
     int rows = PQntuples(res);
     int cols = PQnfields(res);
     client_package->channel_list_size = rows;
+    
 
     printf("\n");
 
     Channel_info *channels = malloc(sizeof(Channel_info)*rows);
+    if (channels == NULL) {
+        fprintf(stderr, "Error allocating memory for channels\n");
+        PQclear(res);
+        PQfinish(conn);
+        return;
+    }
+    memset(channels, 0, sizeof(Channel_info) * rows);
     client_package->channels = channels;
 
     printf("user_id %d, user_name %s\n",
@@ -58,7 +67,7 @@ void get_channel_list(Client_package *client_package) {
 
     if (rows > 0 && cols > 0)
     {
-        printf("rows : %d, cols : %d\n", rows, cols);
+        printf("[get_channel_list] rows : %d, cols : %d\n", rows, cols);
         for (int row = 0; row < rows; row++)
             {
                 client_package->channels[row].channel_id = atoi(PQgetvalue(res, row, 0));
@@ -79,6 +88,7 @@ void get_channel_list(Client_package *client_package) {
     PQclear(res);
 
     PQfinish(conn);
+    printf("[get_channel_list fin] CHECKPOINT: channels %p\n", client_package->channels);
 }
 
 PGresult* generate_full_chat_content_query(PGconn *conn, Client_package *client_package)
@@ -175,6 +185,7 @@ int check_channel_access(PGconn *conn, Client_package *client_package)
 }
 
 void get_full_chat_content(Client_package *client_package) {
+    printf("\n[get_full_chat_content debut] CHECKPOINT: channels %p\n", client_package->channels);
     PGconn *conn = database_connexion();
     int nFields;
     printf("\n\n\tdans get_full_chat_content\n");
@@ -237,5 +248,6 @@ void get_full_chat_content(Client_package *client_package) {
         PQclear(res);
         PQfinish(conn);
     }
+    printf("[get_full_chat_content fin] CHECKPOINT: channels %p\n", client_package->channels);
     printf("\n\nRequete get_full_chat_content terminee\n\n");
 }

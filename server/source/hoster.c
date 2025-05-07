@@ -50,7 +50,7 @@ int login_attempts(Client_package *client_package)
 {
     while (1)
     {
-        client_package->login_info = malloc(sizeof(Login_infos));
+        // client_package->login_info = malloc(sizeof(Login_infos));
         // Login_infos *login_info = malloc(sizeof(Login_infos));
         int login_status = 0;
         // Client_package *client_package_copy = malloc(sizeof(Client_package));
@@ -93,6 +93,8 @@ int login_attempts(Client_package *client_package)
 
         // cJSON *root = cJSON_Parse(client_package_str);
         parse_client_package_str(client_package, client_package_str);
+        // printf("[login_attempts] CHECKPOINT: login_info ptr = %p\n", client_package->login_info);
+        printf("[login_attempts] CHECKPOINT: login_info ptr = %p\n channels %p\n", client_package->login_info, client_package->channels);
         printf("j'ai fini de récupéré les infos du json\n");
         free(client_package_str);
 
@@ -163,10 +165,22 @@ int login_attempts(Client_package *client_package)
 
 void recover_messages(Client_package_for_backend *package)
 {
+    printf("[recover_messages debut] CHECKPOINT: channels %p\n", package->client_package->channels);
+    if (!package->client_package || !package->client_package->client || !package->client_package->login_info) {
+        fprintf(stderr, "serialize_client_package: NULL field detected\n");
+        if (!package->client_package->client) {
+            printf("c'est client_data qui est vide!");
+        } else if (!package->client_package->login_info) {
+            printf("c'est login info qui est vide! ");
+        }
+    }
+    
     printf("dans recover_message cote serveur :p juste avant get_full_chat_content\n");
     if (package->client_package->send_type != LOGIN && package->client_package->send_type != CREATE_ACCOUNT)
     {
+        printf("\n[recover_messages apres condition avant get_full_chat_content] CHECKPOINT: channels ptr = %p\n\n", package->client_package->channels);
         get_full_chat_content(package->client_package);
+        printf("[recover_messages after get_full_chat_content] CHECKPOINT: channels %p\n", package->client_package->channels);
     }
     // printf("DANS recover_message : sock du client : %lld\n", package->client_package->client->sock_pointer);
 
@@ -175,15 +189,32 @@ void recover_messages(Client_package_for_backend *package)
     printf("message_list size (number of messages) : %d\n", size_of_list);
 
     // CHANGE TYPE TO SEND !!
-    char * client_pack_str = serialize_client_package(package->client_package);
+    // memset(package->client_package->login_info, 0, sizeof(Login_infos));
 
-    printf("Voici la string du json a envoyé dans recover_message : \n\n%s\n\n\n",
+    if (!package->client_package || !package->client_package->client || !package->client_package->login_info) {
+        fprintf(stderr, "serialize_client_package: NULL field detected\n");
+        // return NULL;
+    }
+
+    printf("[recover_messages avant serialize_client_package] CHECKPOINT: client_package ptr = %p\n", package->client_package);
+    printf("[recover_messages avant serialize_client_package] CHECKPOINT: login_info ptr = %p\n\n", package->client_package->login_info);
+    printf("[recover_messages avant serialize_client_package] CHECKPOINT: channels ptr = %p\n", package->client_package->channels);
+    // printf("[recover message juste avant serialize_client_package] CHECKPOINT: login_info ptr = %p\n channels %p\n", package->client_package->login_info, package->client_package->channels);
+    char * client_pack_str = serialize_client_package(package->client_package);
+    // char client_pack_string_final[strlen(package->client_package->client_pack_str)]
+    printf("\n\nVoici la string du json a envoyé dans recover_message : \n\n%s\n\n\n",
         client_pack_str);
 
+    printf("\n\nVoici la string du json a envoyé dans recover_message package->client_package->client_pack_str: \n\n%s\n\n\n",
+        package->client_package->client_pack_str);
+
     int len = strlen(client_pack_str);
+    // Convert to network byte order before sending
+    int network_len = htonl(len);
+    printf("\n\nlen dans recover_message %d\n\n", len);
 
     send(package->client_package->client->sock_pointer,
-    (char *)&len,
+    (char *)&network_len,
     sizeof(int),
     0);
 
@@ -234,6 +265,11 @@ void recover_messages(Client_package_for_backend *package)
 void *handle_client(void *arg)
 {
     Client_package_for_backend *client_pack = (Client_package_for_backend *)arg;
+    if (!client_pack || !client_pack->client_package || !client_pack->client_package->login_info) {
+        fprintf(stderr, "[handle_client] Client package or login_info is NULL!\n");
+    }
+
+    printf("handle_client: login_info pointer = %p\n", client_pack->client_package->login_info);
 
     printf("\n\nvaleur de la socket server avant connect_to_client : %lld\n\n",
     client_pack->client_package->client->sock_pointer);
@@ -254,6 +290,9 @@ void *handle_client(void *arg)
     SOCKET client_sock = client->sock_pointer;
 
     int login_status = login_attempts(client_pack->client_package);
+    // printf("[handle_client after login_attempts] CHECKPOINT: login_info ptr = %p\n", client_pack->client_package->login_info);
+    printf("\n[handle_client after login_attempts] CHECKPOINT: login_info ptr = %p\n channels %p\n", client_pack->client_package->login_info, client_pack->client_package->channels);
+
     if (login_status == 1)
     {
         printf("[INFO] dans handle client : Abandon de connexion");
@@ -264,13 +303,53 @@ void *handle_client(void *arg)
         return 0;
     }
 
+    if (!client_pack->client_package || !client_pack->client_package->client || !client_pack->client_package->login_info) {
+        fprintf(stderr, "serialize_client_package: NULL field detected\n");
+        if (!client_pack->client_package->client) {
+            printf("c'est client_data qui est vide!");
+        } else if (!client_pack->client_package->login_info) {
+            printf("c'est login info qui est vide! ");
+        }
+    }
+
+    printf("[handle_client before first_update_client_package] CHECKPOINT: channels %p\n", client_pack->client_package->channels);
+    
     first_update_client_package(client_pack->client_package);
+    printf("[handle_client after first_update_client_package]CHECKPOINT: login_info ptr = %p\n channels %p\n", client_pack->client_package->login_info, client_pack->client_package->channels);
+    if (client_pack->client_package->login_info == NULL) {
+        fprintf(stderr, "login_info is NULL! Cannot access username.\n");
+        pthread_exit(NULL);
+    }
+
     printf("de retour dans handle_client : valeur user_id %d et user_name : %s\n",
         client_pack->client_package->login_info->user_id,
         client_pack->client_package->login_info->username);
-  
+    
+    Client_data *client_data_copy = malloc(sizeof(Client_data)); // rajoute le mercredi soir
+    if (!client_data_copy) {
+        perror("malloc client_copy");
+        printf("client_data_copy malloc failed");
+        exit(EXIT_FAILURE);
+    }
+
+    Login_infos *login_copy = malloc(sizeof(Login_infos));
+    if (!login_copy) {
+        perror("malloc login_copy");
+        exit(EXIT_FAILURE);
+    }
+
     Client_package *client_copy = malloc(sizeof(Client_package));
-    *client_copy->client = *client;
+    if (!client_copy) {
+        perror("malloc client_copy");
+        printf("client_copy malloc failed");
+        exit(EXIT_FAILURE);
+    }
+    *login_copy = *(client_pack->client_package->login_info);
+    *client_data_copy = *client;
+    // *client_copy->client = *client; // fails !!!
+    client_copy->client = client_data_copy;
+    client_copy->login_info = login_copy;
+
     printf("sock du client : %lld\n", client_sock);
 
     pthread_mutex_lock(&state->lock);
@@ -278,6 +357,16 @@ void *handle_client(void *arg)
     pthread_mutex_unlock(&state->lock);
 
     printf("dans handle_client avant recover_messages\n");
+    if (!client_pack->client_package || !client_pack->client_package->client || !client_pack->client_package->login_info) {
+        fprintf(stderr, "serialize_client_package: NULL field detected\n");
+        if (!client_pack->client_package->client) {
+            printf("c'est client_data qui est vide!");
+        } else if (!client_pack->client_package->login_info) {
+            printf("c'est login info qui est vide! ");
+        }
+    }
+    printf("\n\n\n ligne 359 PREMIER RECOVER MESSAGE\n\n\n");
+    printf("[handle_client before recover_messages] CHECKPOINT: channels %p\n", client_pack->client_package->channels);
     recover_messages(client_pack);
 
     while (1)
@@ -286,6 +375,7 @@ void *handle_client(void *arg)
      
         Client_package *client_package = malloc(sizeof(Client_package));
         
+        printf("reception apres premier recover_message dans la boucle while\n\n");
         int bytes = recv(client_sock, (char *)client_package, sizeof(Client_package), 0);
         if (bytes <= 0)
         {
@@ -295,6 +385,7 @@ void *handle_client(void *arg)
         client_pack->client_package = client_package;
         strcpy(client_package->message_send.timestamp, get_str_timestamp());
 
+        printf("\n\n\n ligne 376 DEUXIEME RECOVER MESSAGE\n\n\n");
         recover_messages(client_pack);
         // broadcast_message(client_package); // Envoie d'une notification de nouveau message dans la db aux clients connectés
         free(client_message);
@@ -379,13 +470,31 @@ void start_server()
         // Login_infos *login_info = malloc(sizeof(Login_infos));
         Client_package_for_backend *client_pack = malloc(sizeof(Client_package_for_backend));
         Client_package *client_package = malloc(sizeof(Client_package));
+        // Client_package *client_package = malloc(sizeof(Client_package));
+        memset(client_package, 0, sizeof(Client_package));
+
+        Login_infos *login_info = malloc(sizeof(Login_infos));
+        if (!login_info) {
+            perror("malloc login_info");
+            exit(EXIT_FAILURE);
+        }
+
+        // Channel_info *channel_info = malloc(sizeof(Channel_info));
+        // if (!channel_info) {
+        //     perror("malloc login_info");
+        //     exit(EXIT_FAILURE);
+        // }
+
         client_pack->client_package = client_package;
         client_pack->client_package->client = client_data;
+        client_pack->client_package->login_info = login_info;
         printf("\nvaleur de sock dans sock_pointer de client_pack->client_package->client %lld\n",
             client_pack->client_package->client->sock_pointer);
         client_pack->server = state;
         // client_package->client->channels = &channels;
         // client_package->login_info = login_info;
+        printf("start_server: login_info pointer = %p\n", login_info);
+        printf("start_server: assigned to client_pack->client_package->login_info = %p\n", client_pack->client_package->login_info);
 
         pthread_t thread;
         pthread_create(&thread, NULL, handle_client, (void *)client_pack);
