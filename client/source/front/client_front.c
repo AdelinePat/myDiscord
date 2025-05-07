@@ -33,8 +33,8 @@ int launch_front() {
         printf("Failed to allocate memory for login_pack->client."); // Or handle the error in an appropriate way
     }
 
-    login_pack->client_package->login_info = malloc(sizeof(Login_infos));
-    // Login_infos *login_info = malloc(sizeof(Login_infos));
+    Login_infos *login_info = malloc(sizeof(Login_infos));
+    login_pack->client_package->login_info = login_info;
     if (login_pack->client_package->login_info == NULL) {
         g_warning("Failed to allocate memory for login_pack.");
         printf("Failed to allocate memory for login_pack->login_info."); // Or handle the error in an appropriate way

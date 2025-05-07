@@ -86,8 +86,12 @@ static void on_connect_clicked(GtkButton *button, gpointer user_data)
 
     // Allouer la structure de connexion
     Client_package_for_frontend *login_pack = malloc(sizeof(Client_package_for_frontend));
-    login_pack->client_package->login_info = malloc(sizeof(Login_infos));
-    login_pack->client_package->client = malloc(sizeof(Client_data));
+    Login_infos *login_info = malloc(sizeof(Login_infos));
+    login_pack->client_package->login_info = login_info;
+
+    Client_data *client = malloc(sizeof(Client_data));
+    login_pack->client_package->client = client;
+    
     login_pack->app = app;
 
     strncpy(login_pack->client_package->login_info->username,

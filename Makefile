@@ -2,7 +2,7 @@
 CC = gcc
 
 # Options de compilation de base
-CFLAGS = -Wall -Wextra -std=c11
+CFLAGS = -g -Wall -Wextra -std=c11
 LDFLAGS = -lws2_32  # pour les plateformes Windows
 
 # CFLAGS pour l'inclusion des headers

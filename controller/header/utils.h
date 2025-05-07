@@ -88,6 +88,8 @@ typedef struct {
     int channel_list_size; //
     int current_channel; //
     Login_infos *login_info;
+    char * client_pack_str;
+    int size_string;
 } Client_package;
 
 typedef struct {

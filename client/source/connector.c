@@ -45,13 +45,14 @@ int login_attempts(Client_package_for_frontend *login_pack) {
     login_pack->client_package->current_channel = 1;
     char * client_pack_str = serialize_client_package(login_pack->client_package);
     int login_status = 0;
-    printf("client_pack_str = \n%s\n", client_pack_str);
+    printf("\n\nclient_pack_str = \n%s\n", client_pack_str);
     // printf("taille de client_package_copy %d\n", sizeof(client_package_copy));
     // printf("contenu de l'envoie : %s", client_pack_str);
     // printf("\n\nAttempting login: \n\t%s password :\n\t %s\n\n",
     //     client_package_copy->login_info->username,
     //     client_package_copy->login_info->password);
     int len = strlen(client_pack_str);
+    printf("len de client_pack_str = %d", len);
     send(login_pack->client_package->client->sock_pointer,
         (char *)&len,
         sizeof(int),
@@ -184,9 +185,12 @@ void recover_messages(Client_package_for_frontend *login_pack) {
         (char *)&str_len,
         sizeof(int),
         0);
-
+    
+    // Convert from network byte order to host byte order
+    str_len = ntohl(str_len);
+    
     if (bytes > 0) {
-        printf("BLBLBL received size : %lld\n", str_len);
+        printf("BLBLBL received size : %d\n", str_len);
     }
     if (bytes == SOCKET_ERROR)
     {
@@ -206,7 +210,11 @@ void recover_messages(Client_package_for_frontend *login_pack) {
         0);
     
     client_package_str[str_len] = '\0';
+    printf("j'imprime la reception de client_package_str \n%s\n", client_package_str);
+
     parse_client_package_str(login_pack->client_package, client_package_str);
+    // printf("CHECKPOINT: login_info ptr = %p\n", login_pack->client_package->login_info);
+    printf("[dans recover message] CHECKPOINT: login_info ptr = %p\n channels %p\n", login_pack->client_package->login_info, login_pack->client_package->channels);
     free(client_package_str);
     
     printf("\n\n\nréception de client_package dans recover_messages : %s\n\n\n", client_package_str);
