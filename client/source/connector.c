@@ -71,7 +71,7 @@ int login_attempts(Client_package_for_frontend *login_pack) {
     printf("\n\nLOGIN STATUS APRES RECV %d\n\n", login_status);
 
     if (login_status == 1) {
-        printf("Connexion réussie\n");
+        printf("Connexion réussie login_attempts client side\n");
         receive_client_data(login_pack);
         // free(login_info_copy);
         // free(client_package_copy);
@@ -88,12 +88,22 @@ int login_attempts(Client_package_for_frontend *login_pack) {
 void receive_client_data(Client_package_for_frontend *login_pack) {
     int socket_client = login_pack->client_package->client->sock_pointer;
 
-    recv(socket_client,
-        (char *)login_pack->client_package->client,
-        sizeof(Client_data),
+    int handshake = READY;
+    // sending a ready message to server
+    char time_stamp[LARGE_PLUS_STRING];
+    debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
+    printf("\n[TIME BEFORE SEND READY] timestamp \t%s\n", time_stamp);
+    send(login_pack->client_package->client->sock_pointer,
+        (char *)&handshake,
+        sizeof(int),
         0);
 
-    login_pack->client_package->client->sock_pointer = socket_client; // when receive, socket client is changed, this line is for change it back
+    // recv(socket_client,
+    //     (char *)login_pack->client_package->client,
+    //     sizeof(Client_data),
+    //     0);
+    recover_messages(login_pack);
+    // login_pack->client_package->client->sock_pointer = socket_client; // when receive, socket client is changed, this line is for change it back
 
     printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%lld\n",
         login_pack->client_package->client->user_id,
@@ -176,21 +186,33 @@ void *receive_messages(void *arg) { // permet de recevoir une notification lorsq
     free(arg);
     return NULL;
 }
-
+void fill_in_structures(Client_package_for_frontend *login_pack) {
+    
+}
 void recover_messages(Client_package_for_frontend *login_pack) {
-    printf("socket :%lld\n", login_pack->client_package->client->sock_pointer);
+    printf("\njuste avant réception str_len : socket :%lld\n", login_pack->client_package->client->sock_pointer);
+    // sending a ready message to server
+    char time_stamp[LARGE_PLUS_STRING];
 
     int str_len;
+    debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
+    printf("\n[TIME BEFORE RECV LEN] timestamp \t%s\n", time_stamp);
     int bytes = recv(login_pack->client_package->client->sock_pointer,
         (char *)&str_len,
         sizeof(int),
         0);
+
     
+    debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
+    printf("\n[TIME AFTER RECV LEN] timestamp \t%s\n", time_stamp);
+    // printf("\n est ce que la len est le debut de la string ?? %s", str_len);
+
     // Convert from network byte order to host byte order
-    str_len = ntohl(str_len);
+    // str_len = ntohl(str_len);
     
-    if (bytes > 0) {
-        printf("BLBLBL received size : %d\n", str_len);
+    if (bytes > 0 && bytes == sizeof(int)) {
+        int str_len_network = ntohl(str_len);
+        printf("BLBLBL received size : %d, converted ntohl %d\n", str_len, str_len_network);
     }
     if (bytes == SOCKET_ERROR)
     {
@@ -198,7 +220,7 @@ void recover_messages(Client_package_for_frontend *login_pack) {
     }
     if (bytes != sizeof(int))
     {
-        printf("[ERROR] Taille des données size_of_list reçues incorrecte. Attendu %zu, reçu %d\n", sizeof(size_t), bytes);
+        printf("[ERROR] Taille des données size_of_list reçues incorrecte. Attendu %zu, reçu %d\n", sizeof(int), bytes);
     }
 
     int validation = 1;
@@ -215,44 +237,16 @@ void recover_messages(Client_package_for_frontend *login_pack) {
     parse_client_package_str(login_pack->client_package, client_package_str);
     // printf("CHECKPOINT: login_info ptr = %p\n", login_pack->client_package->login_info);
     printf("[dans recover message] CHECKPOINT: login_info ptr = %p\n channels %p\n", login_pack->client_package->login_info, login_pack->client_package->channels);
+    
+    
+    // printf("\n\n\nréception de client_package dans recover_messages : %s\n\n\n", client_package_str);
     free(client_package_str);
-    
-    printf("\n\n\nréception de client_package dans recover_messages : %s\n\n\n", client_package_str);
-    
+
     send(login_pack->client_package->client->sock_pointer,
         (char *)validation,
         sizeof(int),
         0);
-    
-    // Message *message_list = malloc(sizeof(Message) * size_of_list);
-    // for (long long unsigned int i = 0; i < size_of_list; i++) {
-    //     Message new_message;
-    //     bytes = recv(login_pack->client_package->client->sock_pointer,
-    //         (char *)&new_message,
-    //         sizeof(Message),
-    //         0);
-
-    //     if (bytes > 0) {
-    //         printf("hihi");
-    //     }
-    //     if (bytes == SOCKET_ERROR)
-    //     {
-    //         printf("[ERROR] Erreur lors de la réception du message : %lld, code %d\n", i, WSAGetLastError());
-    //     }
-    //     if (bytes != sizeof(Message))
-    //     {
-    //         printf("[ERROR] Taille des données reçues incorrecte. Attendu %zu, reçu %d\n", sizeof(Message), bytes);
-    //     }
-    //     message_list[i] = new_message;
-    //     printf("Message ajouté à la liste\n");
-    //     send(login_pack->client_package->client->sock_pointer,
-    //         (char *)validation,
-    //         sizeof(int),
-    //         0);
-
-    //     printf("Validation envoyée\n");
-    // }
-
+    printf("before fill_in_chat");
     // fill_in_chat(login_pack->chat_display, message_list, size_of_list);
     fill_in_chat(login_pack->chat_display,
         login_pack->client_package->messages_list,

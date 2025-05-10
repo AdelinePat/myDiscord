@@ -21,6 +21,10 @@ char * get_str_timestamp();
 struct tm parse_db_query_time(char *time_str);
 char * timestamp_to_char(struct tm time);
 
+// char * debug_get_str_timestamp();
+void debug_get_str_timestamp(char * buffer, size_t buffer_size);
+char * debug_timestamp_to_char(struct tm time);
+
 typedef enum
 {
     LOGIN = 0,
@@ -33,7 +37,9 @@ typedef enum
     CHANGE_ACCESS = 7,
     DELETE_ACCOUNT = 8,
     SOCKET_OK = 9,
-    SOCKET_FAIL = 10
+    SOCKET_FAIL = 10,
+    READY = 11,
+    WAIT = 12
 } SendType;
 
 typedef struct {

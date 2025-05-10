@@ -6,7 +6,8 @@
         "register_window.h": "c",
         "sha.h": "c",
         "time.h": "c",
-        "system_error": "c"
+        "system_error": "c",
+        "cjson.h": "c"
     },
     "C_Cpp.default.compilerPath": "C:/msys64/mingw64/bin/gcc.exe"
 }
