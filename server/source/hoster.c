@@ -257,16 +257,15 @@ void recover_messages(Client_package_for_backend *package)
             switch (package->client_package->send_type)
             {
                 case SEND_MESSAGE:
-                
-
-                char * msg_timestamp = get_str_timestamp();
-                strncpy(package->client_package->message_send.timestamp, msg_timestamp, MEDIUM_STRING);
-                create_new_message_db(package->client_package);
-                get_full_chat_content(package->client_package);
-                request = CLIENT_RECV;
+                    char * msg_timestamp = get_str_timestamp();
+                    strncpy(package->client_package->message_send.timestamp, msg_timestamp, MEDIUM_STRING);
+                    create_new_message_db(package->client_package);
+                    get_full_chat_content(package->client_package);
+                    request = CLIENT_RECV;
+                default:
+                    request = CLIENT_RECV;
             }
             printf("apres parsing\n");
-            break;
             // save_message_in_db();
         case CLIENT_RECV:
             printf("\n\n\nDANS SWITCH CASE CLIENT RECV\n\n\n");
