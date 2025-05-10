@@ -39,7 +39,8 @@ typedef enum
     SOCKET_OK = 9,
     SOCKET_FAIL = 10,
     READY = 11,
-    WAIT = 12
+    WAIT = 12,
+    MESSAGE_REFRESHED = 13
 } SendType;
 
 typedef struct {
@@ -108,6 +109,8 @@ typedef struct {
     GtkWidget **data;
     GtkApplication *app;
     GtkWidget *chat_display;
+    GtkWidget *window;
+
 } Client_package_for_frontend;
 
     // SendType send_type;

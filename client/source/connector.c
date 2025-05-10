@@ -92,7 +92,7 @@ void receive_client_data(Client_package_for_frontend *login_pack) {
     // sending a ready message to server
     char time_stamp[LARGE_PLUS_STRING];
     debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
-    printf("\n[TIME BEFORE SEND READY] timestamp \t%s\n", time_stamp);
+    printf("\n[RECEIVE CLIENT DATA]before handshake timestamp \t%s\n", time_stamp);
     send(login_pack->client_package->client->sock_pointer,
         (char *)&handshake,
         sizeof(int),
@@ -102,7 +102,8 @@ void receive_client_data(Client_package_for_frontend *login_pack) {
     //     (char *)login_pack->client_package->client,
     //     sizeof(Client_data),
     //     0);
-    recover_messages(login_pack);
+    fill_in_structures(login_pack);
+    // recover_messages(login_pack);
     // login_pack->client_package->client->sock_pointer = socket_client; // when receive, socket client is changed, this line is for change it back
 
     printf("[DEBUG] Client_data reçu: id=%d pseudo=%s, sock=%lld\n",
@@ -127,6 +128,8 @@ void broadcast_notifications_receiver_start(Client_package_for_frontend *login_p
     // Chat_display_package *chat_display_package = malloc(sizeof(Chat_display_package));
     // chat_display_package->sock_copy = sock_copy;
     // chat_display_package->chat_display = chat_display;
+    printf("valeur de send_type dans broadcast_notifications %d\n",
+        login_pack->client_package->send_type);
     pthread_t recv_thread;
     pthread_create(&recv_thread, NULL, receive_messages, (void *)login_pack);
 }
@@ -168,29 +171,42 @@ void fill_in_chat(GtkWidget *chat_display, Message *message_list, int message_le
         gtk_text_buffer_get_end_iter(buffer, &end_iter);
         for (int i = 0; i < message_length; i++) {
             gchar text[150];
-            snprintf(text, sizeof(text), "[%s] : %s", message_list[i].username, message_list[i].message);
+            snprintf(text, sizeof(text), "%s    %s : \n%s\n",
+            message_list[i].username,
+            message_list[i].timestamp,
+            message_list[i].message);
             // printf("Valeur row num%d : message_id %d, user_id %d, username %s, content %s\n", i, message_list[i].message_id, message_list[i].client_id, message_list[i].username, message_list[i].message);
             gtk_text_buffer_insert(buffer, &end_iter, text, -1);
             gtk_text_buffer_insert(buffer, &end_iter, "\n", -1);
         }
 }
 
+void clear_chat(GtkWidget *chat_display) {
+    printf("inside clear_chat ??\n");
+    GList *children, *iter;
+    children = gtk_container_get_children(GTK_CONTAINER(chat_display));
+    for (iter = children; iter != NULL; iter = g_list_next(iter)) {
+        gtk_widget_destroy(GTK_WIDGET(iter->data));
+    }
+    g_list_free(children);
+}
+
 void *receive_messages(void *arg) { // permet de recevoir une notification lorsqu'un message est broadcasté par le serveur
     // Chat_display_package *chat_display_package = (Chat_display_package *)arg;
+    printf("inside receive message that calls for a while(1) and calls continously for recover_messages\n\n");
     Client_package_for_frontend *client_pack = (Client_package_for_frontend *)arg;
     GtkWidget *chat_display = client_pack->chat_display;
-    while (1) {
+    while (client_pack->client_package->send_type != MESSAGE_REFRESHED) {
         // recover_messages(*chat_display_package->sock_copy, chat_display);
         recover_messages(client_pack);
+        gtk_widget_show_all(client_pack->window);
     }
     free(arg);
     return NULL;
 }
+
 void fill_in_structures(Client_package_for_frontend *login_pack) {
-    
-}
-void recover_messages(Client_package_for_frontend *login_pack) {
-    printf("\njuste avant réception str_len : socket :%lld\n", login_pack->client_package->client->sock_pointer);
+    printf("\njuste avant reception str_len : socket :%lld\n", login_pack->client_package->client->sock_pointer);
     // sending a ready message to server
     char time_stamp[LARGE_PLUS_STRING];
 
@@ -246,12 +262,23 @@ void recover_messages(Client_package_for_frontend *login_pack) {
         (char *)validation,
         sizeof(int),
         0);
-    printf("before fill_in_chat");
-    // fill_in_chat(login_pack->chat_display, message_list, size_of_list);
-    fill_in_chat(login_pack->chat_display,
-        login_pack->client_package->messages_list,
-        login_pack->client_package->number_of_messages);
-    // free(message_list);
+}
+
+void recover_messages(Client_package_for_frontend *login_pack) {
+    
+    // fill_in_structures(login_pack);
+    if (login_pack->client_package->send_type != LOGIN &&
+        login_pack->client_package->send_type != CREATE_ACCOUNT &&
+        login_pack->client_package->send_type != MESSAGE_REFRESHED) {
+        printf("before fill_in_chat");
+        // fill_in_chat(login_pack->chat_display, message_list, size_of_list);
+        clear_chat(login_pack->chat_display);
+        fill_in_chat(login_pack->chat_display,
+            login_pack->client_package->messages_list,
+            login_pack->client_package->number_of_messages);
+        login_pack->client_package->send_type = MESSAGE_REFRESHED;
+        // free(message_list);
+    }
 }
 
 SOCKET client_start() {
