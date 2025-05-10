@@ -224,6 +224,7 @@ void recover_messages(Client_package_for_backend *package)
         0);
     } while (handshake != READY);
     
+    printf("sortie de la boucle while, valeur de handshake : %d", handshake);
     
     // if () {
     //     fprintf(stderr, "client not ready!\n");

@@ -11,12 +11,14 @@ int login_attempts(Client_package_for_frontend *login_pack);
 int connect_to_server(Client_package_for_frontend *login_pack);
 int register_attempts(Client_package_for_frontend *login_pack);
 void *receive_messages(void *arg);
+void fill_in_chat(GtkWidget *chat_display, Message *message_list, int message_length);
 // void recover_messages(SOCKET sock, GtkWidget *chat_display);
 void recover_messages(Client_package_for_frontend *login_pack);
 void receive_client_data(Client_package_for_frontend *login_pack);
 void broadcast_notifications_receiver_start(Client_package_for_frontend *login_pack);
 void send_message(Client_package *client_package, char text[1024]);
-// void fill_in_structures(Client_package_for_frontend *login_pack);
+void fill_in_structures(Client_package_for_frontend *login_pack);
+void clear_chat(GtkWidget *chat_display);
 // SendType register_attempts(Login_package_for_front *login_pack);
 
 #endif

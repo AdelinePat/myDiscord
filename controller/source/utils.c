@@ -85,6 +85,7 @@ void serialize_login_info(cJSON * login, Login_infos *login_info) {
         cJSON_AddStringToObject(login, "password", login_info->password);
     }    
     cJSON_AddNumberToObject(login, "user_id", login_info->user_id);
+    printf("\n\n\n\nlogin_info->user_id %d\n\n\n", login_info->user_id);
 }
 
 void serialize_client_data(cJSON * clientData, Client_data *client, int * size_string)
@@ -100,9 +101,9 @@ void serialize_client_data(cJSON * clientData, Client_data *client, int * size_s
 
     printf("\nvaleur de client->user_id %d\n", client->user_id);
     cJSON_AddNumberToObject(clientData, "user_id", client->user_id);
-    printf("serialize_client_data : send_type %d\n", client->user_id);
+    // printf("serialize_client_data : send_type %d\n", client->user_id);
 
-    printf("[client_data] valeur de size_string %d\n", *size_string);
+    // printf("[client_data] valeur de size_string %d\n", *size_string);
 
     sprintf(buffer, "%d", client->user_id);
     int_length = strlen(buffer);
@@ -193,21 +194,21 @@ cJSON * serialize_message(Message * a_message, int * size_string)
     memset(buffer, 0, sizeof(buffer));
 
     if (a_message->username != NULL) {
-        printf("username n'est pas null dans le msg\n");
-        printf("strlen(username) = %zu\n", strlen(a_message->username));
-        printf("username = %s\n", a_message->username);
+        // printf("username n'est pas null dans le msg\n");
+        // printf("strlen(username) = %zu\n", strlen(a_message->username));
+        // printf("username = %s\n", a_message->username);
         cJSON_AddStringToObject(message_json, "username", a_message->username);
     }
     if (a_message->timestamp != NULL) {
-        printf("timestamp n'est pas null dans le msg\n");
-        printf("strlen(timestamp) = %zu\n", strlen(a_message->timestamp));
-        printf("timestamp = %s\n", a_message->timestamp);
+        // printf("timestamp n'est pas null dans le msg\n");
+        // printf("strlen(timestamp) = %zu\n", strlen(a_message->timestamp));
+        // printf("timestamp = %s\n", a_message->timestamp);
         cJSON_AddStringToObject(message_json, "timestamp", a_message->timestamp);
     }
     if (a_message->message != NULL) {
-        printf("message n'est pas null dans le msg\n");
-        printf("strlen(message) = %zu\n", strlen(a_message->message));
-        printf("message = %s\n", a_message->message);
+        // printf("message n'est pas null dans le msg\n");
+        // printf("strlen(message) = %zu\n", strlen(a_message->message));
+        // printf("message = %s\n", a_message->message);
         cJSON_AddStringToObject(message_json, "message", a_message->message);
     }
 
@@ -240,9 +241,9 @@ void serialize_message_list(cJSON * message_list_json, Client_package * client_p
 
 char * serialize_client_package(Client_package *client_package) {
     // printf("[debut serialize_client_package] CHECKPOINT: login_info ptr = %p\n", client_package->login_info);
-    printf("[debut serialize_client_package] CHECKPOINT: login_info ptr = %p\n", client_package->login_info);
-    printf("[debut serialize_client_package] CHECKPOINT: client_package ptr = %p\n", client_package);
-    printf("[debut serialize_client_package] CHECKPOINT: channels ptr = %p\n", client_package->channels);
+    // printf("[debut serialize_client_package] CHECKPOINT: login_info ptr = %p\n", client_package->login_info);
+    // printf("[debut serialize_client_package] CHECKPOINT: client_package ptr = %p\n", client_package);
+    // printf("[debut serialize_client_package] CHECKPOINT: channels ptr = %p\n", client_package->channels);
     
     // printf("serialize_client_package: &client_package = %p, client_package = %p, login_info = %p\n",
     //     &client_package, client_package, client_package ? client_package->login_info : 0);
@@ -266,12 +267,12 @@ char * serialize_client_package(Client_package *client_package) {
     cJSON *root = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(root, "send_type", client_package->send_type);
-    printf("\ntest avant de compter la len\n");
+    // printf("\ntest avant de compter la len\n");
     sprintf(buffer, "%d", client_package->send_type);
     int_length = strlen(buffer);
     size_string = size_string + strlen("{\"send_type \" : ,}") + int_length;
     memset(buffer, 0, sizeof(buffer));
-    printf("\ntest apres avoir compté la len\n");
+    // printf("\ntest apres avoir compté la len\n");
 
     // printf("\nserialize_client_package : send_type %d\n", client_package->send_type);
     cJSON_AddNumberToObject(root, "number_of_messages", client_package->number_of_messages);
@@ -413,6 +414,9 @@ cJSON * parse_login_info(cJSON *root, Client_package * client_package) {
         LARGE_PLUS_STRING);
     client_package->login_info->password[LARGE_PLUS_STRING -1] = '\0';
 
+    client_package->login_info->user_id = cJSON_GetObjectItem(login, "user_id")->valueint;
+    printf("login_info->user_id in parse_login_info inside cjson %d\n\n\n", cJSON_GetObjectItem(login, "user_id")->valueint);
+    printf("login_info->user_id in parse_login_info inside structure %d\n\n\n", client_package->login_info->user_id);
     return login;
 }
 
@@ -428,6 +432,9 @@ cJSON * parse_client_data(cJSON *root, Client_package * client_package) {
     client_package->client->username[SMALL_STRING -1] = '\0';
 
     client_package->client->user_id = cJSON_GetObjectItem(client_data, "user_id")->valueint;
+    printf("client->user_id in parse_client_data inside cjson %d\n\n\n", cJSON_GetObjectItem(client_data, "user_id")->valueint);
+    printf("client->user_id in parse_client_data inside structure %d\n\n\n", client_package->login_info->user_id);
+
     return client_data;
 }
 
@@ -527,5 +534,8 @@ void parse_client_package_str(Client_package * client_package, char * client_pac
     printf("avant parse_client_data\n");
     if (client_package->send_type != LOGIN && client_package->send_type != CREATE_ACCOUNT) {
         cJSON *client_data = parse_client_data(root, client_package);
+    } else {
+        client_package->client->user_id = client_package->login_info->user_id;
+        strncpy(client_package->client->username, client_package->login_info->username, SMALL_STRING);
     }
 }

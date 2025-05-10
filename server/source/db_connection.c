@@ -82,9 +82,9 @@ void first_update_client_package(Client_package *client_package) {
     client_package->current_channel = 1;
     get_user_data(client_package);
     get_channel_list(client_package);
-    printf("[first_update_client_package avant get_full_chat_content] CHECKPOINT: channels ptr = %p\n", client_package->channels);
+    // printf("[first_update_client_package avant get_full_chat_content] CHECKPOINT: channels ptr = %p\n", client_package->channels);
     get_full_chat_content(client_package);
-    printf("[first_update_client_package fin] CHECKPOINT: channels %p\n", client_package->channels);
+    // printf("[first_update_client_package fin] CHECKPOINT: channels %p\n", client_package->channels);
 }
 
 void get_user_data(Client_package* client_package) {
