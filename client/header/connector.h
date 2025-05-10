@@ -16,6 +16,7 @@ void recover_messages(Client_package_for_frontend *login_pack);
 void receive_client_data(Client_package_for_frontend *login_pack);
 void broadcast_notifications_receiver_start(Client_package_for_frontend *login_pack);
 void send_message(Client_package *client_package, char text[1024]);
+// void fill_in_structures(Client_package_for_frontend *login_pack);
 // SendType register_attempts(Login_package_for_front *login_pack);
 
 #endif

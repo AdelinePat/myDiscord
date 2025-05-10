@@ -91,7 +91,7 @@ static void on_connect_clicked(GtkButton *button, gpointer user_data)
 
     Client_data *client = malloc(sizeof(Client_data));
     login_pack->client_package->client = client;
-    
+
     login_pack->app = app;
 
     strncpy(login_pack->client_package->login_info->username,
@@ -106,6 +106,7 @@ static void on_connect_clicked(GtkButton *button, gpointer user_data)
     // login_pack->client_package->client->sock_pointer = sock;
 
     // Tente la connexion
+    printf("call for login_attempts in on connect_clicked");
     if (login_attempts(login_pack) == 0)
     {
         // Authentification réussie
@@ -226,6 +227,7 @@ void show_chat_window(Client_package_for_frontend *login_pack) {
     gtk_box_pack_start(GTK_BOX(channels_box), bottom_box, FALSE, FALSE, 0);
 
     // CHAT DISPLAY DANS LOGIN_PACK
+    printf("login_pack->chat_display = chat_display_widget\n");
     login_pack->chat_display = chat_display;
 
     disconnect_button = gtk_button_new_with_label("Déconnexion");
@@ -262,7 +264,7 @@ void show_chat_window(Client_package_for_frontend *login_pack) {
         GtkStyleContext *context = gtk_widget_get_style_context(widgets_to_style[i]);
         gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
     }
-    printf("dans chat_window juste avant recover_message");
+    printf("\ndans chat_window juste avant recover_message\n");
     recover_messages(login_pack);
     gtk_widget_show_all(window);
     broadcast_notifications_receiver_start(login_pack);

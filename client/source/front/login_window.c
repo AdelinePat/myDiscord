@@ -74,7 +74,8 @@ static void on_login_clicked(GtkButton *button, gpointer user_data)
     g_print("Attempting login: %s / %s\n",
         login_pack->client_package->login_info->username,
         login_pack->client_package->login_info->password);
-
+    
+    printf("\n\ncall for login_attempts in on_login_clicked\n\n");
     int login_status = login_attempts(login_pack);
     // TODO: Call the validate_credentials() function here to check the format of the email/username and password with regex
     //       Do not specify if it's the email or password that is incorrect

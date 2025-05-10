@@ -58,7 +58,11 @@ int login_attempts(Client_package *client_package)
         // client_package_copy->login_info = login_info_copy;
         // int bytes = recv(client_package->client->sock_pointer, (char *)login_info, sizeof(Login_infos), 0);
         int len = 0;
-        int check_len = recv(client_package->client->sock_pointer, (char *)&len, sizeof(int), 0);
+        int check_len = recv(client_package->client->sock_pointer,
+            (char *)&len,
+            sizeof(int),
+            0);
+
         if (check_len == SOCKET_ERROR) {
             printf("[ERROR] Failed socket connexion from client to server\n");
         }
@@ -69,9 +73,11 @@ int login_attempts(Client_package *client_package)
             break;
         }
 
+        printf("\n\n\n\n\n\t\t\t len %d\n", len);
+
         char * client_package_str = malloc(len + 1);
 
-        printf("la longueur du json est de %d", (int)len);
+        printf("\t\t\tla longueur du json est de %d", (int)len);
 
         int bytes = recv(client_package->client->sock_pointer,
             client_package_str,
@@ -165,15 +171,15 @@ int login_attempts(Client_package *client_package)
 
 void recover_messages(Client_package_for_backend *package)
 {
-    printf("[recover_messages debut] CHECKPOINT: channels %p\n", package->client_package->channels);
-    if (!package->client_package || !package->client_package->client || !package->client_package->login_info) {
-        fprintf(stderr, "serialize_client_package: NULL field detected\n");
-        if (!package->client_package->client) {
-            printf("c'est client_data qui est vide!");
-        } else if (!package->client_package->login_info) {
-            printf("c'est login info qui est vide! ");
-        }
-    }
+    // printf("[recover_messages debut] CHECKPOINT: channels %p\n", package->client_package->channels);
+    // if (!package->client_package || !package->client_package->client || !package->client_package->login_info) {
+    //     fprintf(stderr, "serialize_client_package: NULL field detected\n");
+    //     if (!package->client_package->client) {
+    //         printf("c'est client_data qui est vide!");
+    //     } else if (!package->client_package->login_info) {
+    //         printf("c'est login info qui est vide! ");
+    //     }
+    // }
     
     printf("dans recover_message cote serveur :p juste avant get_full_chat_content\n");
     if (package->client_package->send_type != LOGIN && package->client_package->send_type != CREATE_ACCOUNT)
@@ -196,59 +202,59 @@ void recover_messages(Client_package_for_backend *package)
         // return NULL;
     }
 
-    printf("[recover_messages avant serialize_client_package] CHECKPOINT: client_package ptr = %p\n", package->client_package);
-    printf("[recover_messages avant serialize_client_package] CHECKPOINT: login_info ptr = %p\n\n", package->client_package->login_info);
-    printf("[recover_messages avant serialize_client_package] CHECKPOINT: channels ptr = %p\n", package->client_package->channels);
+    // printf("[recover_messages avant serialize_client_package] CHECKPOINT: client_package ptr = %p\n", package->client_package);
+    // printf("[recover_messages avant serialize_client_package] CHECKPOINT: login_info ptr = %p\n\n", package->client_package->login_info);
+    // printf("[recover_messages avant serialize_client_package] CHECKPOINT: channels ptr = %p\n", package->client_package->channels);
     // printf("[recover message juste avant serialize_client_package] CHECKPOINT: login_info ptr = %p\n channels %p\n", package->client_package->login_info, package->client_package->channels);
     char * client_pack_str = serialize_client_package(package->client_package);
     // char client_pack_string_final[strlen(package->client_package->client_pack_str)]
     printf("\n\nVoici la string du json a envoyé dans recover_message : \n\n%s\n\n\n",
         client_pack_str);
 
-    printf("\n\nVoici la string du json a envoyé dans recover_message package->client_package->client_pack_str: \n\n%s\n\n\n",
-        package->client_package->client_pack_str);
+    // printf("\n\nVoici la string du json a envoyé dans recover_message package->client_package->client_pack_str: \n\n%s\n\n\n",
+    //     package->client_package->client_pack_str);
+    char time_stamp[LARGE_PLUS_STRING];
+    int handshake;
+    do {
+        debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
+        printf("\n[TIME BEFORE RECV WHILE] timestamp \t%s\n", time_stamp);
+        recv(package->client_package->client->sock_pointer,
+        (char *)&handshake,
+        sizeof(int),
+        0);
+    } while (handshake != READY);
+    
+    
+    // if () {
+    //     fprintf(stderr, "client not ready!\n");
+    // }
 
     int len = strlen(client_pack_str);
     // Convert to network byte order before sending
-    int network_len = htonl(len);
-    printf("\n\nlen dans recover_message %d\n\n", len);
-
+    // int network_len = htonl(len);
+    printf("\n\nlen dans recover_message %d\n et son adresse %p\n", len, &len);
+    // printf("\n\network_len dans recover_message %d\n\n", network_len);
+    // char time_stamp[LARGE_PLUS_STRING];
+    debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
+    printf("\n[TIME BEFORE SEND LEN] timestamp \t%s\n", time_stamp);
+    
+    
     send(package->client_package->client->sock_pointer,
-    (char *)&network_len,
+    (char *)&len,
     sizeof(int),
     0);
-
+    
+    debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
+    printf("\n[TIME AFTER SEND LEN] timestamp \t%s\n", time_stamp);
     send(package->client_package->client->sock_pointer,
     client_pack_str,
     len,
     0);
-    // send(package->client_package->client->sock_pointer,
-    //     (char *)&package->client_package->number_of_messages,
-    //     sizeof(int),
-    //     0);
-
     int validation;
     recv(package->client_package->client->sock_pointer, (char *)validation, sizeof(int), 0);
 
-    printf("sending messages");
+    printf("sending messages\n");
     printf("messages number : %d\n", package->client_package->number_of_messages);
-
-    // for (int i = 0; i < size_of_list; i++) {
-    //     Message message_sent = package->client_package->messages_list[i];
-    //     printf("[DEBUG] Envoi message %s : %s\n", message_sent.username, message_sent.message);
-
-    //     int bytes = send(package->client_package->client->sock_pointer,
-    //         (char *)&message_sent,
-    //         sizeof(Message),
-    //         0);
-
-    //     if (bytes <= 0) {
-    //         perror("[ERROR] send message failed\n");
-    //         break;
-    //     }
-    //     recv(package->client_package->client->sock_pointer, (char *)validation, sizeof(int), 0);
-    // }
-
     printf("       messages sent\n");
 }
 
