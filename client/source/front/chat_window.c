@@ -164,11 +164,22 @@ void show_chat_window(Client_package_for_frontend *login_pack) {
     gtk_widget_set_size_request(channels_box, 330, -1);
     gtk_box_pack_start(GTK_BOX(outer_box), channels_box, FALSE, FALSE, 0);
 
-    int current_channel = login_pack->client_package->current_channel;
+    
+    int current_channel = -1;
+    for (int index = 0; index < login_pack->client_package->channel_list_size; index++) {
+        printf("index : %d : %s\n",
+            index,
+            login_pack->client_package->channels[index].channel_title);
+            if (login_pack->client_package->current_channel == login_pack->client_package->channels[index].channel_id) {
+                current_channel = index;
+            };
+
+    }
+    
     printf("\nnom du channel courant : %s\n", login_pack->client_package->channels[current_channel].channel_title);
     printf("\nnom du channel courant : %s\n", login_pack->client_package->channels[1].channel_title);
     printf("\n\n\nvaleur de current_channel in chat_window : %d\n\n\n", current_channel);
-    
+
     gchar *channel_label_text = g_strdup_printf("channel : %s", login_pack->client_package->channels[current_channel].channel_title);
     GtkWidget *channel_label = gtk_label_new(channel_label_text);
     gtk_box_pack_start(GTK_BOX(channels_box), channel_label, FALSE, FALSE, 0);
