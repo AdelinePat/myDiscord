@@ -124,7 +124,10 @@ cJSON * serialize_channel_info(Channel_info channel_info, int * size_string)
     }
     char buffer[LARGE_PLUS_STRING];
     int int_length;
+    printf("bidule dans serialize_channel_info\n");
+
     sprintf(buffer, "%d", channel_info.channel_id);
+    printf("apres sprintf dans serialize_channel_info\n");
     int_length = strlen(buffer);
     *size_string = *size_string + strlen("channel_id : { \"\",, }") + strlen("channel_title : { \"\",, }") + strlen(channel_info.channel_title) + int_length;
     memset(buffer, 0, sizeof(buffer));
@@ -240,14 +243,6 @@ void serialize_message_list(cJSON * message_list_json, Client_package * client_p
 }
 
 char * serialize_client_package(Client_package *client_package) {
-    // printf("[debut serialize_client_package] CHECKPOINT: login_info ptr = %p\n", client_package->login_info);
-    // printf("[debut serialize_client_package] CHECKPOINT: login_info ptr = %p\n", client_package->login_info);
-    // printf("[debut serialize_client_package] CHECKPOINT: client_package ptr = %p\n", client_package);
-    // printf("[debut serialize_client_package] CHECKPOINT: channels ptr = %p\n", client_package->channels);
-    
-    // printf("serialize_client_package: &client_package = %p, client_package = %p, login_info = %p\n",
-    //     &client_package, client_package, client_package ? client_package->login_info : 0);
-
     if (!client_package || !client_package->client || !client_package->login_info) {
         fprintf(stderr, "serialize_client_package: NULL field detected\n");
         if (!client_package->client) {
@@ -258,7 +253,6 @@ char * serialize_client_package(Client_package *client_package) {
         return NULL;
     }
     
-    // printf("test du client_package : serialize_client_package: username = %s\n", client_package->login_info->username);
     int size_string = 0;
     char buffer[VERY_LARGE_STRING];
     int int_length;
@@ -267,21 +261,16 @@ char * serialize_client_package(Client_package *client_package) {
     cJSON *root = cJSON_CreateObject();
 
     cJSON_AddNumberToObject(root, "send_type", client_package->send_type);
-    // printf("\ntest avant de compter la len\n");
     sprintf(buffer, "%d", client_package->send_type);
     int_length = strlen(buffer);
     size_string = size_string + strlen("{\"send_type \" : ,}") + int_length;
     memset(buffer, 0, sizeof(buffer));
-    // printf("\ntest apres avoir compté la len\n");
 
-    // printf("\nserialize_client_package : send_type %d\n", client_package->send_type);
     cJSON_AddNumberToObject(root, "number_of_messages", client_package->number_of_messages);
     sprintf(buffer, "%d", client_package->number_of_messages);
     int_length = strlen(buffer);
     size_string = size_string + strlen("{\"number_of_messages \" : ,}") + int_length;
     memset(buffer, 0, sizeof(buffer));
-
-    // printf("serialize_client_package : nbr_of_message %d\n", client_package->number_of_messages);
 
     cJSON_AddNumberToObject(root, "current_channel", client_package->current_channel);
     sprintf(buffer, "%d", client_package->current_channel);
@@ -289,20 +278,12 @@ char * serialize_client_package(Client_package *client_package) {
     size_string = size_string + strlen("{\"current_channel \" : ,}") + int_length;
     memset(buffer, 0, sizeof(buffer));
 
-    // printf("serialize_client_package : current_channel %d\n", client_package->current_channel);
-
     cJSON_AddNumberToObject(root, "channel_list_size", client_package->channel_list_size);
-    // size_string += LARGE_PLUS_STRING * 5; // 4 items + 1 en plus au cas où
     sprintf(buffer, "%d", client_package->channel_list_size);
     int_length = strlen(buffer);
     size_string = size_string + strlen("{\"channel_list_size \" : ,}") + int_length;
     memset(buffer, 0, sizeof(buffer));
-    // printf("serialize_client_package : channel_list_size %d\n", client_package->channel_list_size);
 
-
-    // printf("\n[apres current_channel] valeur de size_string %d\n", size_string);
-    // Call for serialize every nested json object
-    // printf("\njuste avant client_data\n");
     cJSON *clientdata = cJSON_CreateObject();
     if (client_package->client->user_id != NULL && client_package->client->username != NULL)
     {
@@ -318,7 +299,6 @@ char * serialize_client_package(Client_package *client_package) {
     size_string = size_string + strlen("{\"client_data \" : ,}");
     
 
-    // printf("\n[apres client data] valeur de size_string %d\n", size_string);
     size_string += LARGE_PLUS_STRING;
 
     // printf("\njuste avant message_list\n");
@@ -347,6 +327,11 @@ char * serialize_client_package(Client_package *client_package) {
     }
     cJSON_AddItemToObject(root, "channels", channels_info_list);
     size_string = size_string + strlen("{\"channels \" : ,}");
+    if (client_package->send_type == SEND_MESSAGE)
+    {
+        cJSON * message_send = serialize_message(&client_package->message_send, &size_string);
+        cJSON_AddItemToObject(root, "message_send", message_send);
+    }
     
     // printf("juste avant la transformation en string\n");
 
@@ -357,43 +342,19 @@ char * serialize_client_package(Client_package *client_package) {
     size_string += (LARGE_PLUS_STRING*3 +1);
     // printf("[DEBUG] malloc size_string = %d\n", size_string);
     if (size_string <= 0 || size_string > 1000000) {
-        fprintf(stderr, "Invalid size_string value: %d\n", size_string);
+        fprintf(stderr, "Invalid size_string value: %d\n", &size_string);
         return NULL;
     }
     // printf("\n\n\ntaille du json ? : %d\n\n\n", size_string);
     // printf(" avant d'imprimer json final");
     char * json_string = cJSON_PrintUnformatted(root);
-    // printf("\nj'imprime mon json final \n%s", json_string);
-    // // char *json_string = (char *)malloc(size_string);
-    // char json_string[size_string];
-    // printf("apres malloc ???\n");
-    // if (!json_string) {
-    //     // perror("malloc for json_string failed\n");
-    //     fprintf(stderr, "[ERROR] malloc failed for json_string with size: %d\n", size_string);
-    //     cJSON_Delete(root);
-    //     return NULL;
-    // }
-    // // memset(json_string, 0, size_string);
-    // printf("\napres json_string malloc\n");
-    // // printf("\nsizeof(json_string) : %d VS size_string %d\n", sizeof(json_string), size_string);
-    // int printed = cJSON_PrintPreallocated(root, json_string, size_string, 0);
-    // if (!printed) {
-    //     printf("cJSON_PrintPreallocated failed!\n");
-    //     free(json_string);
-    //     cJSON_Delete(root);
-    //     return NULL;
-        
-    // } else {
-    //     printf("Preallocated print: %s\n", json_string);
-    // }
-    // printf("\nsize_string %d VS strlen(json_string) %d\n", size_string, strlen(json_string));
-    // printf("\n\nprint du json_string dans serialize_client_package JSON_STRING \n%s\n", json_string);
-    // cJSON_Delete(root);
+  
     char * final_json_string = malloc(strlen(json_string));
     client_package->client_pack_str = final_json_string;
     strncpy(final_json_string, json_string, strlen(json_string));
-    printf("print of client_package->client_pack_str inside serialize_client_package \n\n%s\n\n", client_package->client_pack_str);
-    // strncpy(client_package->client_pack_str, json_string, strlen(json_string));
+    // printf("print of client_package->client_pack_str inside serialize_client_package \n\n%s\n\n", client_package->client_pack_str);
+    strncpy(client_package->client_pack_str, json_string, strlen(json_string));
+    printf("json_string \n\n%s\n\n", json_string);
     return json_string; // Don't forget to free this after sending!
 }
 
@@ -468,13 +429,13 @@ void parse_message_list(cJSON *root, Client_package * client_package) {
 
         for (int i = 0; i < client_package->number_of_messages; i++) {
             cJSON * a_message = cJSON_GetArrayItem(messages_list, i);
-            parse_a_message(a_message, client_package, i);
+            parse_a_message_from_list(a_message, client_package, i);
             }
     }
 
 }
 
-void parse_a_message(cJSON * a_message, Client_package * client_package, int index) {
+void parse_a_message_from_list(cJSON * a_message, Client_package * client_package, int index) {
     client_package->messages_list[index].channel_id = cJSON_GetObjectItem(a_message, "channel_id")->valueint;
     client_package->messages_list[index].message_id = cJSON_GetObjectItem(a_message, "message_id")->valueint;
     client_package->messages_list[index].user_id = cJSON_GetObjectItem(a_message, "user_id")->valueint;
@@ -493,7 +454,47 @@ void parse_a_message(cJSON * a_message, Client_package * client_package, int ind
         cJSON_GetObjectItem(a_message, "message")->valuestring,
         VERY_LARGE_STRING);
     client_package->messages_list[index].message[VERY_LARGE_STRING -1] = '\0';
+}
 
+cJSON * parse_a_message(cJSON * root, Client_package * client_package) {
+    printf("dans parse_client_data\n");
+    cJSON *a_message = cJSON_GetObjectItem(root, "message_send");
+
+    client_package->message_send.channel_id = cJSON_GetObjectItem(a_message, "channel_id")->valueint;
+    client_package->message_send.message_id = cJSON_GetObjectItem(a_message, "message_id")->valueint;
+    client_package->message_send.user_id = cJSON_GetObjectItem(a_message, "user_id")->valueint;
+
+    printf("valeur récupérée channel id %d, message id %d user_id %d\n",
+        client_package->message_send.channel_id,
+        client_package->message_send.message_id,
+        client_package->message_send.user_id);
+    
+    strncpy(client_package->message_send.username,
+        cJSON_GetObjectItem(a_message, "username")->valuestring,
+        SMALL_STRING);
+    client_package->message_send.username[SMALL_STRING -1] = '\0';
+
+    strncpy(client_package->message_send.timestamp,
+        cJSON_GetObjectItem(a_message, "timestamp")->valuestring,
+        MEDIUM_STRING);
+
+    client_package->message_send.timestamp[MEDIUM_STRING -1] = '\0';
+
+    strncpy(client_package->message_send.message,
+        cJSON_GetObjectItem(a_message, "message")->valuestring,
+        VERY_LARGE_STRING);
+    client_package->message_send.message[VERY_LARGE_STRING -1] = '\0';
+
+    printf("contenu username json %s\n\n", cJSON_GetObjectItem(a_message, "username")->valuestring);
+    printf("contenu username %s\n\n", client_package->message_send.username);
+
+    printf("contenu timestamp json %s\n\n", cJSON_GetObjectItem(a_message, "timestamp")->valuestring);
+    printf("contenu timestamp %s\n\n", client_package->message_send.timestamp);
+
+    printf("contenu message json %s\n\n", cJSON_GetObjectItem(a_message, "message")->valuestring);
+    printf("contenu message %s\n\n", client_package->message_send.message);
+
+    return a_message;
 }
 
 void parse_channels_info_list(cJSON *root, Client_package * client_package) {
@@ -520,22 +521,38 @@ void parse_channels_info_list(cJSON *root, Client_package * client_package) {
 
 void parse_client_package_str(Client_package * client_package, char * client_package_str) {
     cJSON *root = cJSON_Parse(client_package_str);
+    if (!root) {
+        fprintf(stderr, "Failed to parse JSON: %s\n", client_package_str);
+        return;
+    }
     printf("parse du json parent\n");
     client_package->send_type = cJSON_GetObjectItem(root, "send_type")->valueint;
+    printf("\nvaleur de send_type dans parse client package %d\n", client_package->send_type);
     client_package->current_channel = cJSON_GetObjectItem(root, "current_channel")->valueint;
     client_package->number_of_messages = cJSON_GetObjectItem(root, "number_of_messages")->valueint;
     client_package->channel_list_size = cJSON_GetObjectItem(root, "channel_list_size")->valueint;
     printf("avant parse_login_info\n");
     cJSON *login = parse_login_info(root, client_package);
     printf("avant parse_message_list\n");
+
+    Message * messages_list = malloc(sizeof(Message)* client_package->number_of_messages);
+    client_package->messages_list = messages_list;
+
     parse_message_list(root, client_package);
     printf("avant channels_info_list\n");
     parse_channels_info_list(root, client_package);
     printf("avant parse_client_data\n");
+    
     if (client_package->send_type != LOGIN && client_package->send_type != CREATE_ACCOUNT) {
         cJSON *client_data = parse_client_data(root, client_package);
     } else {
         client_package->client->user_id = client_package->login_info->user_id;
         strncpy(client_package->client->username, client_package->login_info->username, SMALL_STRING);
     }
+    printf("\nvaleur de send_type dans parse client package avant condition %d\n", client_package->send_type);
+    if (client_package->send_type == SEND_MESSAGE) {
+        printf("\n\nparsing message_send\n\n");
+        cJSON *message_send = parse_a_message(root, client_package);
+    }
+
 }

@@ -2,6 +2,7 @@
 #define HOSTER_H
 
 #include "../../controller/header/utils.h"
+#include "../header/save_message.h"
 #include <cjson/cJSON.h>
 
 void start_server();
