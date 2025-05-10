@@ -199,7 +199,9 @@ void get_full_chat_content(Client_package *client_package) {
         client_package->number_of_messages = rows;
 
         printf("\n");
-
+        if (client_package->messages_list != NULL) {
+            free(client_package->messages_list);
+        }
         Message *messages_list = malloc(sizeof(Message)*rows);
         client_package->messages_list = messages_list;
 

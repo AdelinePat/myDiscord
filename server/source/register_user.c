@@ -18,7 +18,7 @@ int does_user_exists(Login_infos* login_info) {
         exit(1);
     }
 
-    printf("valeur de user_name %s et de email %s et password : %s avant la requete\n",
+    printf("valeur de user_name <<%s>> et de email <<%s>> et password : <<%s>> avant la requete\n",
         login_info->username,
         login_info->email,
         login_info->password);
@@ -45,11 +45,12 @@ int does_user_exists(Login_infos* login_info) {
     int rows = PQntuples(res);
     int cols = PQnfields(res);
     int query_result = 0;
-
-    if (rows > 0 && cols > 0)
+    printf("nombre de rows : %d\n", rows);
+    if (rows > 0)
     {
         char *result_str = PQgetvalue(res, 0, 0);
         query_result = atoi(result_str);  // Convert string to int
+        printf("resultat query user exist : %d\n", query_result);
     }    
 
     PQclear(res);

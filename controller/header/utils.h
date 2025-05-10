@@ -40,7 +40,9 @@ typedef enum
     SOCKET_FAIL = 10,
     READY = 11,
     WAIT = 12,
-    MESSAGE_REFRESHED = 13
+    MESSAGE_REFRESHED = 13,
+    CLIENT_SEND = 14,
+    CLIENT_RECV = 15
 } SendType;
 
 typedef struct {
@@ -130,8 +132,9 @@ void serialize_login_info(cJSON * login, Login_infos *login_info);
 cJSON * parse_login_info(cJSON *root, Client_package * client_package); 
 cJSON * parse_client_data(cJSON *root, Client_package * client_package);
 void parse_message_list(cJSON *root, Client_package * client_package);
-void parse_a_message(cJSON * a_message, Client_package * client_package, int index);
+void parse_a_message_from_list(cJSON * a_message, Client_package * client_package, int index);
 void parse_channels_info_list(cJSON *root, Client_package * client_package);
 void parse_client_package_str(Client_package * client_package, char * client_package_str);
+cJSON * parse_a_message(cJSON * root, Client_package * client_package);
 
 #endif

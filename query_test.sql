@@ -52,4 +52,8 @@ SELECT COUNT(user_name) FROM users
   WHERE (user_name = 'florence' OR email = 'florence') AND password = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92';
 
 SELECT COUNT(user_name) FROM users
-    WHERE (user_name = 'florence' OR email = 'florence') AND password = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92'
+    WHERE (user_name = 'florence' OR email = 'florence@gmail.com');
+
+
+SELECT * FROM messages
+WHERE channel_id = 1;

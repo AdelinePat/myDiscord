@@ -98,6 +98,13 @@ void receive_client_data(Client_package_for_frontend *login_pack) {
         sizeof(int),
         0);
 
+    int request = CLIENT_RECV;
+    
+    send(login_pack->client_package->client->sock_pointer,
+        (char *)&request,
+        sizeof(int),
+        0);
+
     // recv(socket_client,
     //     (char *)login_pack->client_package->client,
     //     sizeof(Client_data),
@@ -159,10 +166,47 @@ void send_message(Client_package *client_package, char text[1024]) {
     Message message;
     message.user_id = client_package->client->user_id;
     message.channel_id = client_package->current_channel;
+    strncpy(message.username, client_package->client->username, SMALL_STRING);
     strncpy(message.message, text, sizeof(message.message));
     message.message[sizeof(message.message) - 1] = '\0';
-    printf("Infos envoyées : %s de %d à %lld\n", message.message, message.user_id, client_package->client->sock_pointer);
-    send(client_package->client->sock_pointer, (char *)&message, sizeof(Message), 0);
+    printf("je rajoute le message au client_package\n\n");
+    client_package->message_send = message;
+
+    client_package->send_type = SEND_MESSAGE;
+    int handshake = READY;
+    // sending a ready message to server
+    char time_stamp[LARGE_PLUS_STRING];
+    debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
+    printf("\n[RECEIVE CLIENT DATA]before handshake timestamp \t%s\n", time_stamp);
+    send(client_package->client->sock_pointer,
+        (char *)&handshake,
+        sizeof(int),
+        0);
+
+    int request = CLIENT_SEND;
+    send(client_package->client->sock_pointer,
+        (char *)&request,
+        sizeof(int),
+        0);
+
+    printf("Infos envoyées : %s de %d à %lld\n", client_package->message_send.message, client_package->message_send.user_id, client_package->client->sock_pointer);
+    printf("avant le serialize dans send message\n\n");
+
+    char *json_string = serialize_client_package(client_package);
+    int str_len = strlen(json_string);
+    
+    debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
+    printf("\n[TIME BEFORE SEND LEN] timestamp \t%s\n", time_stamp);
+    send(client_package->client->sock_pointer,
+        (char *)&str_len,
+        sizeof(int), 0);
+    printf("envoie de la longueur de la string dans send message %d\n", str_len);
+
+    send(client_package->client->sock_pointer,
+        json_string,
+        str_len, 0);
+    printf("envoie de la string ds send message\n\n");
+    // send(client_package->client->sock_pointer, (char *)&message, sizeof(Message), 0);
 }
 
 void fill_in_chat(GtkWidget *chat_display, Message *message_list, int message_length) {
@@ -251,6 +295,7 @@ void fill_in_structures(Client_package_for_frontend *login_pack) {
     printf("j'imprime la reception de client_package_str \n%s\n", client_package_str);
 
     parse_client_package_str(login_pack->client_package, client_package_str);
+    
     // printf("CHECKPOINT: login_info ptr = %p\n", login_pack->client_package->login_info);
     printf("[dans recover message] CHECKPOINT: login_info ptr = %p\n channels %p\n", login_pack->client_package->login_info, login_pack->client_package->channels);
     
@@ -271,6 +316,24 @@ void recover_messages(Client_package_for_frontend *login_pack) {
         login_pack->client_package->send_type != CREATE_ACCOUNT &&
         login_pack->client_package->send_type != MESSAGE_REFRESHED) {
         printf("before fill_in_chat");
+
+        int handshake = READY;
+        // sending a ready message to server
+        char time_stamp[LARGE_PLUS_STRING];
+        debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
+        printf("\n[RECOVER MSG]] before handshake timestamp \t%s\n", time_stamp);
+        send(login_pack->client_package->client->sock_pointer,
+            (char *)&handshake,
+            sizeof(int),
+            0);
+    
+        int request = CLIENT_RECV;
+        
+        send(login_pack->client_package->client->sock_pointer,
+            (char *)&request,
+            sizeof(int),
+            0);
+
         // fill_in_chat(login_pack->chat_display, message_list, size_of_list);
         clear_chat(login_pack->chat_display);
         fill_in_chat(login_pack->chat_display,
