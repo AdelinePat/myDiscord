@@ -142,24 +142,65 @@ void broadcast_notifications_receiver_start(Client_package_for_frontend *login_p
 }
 
 int register_attempts(Client_package_for_frontend *login_pack) {
+    int handshake = READY;
+    // sending a ready message to server
+    char time_stamp[LARGE_PLUS_STRING];
+    debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
+    printf("\n[RECOVER MSG] before handshake timestamp \t%s\n", time_stamp);
+    send(login_pack->client_package->client->sock_pointer,
+        (char *)&handshake,
+        sizeof(int),
+        0);
+    
+    int request = CLIENT_SEND;
+    send(login_pack->client_package->client->sock_pointer,
+        (char *)&request,
+        sizeof(int),
+        0);
+
+    
+
     Login_infos *login_info_copy = malloc(sizeof(Login_infos));
     *login_info_copy = *login_pack->client_package->login_info;
     int register_status = 1;
-    // login_pack->login_info->login_register = CREATE_ACCOUNT;
+    char *json_string = serialize_client_package(login_pack->client_package);
+    int str_len = strlen(json_string);
+    debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
+    printf("\n\t\t[TIME BEFORE SEND LEN] register_attempts timestamp \t%s\n", time_stamp);
     send(login_pack->client_package->client->sock_pointer,
-        (char *)login_pack->client_package->login_info,
-        sizeof(Login_infos),
+        (char *)&str_len,
+        sizeof(int), 0);
+    printf("registr attempts envoie de la longueur de la string dans send message %d\n", str_len);
+
+    send(login_pack->client_package->client->sock_pointer,
+        json_string,
+        str_len, 0);
+
+    int validation = 1;
+    send(login_pack->client_package->client->sock_pointer,
+        (char *)validation,
+        sizeof(int),
         0);
 
-    recv(login_pack->client_package->client->sock_pointer, (char *)&register_status, sizeof(int), 0);
-
-    if (login_pack->client_package->send_type == CREATE_ACCOUNT) {
-        printf("Création de compte réussie\n");
-        return 0;
-    } else {
-        printf("Une erreur est survenue lors de l'inscription'\n");
-        return 1; // in front : go back to login
+    if (validation == 1) {
+        register_status = 0;
     }
+    return register_status;
+    // login_pack->login_info->login_register = CREATE_ACCOUNT;
+    // send(login_pack->client_package->client->sock_pointer,
+    //     (char *)login_pack->client_package->login_info,
+    //     sizeof(Login_infos),
+    //     0);
+
+    // recv(login_pack->client_package->client->sock_pointer, (char *)&register_status, sizeof(int), 0);
+
+    // if (login_pack->client_package->send_type == CREATE_ACCOUNT) {
+    //     printf("Création de compte réussie\n");
+    //     return 0;
+    // } else {
+    //     printf("Une erreur est survenue lors de l'inscription'\n");
+    //     return 1; // in front : go back to login
+    // }
 }
 
 void send_message(Client_package *client_package, char text[1024]) {
@@ -211,11 +252,7 @@ void send_message(Client_package *client_package, char text[1024]) {
 
 void fill_in_chat(GtkWidget *chat_display, Message *message_list, int message_length) {
     printf("je suis dans fill_in_chat");
-
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(chat_display));
-    // GtkTextIter end_iter;
-    // gtk_text_buffer_get_end_iter(buffer, &end_iter);
-
     for (int i = 0; i < message_length; i++) {
         GtkTextIter end_iter;
         gtk_text_buffer_get_end_iter(buffer, &end_iter);
@@ -228,20 +265,6 @@ void fill_in_chat(GtkWidget *chat_display, Message *message_list, int message_le
         gtk_text_buffer_insert(buffer, &end_iter, "\n", -1);
     }
     
-    // GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(chat_display));
-    // gtk_text_buffer_set_text(buffer, "", -1);
-    // GtkTextIter end_iter;
-    // gtk_text_buffer_get_end_iter(buffer, &end_iter);
-    // for (int i = 0; i < message_length; i++) {
-    //     gchar text[150];
-    //     snprintf(text, sizeof(text), "%s    %s : \n%s\n",
-    //     message_list[i].username,
-    //     message_list[i].timestamp,
-    //     message_list[i].message);
-    //     // printf("Valeur row num%d : message_id %d, user_id %d, username %s, content %s\n", i, message_list[i].message_id, message_list[i].client_id, message_list[i].username, message_list[i].message);
-    //     gtk_text_buffer_insert(buffer, &end_iter, text, -1);
-    //     gtk_text_buffer_insert(buffer, &end_iter, "\n", -1);
-    // }
 }
 
 void clear_chat(GtkWidget *chat_display) {

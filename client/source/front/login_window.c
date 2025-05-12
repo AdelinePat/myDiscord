@@ -101,10 +101,10 @@ static void on_register_clicked(GtkButton *button, gpointer user_data)
     // GtkApplication *app = GTK_APPLICATION(data[3]);
 
     g_print("Register link clicked!\n");
-
+    printf("avant gtk_widget_destroy\n");
     // Close the login window before opening the registration window
     gtk_widget_destroy(login_window);
-
+    printf("apres gtk_widget_destroy\n");
     // Opens the registration window
     show_register_window(login_pack);
 }

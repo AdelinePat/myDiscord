@@ -45,7 +45,7 @@ static void on_confirm_clicked(GtkButton *button, gpointer user_data) {
     strcpy(login_pack->client_package->login_info->password, hashed_password);
     strcpy(login_pack->client_package->login_info->confirm_password, hashed_confirm_password);
     login_pack->client_package->send_type = CREATE_ACCOUNT;
-
+    printf("ceci est un test avant register_attempts in on_confirm_clicked");
     int register_status = register_attempts(login_pack);
     g_print("Registration with: %s / %s / %s\n", username, email, password);
     // TODO: Call the validate_credentials() function here to check the format of the email/username and password with regex

@@ -50,6 +50,23 @@ int login_attempts(Client_package *client_package)
 {
     while (1)
     {
+        char time_stamp[LARGE_PLUS_STRING];
+        int handshake = -1;
+        do {
+            debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
+            printf("\n[TIME BEFORE RECV WHILE] timestamp \t%s\n", time_stamp);
+            recv(client_package->client->sock_pointer,
+            (char *)&handshake,
+            sizeof(int),
+            0);
+        } while (handshake != READY);
+        
+        int request;
+        recv(client_package->client->sock_pointer,
+            (char *)&request,
+            sizeof(int),
+            0);
+
         int login_status = 0;
         int len = 0;
         int check_len = recv(client_package->client->sock_pointer,
@@ -77,6 +94,7 @@ int login_attempts(Client_package *client_package)
             client_package_str,
             len,
             0);
+
         if (bytes == SOCKET_ERROR)
         {
             printf("[ERROR] Erreur lors de la réception de Login_infos, code %d\n", WSAGetLastError());
@@ -84,7 +102,7 @@ int login_attempts(Client_package *client_package)
         }
         if (bytes != len)
         {
-            printf("[ERROR] Taille des données reçues incorrecte. Attendu %zu, reçu %d\n", len, bytes);
+            printf("[ERROR] LOGIN ATTEMPTS Taille des données reçues incorrecte. Attendu %zu, reçu %d\n", len, bytes);
             break;
         }
 
@@ -178,6 +196,7 @@ void recover_messages(Client_package_for_backend *package)
     // char client_pack_string_final[strlen(package->client_package->client_pack_str)]
     printf("\n\nVoici la string du json a envoyé dans recover_message : \n\n%s\n\n\n",
         client_pack_str);
+    printf("longueur de string json %d", strlen(client_pack_str));
 
     // printf("\n\nVoici la string du json a envoyé dans recover_message package->client_package->client_pack_str: \n\n%s\n\n\n",
     //     package->client_package->client_pack_str);
