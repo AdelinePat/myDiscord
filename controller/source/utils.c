@@ -354,7 +354,7 @@ char * serialize_client_package(Client_package *client_package) {
     strncpy(final_json_string, json_string, strlen(json_string));
     // printf("print of client_package->client_pack_str inside serialize_client_package \n\n%s\n\n", client_package->client_pack_str);
     strncpy(client_package->client_pack_str, json_string, strlen(json_string));
-    printf("json_string \n\n%s\n\n", json_string);
+    printf("fin serialize_client_package : json_string \n\n%s\n\n", json_string);
     return json_string; // Don't forget to free this after sending!
 }
 
