@@ -173,66 +173,88 @@ void send_message(Client_package *client_package, char text[1024]) {
     client_package->message_send = message;
 
     client_package->send_type = SEND_MESSAGE;
-    int handshake = READY;
-    // sending a ready message to server
-    char time_stamp[LARGE_PLUS_STRING];
-    debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
-    printf("\n[RECEIVE CLIENT DATA]before handshake timestamp \t%s\n", time_stamp);
-    send(client_package->client->sock_pointer,
-        (char *)&handshake,
-        sizeof(int),
-        0);
+    // int handshake = READY;
+    // // sending a ready message to server
+    // char time_stamp[LARGE_PLUS_STRING];
+    // debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
+    // printf("\n[RECEIVE CLIENT DATA]before handshake timestamp \t%s\n", time_stamp);
+    // send(client_package->client->sock_pointer,
+    //     (char *)&handshake,
+    //     sizeof(int),
+    //     0);
 
-    int request = CLIENT_SEND;
-    send(client_package->client->sock_pointer,
-        (char *)&request,
-        sizeof(int),
-        0);
+    // int request = CLIENT_SEND;
+    // send(client_package->client->sock_pointer,
+    //     (char *)&request,
+    //     sizeof(int),
+    //     0);
 
-    printf("Infos envoyées : %s de %d à %lld\n", client_package->message_send.message, client_package->message_send.user_id, client_package->client->sock_pointer);
-    printf("avant le serialize dans send message\n\n");
+    // printf("Infos envoyées : %s de %d à %lld\n", client_package->message_send.message, client_package->message_send.user_id, client_package->client->sock_pointer);
+    // printf("avant le serialize dans send message\n\n");
 
-    char *json_string = serialize_client_package(client_package);
-    int str_len = strlen(json_string);
+    // char *json_string = serialize_client_package(client_package);
+    // int str_len = strlen(json_string);
     
-    debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
-    printf("\n[TIME BEFORE SEND LEN] timestamp \t%s\n", time_stamp);
-    send(client_package->client->sock_pointer,
-        (char *)&str_len,
-        sizeof(int), 0);
-    printf("envoie de la longueur de la string dans send message %d\n", str_len);
+    // debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
+    // printf("\n\t\t[TIME BEFORE SEND LEN] send_message timestamp \t%s\n", time_stamp);
+    // send(client_package->client->sock_pointer,
+    //     (char *)&str_len,
+    //     sizeof(int), 0);
+    // printf("envoie de la longueur de la string dans send message %d\n", str_len);
 
-    send(client_package->client->sock_pointer,
-        json_string,
-        str_len, 0);
-    printf("envoie de la string ds send message\n\n");
+    // send(client_package->client->sock_pointer,
+    //     json_string,
+    //     str_len, 0);
+    // printf("envoie de la string ds send message\n\n");
     // send(client_package->client->sock_pointer, (char *)&message, sizeof(Message), 0);
 }
 
 void fill_in_chat(GtkWidget *chat_display, Message *message_list, int message_length) {
+    printf("je suis dans fill_in_chat");
+
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(chat_display));
+    // GtkTextIter end_iter;
+    // gtk_text_buffer_get_end_iter(buffer, &end_iter);
+
+    for (int i = 0; i < message_length; i++) {
         GtkTextIter end_iter;
         gtk_text_buffer_get_end_iter(buffer, &end_iter);
-        for (int i = 0; i < message_length; i++) {
-            gchar text[150];
-            snprintf(text, sizeof(text), "%s    %s : \n%s\n",
-            message_list[i].username,
-            message_list[i].timestamp,
-            message_list[i].message);
-            // printf("Valeur row num%d : message_id %d, user_id %d, username %s, content %s\n", i, message_list[i].message_id, message_list[i].client_id, message_list[i].username, message_list[i].message);
-            gtk_text_buffer_insert(buffer, &end_iter, text, -1);
-            gtk_text_buffer_insert(buffer, &end_iter, "\n", -1);
-        }
+        gchar text[150];
+        snprintf(text, sizeof(text), "%s    %s : \n%s\n",
+                 message_list[i].username,
+                 message_list[i].timestamp,
+                 message_list[i].message);
+        gtk_text_buffer_insert(buffer, &end_iter, text, -1);
+        gtk_text_buffer_insert(buffer, &end_iter, "\n", -1);
+    }
+    
+    // GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(chat_display));
+    // gtk_text_buffer_set_text(buffer, "", -1);
+    // GtkTextIter end_iter;
+    // gtk_text_buffer_get_end_iter(buffer, &end_iter);
+    // for (int i = 0; i < message_length; i++) {
+    //     gchar text[150];
+    //     snprintf(text, sizeof(text), "%s    %s : \n%s\n",
+    //     message_list[i].username,
+    //     message_list[i].timestamp,
+    //     message_list[i].message);
+    //     // printf("Valeur row num%d : message_id %d, user_id %d, username %s, content %s\n", i, message_list[i].message_id, message_list[i].client_id, message_list[i].username, message_list[i].message);
+    //     gtk_text_buffer_insert(buffer, &end_iter, text, -1);
+    //     gtk_text_buffer_insert(buffer, &end_iter, "\n", -1);
+    // }
 }
 
 void clear_chat(GtkWidget *chat_display) {
-    printf("inside clear_chat ??\n");
-    GList *children, *iter;
-    children = gtk_container_get_children(GTK_CONTAINER(chat_display));
-    for (iter = children; iter != NULL; iter = g_list_next(iter)) {
-        gtk_widget_destroy(GTK_WIDGET(iter->data));
-    }
-    g_list_free(children);
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(chat_display));
+    gtk_text_buffer_set_text(buffer, "", -1);
+    // printf("inside clear_chat ??\n");
+    // GList *children, *iter;
+    // children = gtk_container_get_children(GTK_CONTAINER(chat_display));
+    // for (iter = children; iter != NULL; iter = g_list_next(iter)) {
+    //     gtk_widget_destroy(GTK_WIDGET(iter->data));
+    //     printf("\ndans clear_chat iteration");
+    // }
+    // g_list_free(children);
 }
 
 void *receive_messages(void *arg) { // permet de recevoir une notification lorsqu'un message est broadcasté par le serveur
@@ -240,10 +262,16 @@ void *receive_messages(void *arg) { // permet de recevoir une notification lorsq
     printf("inside receive message that calls for a while(1) and calls continously for recover_messages\n\n");
     Client_package_for_frontend *client_pack = (Client_package_for_frontend *)arg;
     GtkWidget *chat_display = client_pack->chat_display;
-    while (client_pack->client_package->send_type != MESSAGE_REFRESHED) {
+    while (1) {
         // recover_messages(*chat_display_package->sock_copy, chat_display);
-        recover_messages(client_pack);
-        gtk_widget_show_all(client_pack->window);
+        if (client_pack->client_package->send_type != MESSAGE_REFRESHED) {
+            printf("\navant recover message dans while(1) receive messages\n");
+            recover_messages(client_pack);
+            printf("\n\n\n\tAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH\navant gtk_widget_show_all\n\n\n");
+            gtk_widget_show_all(client_pack->window);
+            printf("\naprès gtl_widget_show_all\n");
+        }
+        
     }
     free(arg);
     return NULL;
@@ -310,38 +338,84 @@ void fill_in_structures(Client_package_for_frontend *login_pack) {
 }
 
 void recover_messages(Client_package_for_frontend *login_pack) {
+    int handshake = READY;
+    // sending a ready message to server
+    char time_stamp[LARGE_PLUS_STRING];
+    debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
+    printf("\n[RECOVER MSG] before handshake timestamp \t%s\n", time_stamp);
+    send(login_pack->client_package->client->sock_pointer,
+        (char *)&handshake,
+        sizeof(int),
+        0);
     
-    // fill_in_structures(login_pack);
-    if (login_pack->client_package->send_type != LOGIN &&
-        login_pack->client_package->send_type != CREATE_ACCOUNT &&
-        login_pack->client_package->send_type != MESSAGE_REFRESHED) {
-        printf("before fill_in_chat");
+    int request = -1;
+    if (login_pack->client_package->send_type == SEND_MESSAGE) {
+        request = CLIENT_SEND;
+    } else {
+        request = CLIENT_RECV;
+    }
+    printf("\n\nvaleur de request dans recover message : %d\n\n", request);
+    
+    send(login_pack->client_package->client->sock_pointer,
+        (char *)&request,
+        sizeof(int),
+        0);
+    if (request == CLIENT_SEND) {
+        char *json_string = serialize_client_package(login_pack->client_package);
+        int str_len = strlen(json_string);
+        debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
+        printf("\n\t\t[TIME BEFORE SEND LEN] send_message timestamp \t%s\n", time_stamp);
+        send(login_pack->client_package->client->sock_pointer,
+            (char *)&str_len,
+            sizeof(int), 0);
+        printf("envoie de la longueur de la string dans send message %d\n", str_len);
+    
+        send(login_pack->client_package->client->sock_pointer,
+            json_string,
+            str_len, 0);
 
+        int validation = 1;
+        send(login_pack->client_package->client->sock_pointer,
+            (char *)validation,
+            sizeof(int),
+            0);
+    }
+
+    if (request == CLIENT_SEND) {
         int handshake = READY;
-        // sending a ready message to server
+    // sending a ready message to server
         char time_stamp[LARGE_PLUS_STRING];
         debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
-        printf("\n[RECOVER MSG]] before handshake timestamp \t%s\n", time_stamp);
+        printf("\n[RECOVER MSG] avant fill_in_struct before handshake timestamp \t%s\n", time_stamp);
         send(login_pack->client_package->client->sock_pointer,
             (char *)&handshake,
             sizeof(int),
             0);
+        request = CLIENT_RECV;
     
-        int request = CLIENT_RECV;
-        
-        send(login_pack->client_package->client->sock_pointer,
-            (char *)&request,
-            sizeof(int),
-            0);
+        printf("avant : fill in structure dans recover_message");
+        fill_in_structures(login_pack);
+    }
+    
 
+    
+    
+    
+
+    // if (login_pack->client_package->send_type != LOGIN &&
+    //     login_pack->client_package->send_type != CREATE_ACCOUNT) {
+        printf("before clear_chat\n");
         // fill_in_chat(login_pack->chat_display, message_list, size_of_list);
         clear_chat(login_pack->chat_display);
+        printf("before fill_in_chat\n");
         fill_in_chat(login_pack->chat_display,
             login_pack->client_package->messages_list,
             login_pack->client_package->number_of_messages);
         login_pack->client_package->send_type = MESSAGE_REFRESHED;
+        printf("after fill_in_chat\n");
         // free(message_list);
-    }
+    // }
+    printf("\n\nvaleur de request dans fin recover message : %d\n\n", request);
 }
 
 SOCKET client_start() {

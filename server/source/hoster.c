@@ -182,7 +182,7 @@ void recover_messages(Client_package_for_backend *package)
     // printf("\n\nVoici la string du json a envoyé dans recover_message package->client_package->client_pack_str: \n\n%s\n\n\n",
     //     package->client_package->client_pack_str);
     char time_stamp[LARGE_PLUS_STRING];
-    int handshake;
+    int handshake = -1;
     do {
         debug_get_str_timestamp(time_stamp, LARGE_PLUS_STRING);
         printf("\n[TIME BEFORE RECV WHILE] timestamp \t%s\n", time_stamp);
@@ -262,10 +262,13 @@ void recover_messages(Client_package_for_backend *package)
                     create_new_message_db(package->client_package);
                     get_full_chat_content(package->client_package);
                     request = CLIENT_RECV;
+                    break;
                 default:
                     request = CLIENT_RECV;
+                    break;
             }
             printf("apres parsing\n");
+            break;
             // save_message_in_db();
         case CLIENT_RECV:
             printf("\n\n\nDANS SWITCH CASE CLIENT RECV\n\n\n");
@@ -412,7 +415,8 @@ void *handle_client(void *arg)
     }
     printf("\n\n\n ligne 359 PREMIER RECOVER MESSAGE\n\n\n");
     printf("[handle_client before recover_messages] CHECKPOINT: channels %p\n", client_pack->client_package->channels);
-    recover_messages(client_pack);
+    
+    // recover_messages(client_pack);
 
     while (1)
     {
