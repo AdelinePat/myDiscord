@@ -2,7 +2,6 @@
 #include <openssl/sha.h>
 #include <string.h>
 #include <stdio.h>
-// fontion inverser le hashage
 
 #include <stdlib.h>
 

@@ -1,15 +1,12 @@
-// #include <gtk/gtk.h>
 #include "../../header/client_front.h"
-// #include "./header/login_window.h"
 
 static void on_activate(GtkApplication *app, gpointer user_data) {
     Client_package_for_frontend *login_pack = (Client_package_for_frontend *)user_data;
-    // Client_package_for_frontend *login_pack = login_pack;
+
     login_pack->client_package->client->sock_pointer = client_start(); // OK
     printf("\non a reçu la socket client après connexion ??? %lld\n", login_pack->client_package->client->sock_pointer);
     
     connect_to_server(login_pack);
-    // (void)user_data;
     show_login_window(login_pack);  // Start with the login screen
 }
 
@@ -39,8 +36,7 @@ int launch_front() {
         g_warning("Failed to allocate memory for login_pack.");
         printf("Failed to allocate memory for login_pack->login_info."); // Or handle the error in an appropriate way
     }
-
-    // login_pack->login_info = login_info;
+    
     login_pack->app = app;
     
     g_signal_connect(app, "activate", G_CALLBACK(on_activate), (void *)login_pack);

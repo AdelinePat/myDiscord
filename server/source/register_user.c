@@ -84,8 +84,6 @@ PGresult * create_new_user_query(PGconn *conn, Client_package *client_package)
 
     if (resStatus != PGRES_COMMAND_OK)
     {   
-        // char *PQresStatus(ExecStatusType status)
-        // printf("valeur de resStatus : %s", resStatus);
         fprintf(stderr, "ERROR: %s\n", PQerrorMessage(conn));
         printf("il y a eu une erreur dans la requête de création de user\n");
         PQclear(res);

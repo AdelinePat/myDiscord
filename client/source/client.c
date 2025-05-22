@@ -1,4 +1,3 @@
-// #include "../header/connector.h"
 #include "../header/client_front.h"
 
 int main() {

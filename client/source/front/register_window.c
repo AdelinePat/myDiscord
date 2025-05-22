@@ -16,7 +16,6 @@ static void on_confirm_clicked(GtkButton *button, gpointer user_data) {
     GtkWidget *entry_email = data[2];
     GtkWidget *entry_pass = data[3];
     GtkWidget *entry_confirm_pass = data[4];
-    // GtkApplication *app = GTK_APPLICATION(data[5]);
     
     const gchar *username = gtk_entry_get_text(GTK_ENTRY(entry_user));
     const gchar *email = gtk_entry_get_text(GTK_ENTRY(entry_email));
@@ -34,11 +33,6 @@ static void on_confirm_clicked(GtkButton *button, gpointer user_data) {
     char hashed_confirm_password[LARGE_STRING];
     hash_password_sha256(confirm_password, hashed_confirm_password);
 
-    // printf("\n\nA1 : on_register_clicked : Password: %s\n", password);
-    // printf("B1 on_register_clicked1 : Hashed password: %s\n", hashed_password);
-    // printf("A2 on_register_clicked1 : confirm Password: %s\n", password);
-    // printf("B2 on_register_clicked1 : Hashed confirm password: %s\n", hashed_password);
-
     strcpy(login_pack->client_package->login_info->username, username);
     strcpy(login_pack->client_package->login_info->email, email);
     printf("\n\n email from login_info strcpy : %s\n\n", login_pack->client_package->login_info->email);
@@ -48,9 +42,7 @@ static void on_confirm_clicked(GtkButton *button, gpointer user_data) {
     printf("ceci est un test avant register_attempts in on_confirm_clicked");
     int register_status = register_attempts(login_pack);
     g_print("Registration with: %s / %s / %s\n", username, email, password);
-    // TODO: Call the validate_credentials() function here to check the format of the email/username and password with regex
-    //       Do not specify if it's the email or password that is incorrect
-    // Example: if (!validate_credentials(username, password)) { show a generic error and return; }
+    
     if (register_status == 0)
     {
         gtk_widget_destroy(register_window); // Closes the login window
@@ -65,7 +57,6 @@ static void on_return_clicked(GtkButton *button, gpointer user_data) {
 
     GtkWidget **data = login_pack->data;
     GtkWidget *register_window = data[0];
-    // GtkApplication *app = GTK_APPLICATION(data[5]);
 
     gtk_widget_destroy(register_window);
     show_login_window(login_pack);
@@ -186,14 +177,6 @@ void show_register_window(Client_package_for_frontend *login_pack) {
     gtk_box_pack_start(GTK_BOX(hbox_buttons), btn_confirm, TRUE, TRUE, 5);
     gtk_box_pack_start(GTK_BOX(hbox_buttons), btn_return, TRUE, TRUE, 5);
 
-    // GtkWidget **data = g_new(GtkWidget *, 6);
-    // data[0] = window;
-    // data[1] = entry_user;
-    // data[2] = entry_email;
-    // data[3] = entry_pass;
-    // data[4] = entry_confirm_pass;
-    // data[5] = GTK_WIDGET(app);
-    // login_pack->data[] = data;
     login_pack->data[0] = window;
     login_pack->data[1] = entry_user;
     login_pack->data[2] = entry_email;
