@@ -34,10 +34,6 @@ void debug_get_str_timestamp(char * buffer, size_t buffer_size) {
     snprintf(buffer, buffer_size, "%04d-%02d-%02d %02d:%02d:%02d.%03d",
              st.wYear, st.wMonth, st.wDay,
              st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
-    // time_t now = time(NULL);
-    // struct tm time_now = *localtime(&now);
-    // char *time_tr = debug_timestamp_to_char(time_now);
-    // return time_tr;
 }
 
 char * debug_timestamp_to_char(struct tm time) {
@@ -52,7 +48,7 @@ char * debug_timestamp_to_char(struct tm time) {
 
 struct tm parse_db_query_time(char *time_str) {
     struct tm result;
-    memset(&result, 0, sizeof(struct tm)); // zero the struct
+    memset(&result, 0, sizeof(struct tm)); 
     int matched = sscanf(
         time_str,
         "%d-%d-%d %d:%d:%d",

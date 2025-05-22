@@ -2,7 +2,6 @@
 #include "../../header/chat_window.h"
 #include "../../header/login_window.h"
 #include "../../header/register_window.h"
-// #include <gtk/gtk.h>
 #include <unistd.h> // pour send()
 #include <string.h> // pour strlen()
 #include "../../../controller/header/utils.h"
@@ -15,14 +14,9 @@ typedef struct
 
 // === Called when the "Disconnect" button is clicked ===
 static void on_disconnect_clicked(GtkButton *button, gpointer user_data) {
-    // GtkApplication *app = GTK_APPLICATION(user_data);
     Client_package_for_frontend *login_pack = (Client_package_for_frontend *)user_data;
-    // GtkWidget **data = login_pack->data;
     GtkApplication *app = login_pack->app;
-    // login_pack->data = NULL;
     GtkWidget **data = NULL;
-    // gpointer data = NULL;
-    // GtkApplication *app = GTK_APPLICATION(data);
     Login_infos *login_info = login_pack->client_package->login_info;
 
     GtkWidget *window = gtk_widget_get_toplevel(GTK_WIDGET(button));
@@ -32,7 +26,6 @@ static void on_disconnect_clicked(GtkButton *button, gpointer user_data) {
     }
 
     show_login_window(login_pack);
-    // show_login_window(app, data, login_info);  // Return to login screen
     g_free(login_pack->data);
     free(login_pack);
 }
@@ -41,7 +34,6 @@ static void on_disconnect_clicked(GtkButton *button, gpointer user_data) {
 static void on_emoji_clicked(GtkButton *button, gpointer user_data)
 {
     GtkEntry *entry = GTK_ENTRY(user_data);
-    // const gchar *emoji = gtk_button_get_label(GTK_WIDGET(button));
     const gchar *emoji = gtk_button_get_label(button);
     const gchar *current_text = gtk_entry_get_text(entry);
 
@@ -54,7 +46,6 @@ static void on_emoji_clicked(GtkButton *button, gpointer user_data)
 static void on_chat_entry_activate(GtkEntry *entry, gpointer user_data)
 {
     Client_package_for_frontend *login_pack = (Client_package_for_frontend *)user_data;
-    // ChatWidgets *widgets = (ChatWidgets *)user_data;
 
     const gchar *text = gtk_entry_get_text(entry);
     if (g_strcmp0(text, "") != 0)
@@ -102,9 +93,6 @@ static void on_connect_clicked(GtkButton *button, gpointer user_data)
         password,
         sizeof(login_pack->client_package->login_info->password) - 1);
 
-    // SOCKET sock = client_start();
-    // login_pack->client_package->client->sock_pointer = sock;
-
     // Tente la connexion
     printf("call for login_attempts in on connect_clicked");
     if (login_attempts(login_pack) == 0)
@@ -144,9 +132,6 @@ static void on_connect_clicked(GtkButton *button, gpointer user_data)
 
 // === Displays the main chat window ===
 void show_chat_window(Client_package_for_frontend *login_pack) {
-    // Client_package_for_frontend *login_pack = login_pack;
-    // GtkApplication **app = login_pack->app;
-
     GtkWidget *window, *outer_box, *chat_box, *chat_display, *chat_entry;
     GtkWidget *scrolled_window, *channels_box, *user_label, *bottom_box;
     GtkWidget *connect_button, *disconnect_button;
@@ -262,8 +247,6 @@ void show_chat_window(Client_package_for_frontend *login_pack) {
         printf("Failed to allocate memory for login_pack."); // Or handle the error in an appropriate way
     }
 
-    // chat_widgets->chat_display = chat_display;
-    // chat_widgets->chat_entry = chat_entry;
     g_signal_connect(chat_entry, "activate", G_CALLBACK(on_chat_entry_activate), login_pack);
 
     GtkCssProvider *provider = gtk_css_provider_new();
@@ -289,10 +272,6 @@ void show_chat_window(Client_package_for_frontend *login_pack) {
     login_pack->client_package->number_of_messages);
 
     login_pack->client_package->send_type = READY;
-    // recover_messages(login_pack);
-    // fill_in_chat(login_pack->chat_display,
-    //     login_pack->client_package->messages_list,
-    //     login_pack->client_package->number_of_messages);
     gtk_widget_show_all(window);
     login_pack->window = window;
     printf("before broadcast_notifications_receiver_start\n");

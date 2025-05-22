@@ -12,15 +12,6 @@ PGresult * create_new_message_query(PGconn *conn, Client_package *client_package
         client_package->current_channel,
         client_package->message_send.message) +1;
 
-
-        // int final_size_query = snprintf(NULL, 0,
-        //     "INSERT INTO messages (user_id, channel_id, date_time, content)\n\
-        //     VALUES (%d, %d, '%s', '%s');", 
-        //     client_package->login_info->user_id,
-        //     client_package->current_channel,
-        //     client_package->message_send.timestamp,
-        //     client_package->message_send.message) +1;
-
     char *query = malloc(final_size_query);
     if (query == NULL) {
         fprintf(stderr, "Memory allocation failed for query.\n");

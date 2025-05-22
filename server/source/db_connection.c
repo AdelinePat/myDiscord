@@ -82,9 +82,7 @@ void first_update_client_package(Client_package *client_package) {
     client_package->current_channel = 1;
     get_user_data(client_package);
     get_channel_list(client_package);
-    // printf("[first_update_client_package avant get_full_chat_content] CHECKPOINT: channels ptr = %p\n", client_package->channels);
     get_full_chat_content(client_package);
-    // printf("[first_update_client_package fin] CHECKPOINT: channels %p\n", client_package->channels);
 }
 
 void get_user_data(Client_package* client_package) {
@@ -92,7 +90,6 @@ void get_user_data(Client_package* client_package) {
         fprintf(stderr, "Invalid client_package or its subfields\n");
         return;
     }
-    // printf("[get_user_data begin] CHECKPOINT: login_info ptr = %p\n", client_package->login_info);
     printf("[get_user_data begin] CHECKPOINT: login_info ptr = %p\n channels %p\n", client_package->login_info, client_package->channels);
 
     PGconn *conn = database_connexion();
@@ -141,9 +138,6 @@ void get_user_data(Client_package* client_package) {
 
     printf("\n");
 
-    // char* query_result = 0;
-    // printf("value du result de la query mdr : %d", query_result);
-
     if (rows > 0 && cols > 0)
     {
         char *result_user_id = PQgetvalue(res, 0, 0);
@@ -169,7 +163,6 @@ void get_user_data(Client_package* client_package) {
     PQclear(res);
 
     PQfinish(conn);
-    // printf("[get_user_data end] CHECKPOINT: login_info ptr = %p\n", client_package->login_info);
     printf("[get_user_data end] CHECKPOINT: login_info ptr = %p\n channels %p\n", client_package->login_info, client_package->channels);
     
     printf("\n\nBye bye\n\n");
